@@ -28,6 +28,7 @@
 
 # Ignore coverage and more.
 /coverage/*
+/coverage
 /doc
 
 /.env
