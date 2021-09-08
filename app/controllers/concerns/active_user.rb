@@ -19,6 +19,19 @@ module ActiveUser
     def current_user
         User.find_by(id: doorkeeper_token.resource_owner_id) unless doorkeeper_token.blank?
     end
+
+    def validate_admin!
+        throw_error("Unauthorized.", 401) unless doorkeeper_token.scopes.to_s == "admin"
+    
+        admin = Admin.find_by(id: doorkeeper_token.resource_owner_id) unless doorkeeper_token.blank?
+        throw_error("Unauthorized.", 401) if admin.blank?
+    
+        throw_error("Session expired.", 401) if ((Time.now - doorkeeper_token.created_at) / 86400) > Rails.application.secrets.user_active_session_duration
+    end
+    
+    def current_admin
+        Admin.find_by(id: doorkeeper_token.resource_owner_id) unless doorkeeper_token.blank?
+    end
     
 end
   

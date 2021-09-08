@@ -23,6 +23,10 @@ class Admin < ApplicationRecord
   def full_name
     return "#{self.first_name} #{self.last_name}"
   end
+
+  def display_picture_url
+    ""
+  end
      
   def reset_password_token_valid!(token)
     if self.reset_password_token == token.to_s and ((Time.now - self.reset_password_sent_at) / 1.minutes) < Rails.application.secrets.reset_password_token_duration
