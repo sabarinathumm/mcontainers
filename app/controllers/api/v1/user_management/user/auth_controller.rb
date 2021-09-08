@@ -41,7 +41,6 @@ class Api::V1::UserManagement::User::AuthController < Api::V1::BaseController
 			@user = User.find_by(id: access_token.resource_owner_id)
 
 			throw_error("Token is not valid!.", 401) if @user.blank?
-			puts Rails.application.secrets.user_active_session_duration
 		
 			throw_error("Session expired.", 401) if ((Time.now - access_token.created_at) / 86400) > Rails.application.secrets.user_active_session_duration
 
