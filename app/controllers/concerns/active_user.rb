@@ -33,5 +33,8 @@ module ActiveUser
         Admin.find_by(id: doorkeeper_token.resource_owner_id) unless doorkeeper_token.blank?
     end
     
+    def validate_token!
+        throw_error("Session expired.", 401) if ((Time.now - doorkeeper_token.created_at) / 86400) > Rails.application.secrets.user_active_session_duration
+    end
 end
   
