@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_09_09_155254) do
+ActiveRecord::Schema.define(version: 2021_09_12_224536) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -100,6 +100,63 @@ ActiveRecord::Schema.define(version: 2021_09_09_155254) do
     t.index ["token"], name: "index_oauth_access_tokens_on_token", unique: true
   end
 
+  create_table "repair_list_items", force: :cascade do |t|
+    t.bigint "repair_list_id", null: false
+    t.string "uid"
+    t.bigint "container_repair_area_id"
+    t.bigint "container_damaged_area_id"
+    t.bigint "repair_type_id"
+    t.boolean "is_non_mearsk_not_applicable"
+    t.float "non_mearsk_hours"
+    t.money "non_mearsk_material_cost", scale: 2
+    t.text "non_mearsk_description"
+    t.bigint "comp_id"
+    t.bigint "rep_id"
+    t.bigint "dam_id"
+    t.bigint "component_id"
+    t.bigint "event_id"
+    t.text "location"
+    t.bigint "unit_id"
+    t.float "length"
+    t.float "width"
+    t.string "non_mearsk_id_source"
+    t.boolean "is_mearsk_not_applicable"
+    t.money "mearsk_max_material_cost", scale: 2
+    t.money "mearsk_unit_material_cost", scale: 2
+    t.float "mearsk_hours_per_unit"
+    t.float "mesrsk_max_pieces"
+    t.float "mearsk_units"
+    t.bigint "repair_mode_id"
+    t.bigint "mode_number_id"
+    t.string "repair_code"
+    t.string "combined"
+    t.string "mearsk_description"
+    t.string "mearsk_id_source"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.datetime "deleted_at"
+    t.index ["comp_id"], name: "index_repair_list_items_on_comp_id"
+    t.index ["component_id"], name: "index_repair_list_items_on_component_id"
+    t.index ["container_damaged_area_id"], name: "index_repair_list_items_on_container_damaged_area_id"
+    t.index ["container_repair_area_id"], name: "index_repair_list_items_on_container_repair_area_id"
+    t.index ["dam_id"], name: "index_repair_list_items_on_dam_id"
+    t.index ["event_id"], name: "index_repair_list_items_on_event_id"
+    t.index ["mode_number_id"], name: "index_repair_list_items_on_mode_number_id"
+    t.index ["rep_id"], name: "index_repair_list_items_on_rep_id"
+    t.index ["repair_list_id"], name: "index_repair_list_items_on_repair_list_id"
+    t.index ["repair_mode_id"], name: "index_repair_list_items_on_repair_mode_id"
+    t.index ["repair_type_id"], name: "index_repair_list_items_on_repair_type_id"
+    t.index ["uid"], name: "index_repair_list_items_on_uid", unique: true
+    t.index ["unit_id"], name: "index_repair_list_items_on_unit_id"
+  end
+
+  create_table "repair_lists", force: :cascade do |t|
+    t.string "name"
+    t.boolean "is_active", default: true
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+  end
+
   create_table "repair_modes", force: :cascade do |t|
     t.string "name"
     t.datetime "created_at", precision: 6, null: false
@@ -139,4 +196,16 @@ ActiveRecord::Schema.define(version: 2021_09_09_155254) do
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
   end
 
+  add_foreign_key "repair_list_items", "components"
+  add_foreign_key "repair_list_items", "comps"
+  add_foreign_key "repair_list_items", "container_damaged_areas"
+  add_foreign_key "repair_list_items", "container_repair_areas"
+  add_foreign_key "repair_list_items", "dams"
+  add_foreign_key "repair_list_items", "events"
+  add_foreign_key "repair_list_items", "mode_numbers"
+  add_foreign_key "repair_list_items", "repair_lists"
+  add_foreign_key "repair_list_items", "repair_modes"
+  add_foreign_key "repair_list_items", "repair_types"
+  add_foreign_key "repair_list_items", "reps"
+  add_foreign_key "repair_list_items", "units"
 end

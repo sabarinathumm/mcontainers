@@ -21,6 +21,23 @@ Rails.application.routes.draw do
         resources :reps, only: [:index]
       end
 
+      namespace :repair_list_management do
+        namespace :admin do
+          get 'repair_list',  to: 'repair_lists#index'
+          post 'repair_list', to: 'repair_lists#create'
+          scope "/repair_list/:repair_list_id" do 
+            get 'items',  to: 'repair_list_items#index'
+            post 'items', to: 'repair_list_items#create'
+          end
+
+          scope "/repair_list/" do 
+            get "items/:id",  to: 'repair_list_items#show'
+            put "items/:id", to: 'repair_list_items#update'
+            delete "items/:id",  to: 'repair_list_items#delete'
+          end
+        end
+      end
+
       namespace :user_management do
         namespace :user do
           delete 'auth/logout'
