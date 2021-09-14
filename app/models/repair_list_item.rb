@@ -13,6 +13,10 @@ class RepairListItem < ApplicationRecord
     belongs_to :repair_mode, optional: true
     belongs_to :mode_number, optional: true
 
+    monetize :non_mearsk_material_cost_cents
+    monetize :mearsk_max_material_cost_cents
+    monetize :mearsk_unit_material_cost_cents
+
     after_create :set_uid
 
     def set_uid

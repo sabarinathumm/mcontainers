@@ -165,7 +165,7 @@ RSpec.describe 'RepairListItems::', type: :request do
                     repair_type_id: repair_type.id, 
                     non_mearsk_description: 'Random Description',
                     non_mearsk_hours: 54.0,
-                    mearsk_max_material_cost: "500"
+                    mearsk_max_material_cost: 500
                     }
                 }
             }
@@ -174,7 +174,7 @@ RSpec.describe 'RepairListItems::', type: :request do
 
             it 'returns token' do
                 # Note `json` is a custom helper to parse JSON responses
-                puts json
+                #puts json
                 expect(json).not_to be_empty
                 expect(json['repair_list_item']['repair_type']['name']).to eql(repair_type.name)
                 expect(json['repair_list_item']['container_damaged_area']['name']).to eql(container_damaged_area.name)
@@ -189,7 +189,8 @@ RSpec.describe 'RepairListItems::', type: :request do
                 expect(json['repair_list_item']['unit']['name']).to eql(unit.name)
                 expect(json['repair_list_item']['deleted_at']).to eql(nil)
                 expect(json['repair_list_item']['non_mearsk_description']).to eql('Random Description')
-                expect(json['repair_list_item']['mearsk_max_material_cost']).to eql('500.0')
+                expect(json['repair_list_item']['mearsk_max_material_cost']['cents']).to eql(500*100)
+                expect(json['repair_list_item']['mearsk_max_material_cost']['currency_iso']).to eql('USD')
                 expect(response).to have_http_status(200)
             end
         end

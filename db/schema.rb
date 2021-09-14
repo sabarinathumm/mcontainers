@@ -108,7 +108,8 @@ ActiveRecord::Schema.define(version: 2021_09_12_224536) do
     t.bigint "repair_type_id"
     t.boolean "is_non_mearsk_not_applicable"
     t.float "non_mearsk_hours"
-    t.money "non_mearsk_material_cost", scale: 2
+    t.integer "non_mearsk_material_cost_cents", default: 0, null: false
+    t.string "non_mearsk_material_cost_currency", default: "USD", null: false
     t.text "non_mearsk_description"
     t.bigint "comp_id"
     t.bigint "rep_id"
@@ -121,8 +122,10 @@ ActiveRecord::Schema.define(version: 2021_09_12_224536) do
     t.float "width"
     t.string "non_mearsk_id_source"
     t.boolean "is_mearsk_not_applicable"
-    t.money "mearsk_max_material_cost", scale: 2
-    t.money "mearsk_unit_material_cost", scale: 2
+    t.integer "mearsk_max_material_cost_cents", default: 0, null: false
+    t.string "mearsk_max_material_cost_currency", default: "USD", null: false
+    t.integer "mearsk_unit_material_cost_cents", default: 0, null: false
+    t.string "mearsk_unit_material_cost_currency", default: "USD", null: false
     t.float "mearsk_hours_per_unit"
     t.float "mesrsk_max_pieces"
     t.float "mearsk_units"
