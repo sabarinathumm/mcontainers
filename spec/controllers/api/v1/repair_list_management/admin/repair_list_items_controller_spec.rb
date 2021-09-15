@@ -195,5 +195,26 @@ RSpec.describe 'RepairListItems::', type: :request do
             end
         end
     end
+
+    describe 'Export a Repair List items' do
+        # valid payload
+            context 'success' do
+    
+                let!(:repair_list_item){ create(:repair_list_item, repair_list: repair_list, repair_type: repair_type, \
+                    container_damaged_area: container_damaged_area, container_repair_area: container_repair_area, \
+                    component: component, comp: comp, dam: dam, rep: rep, mode_number: mode_number, repair_mode: repair_mode, \
+                    event: event, unit: unit) }
+
+                before { get "/api/v1/repair_list_management/admin/repair_list/#{repair_list.id}/items/export", headers: headers[:auth], as: :json }
+    
+                it 'returns token' do
+                    # Note `json` is a custom helper to parse JSON responses
+                    # puts response.body
+                    # puts response.headers
+                    expect(response.headers['Content-Type']).to eq('text/csv')
+                    expect(response).to have_http_status(200)
+                end
+            end
+        end
     
 end

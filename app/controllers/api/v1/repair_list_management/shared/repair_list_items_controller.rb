@@ -44,7 +44,8 @@ class Api::V1::RepairListManagement::Shared::RepairListItemsController < Api::V1
     def export
         @repair_list_items = RepairListItem.where(repair_list: @repair_list)
         respond_to do |format|
-            format.csv { send_data @repair_list_items.export }
+            format.csv { send_data @repair_list_items.export, filename: "Repair_List_Items_#{@repair_list.id}_#{Date.today}.csv", \
+            type: "text/csv" , disposition: 'attachment', status: :ok }
         end
     end
 
