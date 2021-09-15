@@ -44,6 +44,8 @@ gem 'money-rails', '~>1.12'
 gem 'carrierwave', '~> 2.0'
 gem "roo", "~> 2.8.0"
 
+gem 'dotenv-rails'
+
 
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
