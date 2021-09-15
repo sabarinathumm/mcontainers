@@ -4,5 +4,6 @@ class Api::V1::BaseController < ApplicationController
 	include ExceptionHandler
 	include ActiveUser
 	include Pagination
+	include ActionController::MimeResponds
 
 end

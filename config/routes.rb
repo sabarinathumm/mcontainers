@@ -28,6 +28,8 @@ Rails.application.routes.draw do
           scope "/repair_list/:repair_list_id" do 
             get 'items',  to: 'repair_list_items#index'
             post 'items', to: 'repair_list_items#create'
+            get 'items/export', to: 'repair_list_items#export'
+            post 'items/upload', to: 'repair_list_items#upload'
           end
 
           scope "/repair_list/" do 

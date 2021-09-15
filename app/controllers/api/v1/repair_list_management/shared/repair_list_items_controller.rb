@@ -1,7 +1,8 @@
 class Api::V1::RepairListManagement::Shared::RepairListItemsController < Api::V1::BaseController
     before_action :doorkeeper_authorize!
 	before_action :validate_token!
-    before_action :set_repair_list, only: [:index, :create]
+    before_action :set_repair_list, only: [:index, :create, :export]
+    before_action :set_format, only: [:export]
 
     def index
         @repair_list_items = paginate RepairListItem.where(repair_list: @repair_list)
@@ -31,6 +32,22 @@ class Api::V1::RepairListManagement::Shared::RepairListItemsController < Api::V1
         render json: @repair_list_item, serializer: RepairListItemSerializer
     end
 
+    def upload
+        begin
+            RepairListItem.import(upload_params.attachment)
+            render json: { success: 'Upload is completed' }, status: :created
+        rescue Exception => e
+                throw_error("Upload not completed. Please try again.", :unprocessable_entity)  
+        end
+    end
+
+    def export
+        @repair_list_items = RepairListItem.where(repair_list: @repair_list)
+        respond_to do |format|
+            format.csv { send_data @repair_list_items.export }
+        end
+    end
+
 
     private
 
@@ -45,5 +62,13 @@ class Api::V1::RepairListManagement::Shared::RepairListItemsController < Api::V1
             :location, :event_id, :length, :width, :unit_id, :is_mearsk_not_applicable, \
             :mearsk_unit_material_cost, :mearsk_max_material_cost, :mearsk_hours_per_unit, :mesrsk_max_pieces, \
             :mearsk_units, :repair_mode_id, :mode_number_id, :repair_code, :combined, :mearsk_description, :mearsk_id_source)
+    end
+
+    def upload_params
+        params.permit(:attachment)
+    end
+
+    def set_format
+        request.format = 'csv'
     end
 end
