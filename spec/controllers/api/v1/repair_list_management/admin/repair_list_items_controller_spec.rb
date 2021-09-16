@@ -209,7 +209,7 @@ RSpec.describe 'RepairListItems::', type: :request do
     
                 it 'returns token' do
                     # Note `json` is a custom helper to parse JSON responses
-                    # puts response.body
+                    puts response.body
                     # puts response.headers
                     expect(response.headers['Content-Type']).to eq('text/csv')
                     expect(response).to have_http_status(200)

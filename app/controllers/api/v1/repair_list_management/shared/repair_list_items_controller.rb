@@ -3,9 +3,10 @@ class Api::V1::RepairListManagement::Shared::RepairListItemsController < Api::V1
 	before_action :validate_token!
     before_action :set_repair_list, only: [:index, :create, :export]
     before_action :set_format, only: [:export]
+    before_action :validate_upload, only: [:upload]
 
     def index
-        @repair_list_items = paginate RepairListItem.where(repair_list: @repair_list)
+        @repair_list_items = paginate RepairListItem.where(repair_list: @repair_list, deleted_at: nil)
         render json: @repair_list_items, each_serializer: RepairListItemSerializer, meta: pagination_dict(@repair_list_items)
     end
 
@@ -34,10 +35,10 @@ class Api::V1::RepairListManagement::Shared::RepairListItemsController < Api::V1
 
     def upload
         begin
-            RepairListItem.import(upload_params.attachment)
+            RepairListItem.import(@repair_list_item_upload)
             render json: { success: 'Upload is completed' }, status: :created
         rescue Exception => e
-                throw_error("Upload not completed. Please try again.", :unprocessable_entity)  
+            throw_error("Upload not completed. Please try again.", :unprocessable_entity)  
         end
     end
 
@@ -71,5 +72,35 @@ class Api::V1::RepairListManagement::Shared::RepairListItemsController < Api::V1
 
     def set_format
         request.format = 'csv'
+    end
+    
+    def validate_upload
+        @repair_list_item_upload = RepairListItemUpload.create!(attachment: upload_params[:attachment])
+        
+        if @repair_list_item_upload.attachment.blank?
+            throw_error("Please attach a file for upload.", :unprocessable_entity)
+        end
+
+        @errors = []
+
+        begin
+            spreadsheet = open_spreadsheet(@repair_list_item_upload.attachment.file)
+            header = spreadsheet.row(1)
+
+            (2..spreadsheet.last_row).each do |i|
+                to_hash = Hash[[header, spreadsheet.row(i)].transpose]
+
+            end
+
+        end
+    end
+
+    def open_spreadsheet(attachment)
+        case File.extname(attachment.original_filename)
+        when ".csv" then Csv.new(attachment.path, nil, :ignore)
+        when ".xls" then Excel.new(attachment.path, nil, :ignore)
+        when ".xlsx" then Excelx.new(attachment.path, nil, :ignore)
+        else raise "Unknown file type: #{attachment.original_filename}"
+        end
     end
 end
