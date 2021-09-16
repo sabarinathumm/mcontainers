@@ -35,7 +35,7 @@ class Api::V1::RepairListManagement::Shared::RepairListItemsController < Api::V1
 
     def upload
         begin
-            RepairListItem.import(@repair_list_item_upload)
+            RepairListItem.import(@repair_list_item_upload, params[:repair_list_id])
             render json: { success: 'Upload is completed' }, status: :created
         rescue Exception => e
             puts e.as_json
@@ -52,16 +52,13 @@ class Api::V1::RepairListManagement::Shared::RepairListItemsController < Api::V1
     end
 
     def validate_upload
-       
-            puts params.permit(:attachment)
-            puts params.attachment
-            @repair_list_item_upload = RepairListItemUpload.create!(attachment: upload_params[:attachment])
+        @repair_list_item_upload = RepairListItemUpload.create!(attachment: upload_params[:attachment])
 
         #repair_list_item_upload = RepairListItemUpload.create!(attachment: upload_params[:attachment])
         #puts repair_list_item_upload.attachment
-        # if @repair_list_item_upload.attachment.file.blank?
-        #     throw_error("Please attach a file for upload.", :unprocessable_entity)
-        # end
+        if @repair_list_item_upload.attachment.file.blank?
+            throw_error("Please attach a file for upload.", :unprocessable_entity)
+        end
 
         @errors = []
 
