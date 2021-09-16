@@ -25,6 +25,8 @@ class RepairListItem < ApplicationRecord
               uid = 'RID' + self.repair_list.id.to_s + SecureRandom.random_number(99999).to_s
               break uid unless RepairListItem.exists?(uid: uid)
           end
+
+        self.save!
     end
 
     def self.export(options = {})
@@ -53,7 +55,7 @@ class RepairListItem < ApplicationRecord
 
     def self.import(repair_list_item_upload)
         success = ActiveRecord::Base.transaction do
-            spreadsheet = open_spreadsheet(repair_list_item_upload.attachment.file)
+            spreadsheet = open_spreadsheet(repair_list_item_upload.attachment.file.file)
             header = spreadsheet.row(1)
 
             (2..spreadsheet.last_row).each do |i|

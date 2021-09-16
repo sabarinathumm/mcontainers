@@ -42,6 +42,8 @@ gem 'doorkeeper'
 gem 'money-rails', '~>1.12'
 
 gem 'carrierwave', '~> 2.0'
+gem 'aws-sdk-core'
+gem 'fog-aws'
 gem "roo", "~> 2.8.0"
 
 gem 'dotenv-rails'

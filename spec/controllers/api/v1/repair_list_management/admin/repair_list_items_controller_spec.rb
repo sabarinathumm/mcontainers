@@ -233,11 +233,10 @@ RSpec.describe 'RepairListItems::', type: :request do
                     }
                 }
 
-                before { post "/api/v1/repair_list_management/admin/repair_list/#{repair_list.id}/items/upload", params: valid_attributes , headers: headers[:auth], as: :json }
+                before { post "/api/v1/repair_list_management/admin/repair_list/#{repair_list.id}/items/upload", params: valid_attributes , headers: headers[:auth].merge('CONTENT_TYPE' => 'multipart/form-data'), as: :json }
     
                 it 'returns token' do
                     # Note `json` is a custom helper to parse JSON responses
-                    puts attachment.as_json
                     puts json
                     expect(response).to have_http_status(200)
                 end

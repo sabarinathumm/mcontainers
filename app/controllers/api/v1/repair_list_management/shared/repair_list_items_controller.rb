@@ -38,6 +38,7 @@ class Api::V1::RepairListManagement::Shared::RepairListItemsController < Api::V1
             RepairListItem.import(@repair_list_item_upload)
             render json: { success: 'Upload is completed' }, status: :created
         rescue Exception => e
+            puts e.as_json
             throw_error("Upload not completed. Please try again.", :unprocessable_entity)  
         end
     end
@@ -50,34 +51,15 @@ class Api::V1::RepairListManagement::Shared::RepairListItemsController < Api::V1
         end
     end
 
-
-    private
-
-    def set_repair_list
-        @repair_list = RepairList.find(params[:repair_list_id])
-    end
-
-    def repair_list_item_params
-        params.require(:repair_list_item).permit(:container_repair_area_id, :container_damaged_area_id, :repair_type_id, \
-            :non_mearsk_hours, :non_mearsk_material_cost, :is_non_mearsk_not_applicable, :non_mearsk_id_source, \
-            :non_mearsk_description, :comp_id, :rep_id, :dam_id, :component_id, \
-            :location, :event_id, :length, :width, :unit_id, :is_mearsk_not_applicable, \
-            :mearsk_unit_material_cost, :mearsk_max_material_cost, :mearsk_hours_per_unit, :mesrsk_max_pieces, \
-            :mearsk_units, :repair_mode_id, :mode_number_id, :repair_code, :combined, :mearsk_description, :mearsk_id_source)
-    end
-
-    def upload_params
-        params.permit(:attachment)
-    end
-
-    def set_format
-        request.format = 'csv'
-    end
-    
     def validate_upload
-        @repair_list_item_upload = RepairListItemUpload.create!(attachment: upload_params[:attachment])
-        puts @repair_list_item_upload.as_json
-        # if @repair_list_item_upload.attachment.blank?
+       
+            puts params.permit(:attachment)
+            puts params.attachment
+            @repair_list_item_upload = RepairListItemUpload.create!(attachment: upload_params[:attachment])
+
+        #repair_list_item_upload = RepairListItemUpload.create!(attachment: upload_params[:attachment])
+        #puts repair_list_item_upload.attachment
+        # if @repair_list_item_upload.attachment.file.blank?
         #     throw_error("Please attach a file for upload.", :unprocessable_entity)
         # end
 
@@ -103,4 +85,29 @@ class Api::V1::RepairListManagement::Shared::RepairListItemsController < Api::V1
         else raise "Unknown file type: #{attachment.original_filename}"
         end
     end
+
+
+    private
+
+    def set_repair_list
+        @repair_list = RepairList.find(params[:repair_list_id])
+    end
+
+    def repair_list_item_params
+        params.require(:repair_list_item).permit(:container_repair_area_id, :container_damaged_area_id, :repair_type_id, \
+            :non_mearsk_hours, :non_mearsk_material_cost, :is_non_mearsk_not_applicable, :non_mearsk_id_source, \
+            :non_mearsk_description, :comp_id, :rep_id, :dam_id, :component_id, \
+            :location, :event_id, :length, :width, :unit_id, :is_mearsk_not_applicable, \
+            :mearsk_unit_material_cost, :mearsk_max_material_cost, :mearsk_hours_per_unit, :mesrsk_max_pieces, \
+            :mearsk_units, :repair_mode_id, :mode_number_id, :repair_code, :combined, :mearsk_description, :mearsk_id_source)
+    end
+
+    def upload_params
+        params.slice(:attachment)
+    end
+
+    def set_format
+        request.format = 'csv'
+    end
+
 end
