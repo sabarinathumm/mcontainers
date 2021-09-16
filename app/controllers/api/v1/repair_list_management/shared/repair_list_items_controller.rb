@@ -76,23 +76,23 @@ class Api::V1::RepairListManagement::Shared::RepairListItemsController < Api::V1
     
     def validate_upload
         @repair_list_item_upload = RepairListItemUpload.create!(attachment: upload_params[:attachment])
-        
-        if @repair_list_item_upload.attachment.blank?
-            throw_error("Please attach a file for upload.", :unprocessable_entity)
-        end
+        puts @repair_list_item_upload.as_json
+        # if @repair_list_item_upload.attachment.blank?
+        #     throw_error("Please attach a file for upload.", :unprocessable_entity)
+        # end
 
         @errors = []
 
-        begin
-            spreadsheet = open_spreadsheet(@repair_list_item_upload.attachment.file)
-            header = spreadsheet.row(1)
+        # begin
+        #     spreadsheet = open_spreadsheet(@repair_list_item_upload.attachment.file)
+        #     header = spreadsheet.row(1)
 
-            (2..spreadsheet.last_row).each do |i|
-                to_hash = Hash[[header, spreadsheet.row(i)].transpose]
+        #     (2..spreadsheet.last_row).each do |i|
+        #         to_hash = Hash[[header, spreadsheet.row(i)].transpose]
 
-            end
+        #     end
 
-        end
+        # end
     end
 
     def open_spreadsheet(attachment)

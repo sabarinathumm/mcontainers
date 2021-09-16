@@ -82,7 +82,7 @@ class RepairListItem < ApplicationRecord
 
     end
 
-    def open_spreadsheet(attachment)
+    def self.open_spreadsheet(attachment)
         case File.extname(attachment.original_filename)
         when ".csv" then Csv.new(attachment.path, nil, :ignore)
         when ".xls" then Excel.new(attachment.path, nil, :ignore)

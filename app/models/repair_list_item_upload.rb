@@ -1,3 +1,3 @@
 class RepairListItemUpload < ApplicationRecord
-    mount_attachment :AttachmentUploader
+    mount_uploader :attachment, AttachmentUploader
 end
