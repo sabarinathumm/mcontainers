@@ -2,11 +2,13 @@ class Api::V1::RepairListManagement::Shared::RepairListItemsController < Api::V1
     before_action :doorkeeper_authorize!
 	before_action :validate_token!
     before_action :set_repair_list, only: [:index, :create, :export]
+    before_action :filter_items, only: [:index]
     before_action :set_format, only: [:export]
     before_action :validate_upload, only: [:upload]
 
     def index
-        @repair_list_items = paginate RepairListItem.where(repair_list: @repair_list, deleted_at: nil)
+        @repair_list_items = paginate @repair_list_items.page(params[:page])
+        
         render json: @repair_list_items, each_serializer: RepairListItemSerializer, meta: pagination_dict(@repair_list_items)
     end
 
@@ -38,7 +40,6 @@ class Api::V1::RepairListManagement::Shared::RepairListItemsController < Api::V1
             RepairListItem.import(@repair_list_item_upload, params[:repair_list_id])
             render json: { success: 'Upload is completed' }, status: :created
         rescue Exception => e
-            puts e.as_json
             throw_error("Upload not completed. Please try again.", :unprocessable_entity)  
         end
     end
@@ -105,6 +106,17 @@ class Api::V1::RepairListManagement::Shared::RepairListItemsController < Api::V1
 
     def set_format
         request.format = 'csv'
+    end
+    
+    def sort_params
+        params.permit(:container_repair_area, :container_damaged_area, :uid, :repair_type)
+    end
+
+    def filter_items
+        @repair_list_items = RepairListItem.where(repair_list: @repair_list, deleted_at: nil)
+        @repair_list_items = @repair_list_items.filter_by_container_damaged_area_id(params[:container_repair_area_id]) unless params[:container_repair_area_id].nil? ||  @repair_list_items.nil?
+        @repair_list_items = @repair_list_items.filter_by_container_damaged_area_id(params[:container_damaged_area_id]) unless params[:container_damaged_area_id].nil? ||  @repair_list_items.nil?
+        @repair_list_items = @repair_list_items.filter_by_repair_type_id(params[:repair_type_id]) unless params[:repair_type_id].nil? ||  @repair_list_items.nil?
     end
 
 end

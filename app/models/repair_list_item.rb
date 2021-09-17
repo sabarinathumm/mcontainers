@@ -20,6 +20,10 @@ class RepairListItem < ApplicationRecord
 
     after_create :set_uid
 
+    scope :filter_by_container_repair_area_id, -> (id) { where container_repair_area_id: id}
+    scope :filter_by_container_damaged_area_id, -> (id) { where container_damaged_area_id: id}
+    scope :filter_by_repair_type_id, -> (id) { where repair_type_id: id}
+
     def set_uid
         self.uid = loop do
               uid = 'RID' + self.repair_list.id.to_s + SecureRandom.random_number(99999).to_s
@@ -97,7 +101,6 @@ class RepairListItem < ApplicationRecord
                 repair_list_item.mearsk_id_source = row['mearsk_id_source']
 
                 repair_list_item.save!
-                puts repair_list_item.as_json
             end
             repair_list_item_upload.destroy!
         end
