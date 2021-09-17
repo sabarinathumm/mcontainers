@@ -26,6 +26,7 @@ Rails.application.routes.draw do
           get 'repair_list',  to: 'repair_lists#index'
           post 'repair_list', to: 'repair_lists#create'
           scope "/repair_list/:repair_list_id" do 
+            get 'items/get_uid',  to: 'repair_list_items#get_next_uid'
             get 'items',  to: 'repair_list_items#index'
             post 'items', to: 'repair_list_items#create'
             get 'items/export', to: 'repair_list_items#export'

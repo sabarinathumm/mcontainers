@@ -18,24 +18,58 @@ class RepairListItem < ApplicationRecord
     monetize :mearsk_max_material_cost_cents
     monetize :mearsk_unit_material_cost_cents
 
-    after_create :set_uid
+    # after_create :set_uid
+    before_update :check_not_applicable
 
     scope :filter_by_container_repair_area_id, -> (id) { where container_repair_area_id: id}
     scope :filter_by_container_damaged_area_id, -> (id) { where container_damaged_area_id: id}
     scope :filter_by_repair_type_id, -> (id) { where repair_type_id: id}
 
-    def set_uid
-        self.uid = loop do
-              uid = 'RID' + self.repair_list.id.to_s + SecureRandom.random_number(99999).to_s
-              break uid unless RepairListItem.exists?(uid: uid)
-          end
+    # def set_uid
+    #     self.uid = loop do
+    #           uid = 'RID' + self.repair_list.id.to_s + SecureRandom.random_number(99999).to_s
+    #           break uid unless RepairListItem.exists?(uid: uid)
+    #       end
 
-        self.save!
+    #     self.save!
+    # end
+
+    def check_not_applicable
+
+        if self.is_non_mearsk_not_applicable == true
+            self.non_mearsk_hours = nil
+            self.non_mearsk_material_cost =  nil
+            self.non_mearsk_description = nil
+            self.comp = nil
+            self.dam = nil
+            self.rep = nil
+            self.component = nil
+            self.event = nil
+            self.location = nil
+            self.length = nil
+            self.width = nil
+            self.non_mearsk_id_source = nil
+        end
+
+        if self.is_mearsk_not_applicable == true
+            self.mearsk_max_material_cost = nil
+            self.mearsk_unit_material_cost = nil
+            self.mearsk_hours_per_unit = nil
+            self.mesrsk_max_pieces = nil
+            self.mearsk_units = nil
+            self.repair_mode = nil
+            self.mode_number = nil
+            self.repair_code = nil
+            self.combined = nil
+            self.mearsk_description = nil
+            self.mearsk_id_source = nil
+        end
+
     end
 
     def self.export(options = {})
         CSV.generate(options) do |csv|
-          csv << %w{uid container_repair_area container_damaged_area repair_type is_non_mearsk_not_applicable non_mearsk_hours non_mearsk_material_cost non_mearsk_description comp rep dam component event location unit length width non_mearsk_id_source is_mearsk_not_applicable mearsk_max_material_cost mearsk_unit_material_cost mearsk_hours_per_unit mesrsk_max_pieces mearsk_units repair_mode mode_number repair_code combined mearsk_description mearsk_id_source}
+          csv << %w{uid container_repair_area container_damaged_area repair_type is_non_mearsk_not_applicable non_mearsk_hours non_mearsk_material_cost non_mearsk_description non_mearsk_comp non_mearsk_rep non_mearsk_dam non_mearsk_component non_mearsk_event non_mearsk_location unit non_mearsk_length non_mearsk_width non_mearsk_id_source is_mearsk_not_applicable mearsk_max_material_cost mearsk_unit_material_cost mearsk_hours_per_unit mesrsk_max_pieces mearsk_units repair_mode mode_number repair_code combined mearsk_description mearsk_id_source }
           all.each do |repair_list_item|
             csv << [ repair_list_item.uid, \
                 repair_list_item.container_repair_area.present? ? repair_list_item.container_repair_area.name : nil, \
@@ -74,21 +108,21 @@ class RepairListItem < ApplicationRecord
                 repair_list_item.container_repair_area = ContainerRepairArea.find_by(name: row['container_repair_area']) unless row['container_repair_area'].blank?
                 repair_list_item.container_damaged_area = ContainerDamagedArea.where(name: row['container_damaged_area']).first  unless row['container_damaged_area'].blank?
                 repair_list_item.repair_type = RepairType.where(name: row['repair_type']).first  unless row['repair_type'].blank?
-                repair_list_item.comp = Comp.where(name: row['comp']).first  unless row['comp'].blank?
-                repair_list_item.rep = Rep.where(name: row['rep']).first  unless row['rep'].blank?
-                repair_list_item.dam = Dam.where(name: row['dam']).first  unless row['dam'].blank?
-                repair_list_item.component = Component.where(name: row['component']).first  unless row['component'].blank?
+                repair_list_item.comp = Comp.where(name: row['non_mearsk_comp']).first  unless row['non_mearsk_comp'].blank?
+                repair_list_item.rep = Rep.where(name: row['non_mearsk_rep']).first  unless row['non_mearsk_rep'].blank?
+                repair_list_item.dam = Dam.where(name: row['non_mearsk_dam']).first  unless row['non_mearsk_dam'].blank?
+                repair_list_item.component = Component.where(name: row['non_mearsk_component']).first  unless row['non_mearsk_component'].blank?
                 repair_list_item.unit = Unit.where(name: row['unit']).first  unless row['unit'].blank?
-                repair_list_item.event = Event.where(name: row['event']).first  unless row['event'].blank?
+                repair_list_item.event = Event.where(name: row['non_mearsk_event']).first  unless row['non_mearsk_event'].blank?
                 repair_list_item.mode_number = ModeNumber.where(name: row['mode_number']).first  unless row['mode_number'].blank?
                 repair_list_item.repair_mode = RepairMode.where(name: row['repair_mode']).first  unless row['repair_mode'].blank?
                 repair_list_item.is_non_mearsk_not_applicable = row['is_non_mearsk_not_applicable']
                 repair_list_item.non_mearsk_hours = row['non_mearsk_hours']
                 repair_list_item.non_mearsk_material_cost = row['non_mearsk_material_cost']
                 repair_list_item.non_mearsk_description = row['non_mearsk_description']
-                repair_list_item.location = row['location']
-                repair_list_item.length = row['length']
-                repair_list_item.width = row['width']
+                repair_list_item.location = row['non_mearsk_location']
+                repair_list_item.length = row['non_mearsk_length']
+                repair_list_item.width = row['non_mearsk_width']
                 repair_list_item.non_mearsk_id_source = row['non_mearsk_id_source']
                 repair_list_item.mearsk_max_material_cost = row['mearsk_max_material_cost']
                 repair_list_item.mearsk_unit_material_cost = row['mearsk_unit_material_cost']

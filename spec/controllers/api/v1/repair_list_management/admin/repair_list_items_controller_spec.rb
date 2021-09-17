@@ -151,6 +151,24 @@ RSpec.describe 'RepairListItems::', type: :request do
                 expect(response).to have_http_status(200)
             end
         end
+
+        context 'Get next Unique ID for Repair List Item' do
+            
+            let!(:repair_list_item){ create(:repair_list_item, uid: 'RID44506' ,repair_list: repair_list, repair_type: repair_type, \
+                container_damaged_area: container_damaged_area, container_repair_area: container_repair_area, \
+                component: component, comp: comp, dam: dam, rep: rep, mode_number: mode_number, repair_mode: repair_mode, \
+                event: event, unit: unit) }
+
+            before { get "/api/v1/repair_list_management/admin/repair_list/#{repair_list.id}/items/get_uid", headers: headers[:auth], as: :json }
+
+            it 'returns token' do
+                # Note `json` is a custom helper to parse JSON responses
+                #puts json
+                expect(json).not_to be_empty
+                expect(json['uid']).to eq('RID4507')
+                expect(response).to have_http_status(200)
+            end
+        end
     end
 
     describe 'Show Repair List item' do
@@ -229,6 +247,7 @@ RSpec.describe 'RepairListItems::', type: :request do
             let!(:valid_attributes){ 
                 {
                 repair_list_item: {
+                    is_non_mearsk_not_applicable: true,
                     repair_type_id: repair_type.id, 
                     non_mearsk_description: 'Random Description',
                     non_mearsk_hours: 54.0,
@@ -246,16 +265,16 @@ RSpec.describe 'RepairListItems::', type: :request do
                 expect(json['repair_list_item']['repair_type']['name']).to eql(repair_type.name)
                 expect(json['repair_list_item']['container_damaged_area']['name']).to eql(container_damaged_area.name)
                 expect(json['repair_list_item']['container_repair_area']['name']).to eql(container_repair_area.name)
-                expect(json['repair_list_item']['component']['name']).to eql(component.name)
-                expect(json['repair_list_item']['comp']['name']).to eql(comp.name)
-                expect(json['repair_list_item']['dam']['name']).to eql(dam.name)
-                expect(json['repair_list_item']['rep']['name']).to eql(rep.name)
+                expect(json['repair_list_item']['component']).to eql(nil)
+                expect(json['repair_list_item']['comp']).to eql(nil)
+                expect(json['repair_list_item']['dam']).to eql(nil)
+                expect(json['repair_list_item']['rep']).to eql(nil)
                 expect(json['repair_list_item']['mode_number']['name']).to eql(mode_number.name)
                 expect(json['repair_list_item']['repair_mode']['name']).to eql(repair_mode.name)
-                expect(json['repair_list_item']['event']['name']).to eql(event.name)
+                expect(json['repair_list_item']['event']).to eql(nil)
                 expect(json['repair_list_item']['unit']['name']).to eql(unit.name)
                 expect(json['repair_list_item']['deleted_at']).to eql(nil)
-                expect(json['repair_list_item']['non_mearsk_description']).to eql('Random Description')
+                expect(json['repair_list_item']['non_mearsk_description']).to eql(nil)
                 expect(json['repair_list_item']['mearsk_max_material_cost_dollars']).to eql('500.0')
                 expect(json['repair_list_item']['mearsk_max_material_cost_cents']).to eql(500*100)
                 expect(json['repair_list_item']['mearsk_max_material_cost_currency']).to eql('USD')

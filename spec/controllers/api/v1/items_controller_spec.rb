@@ -17,7 +17,7 @@ RSpec.describe 'ITEM:', type: :request do
       it 'returns items' do
         # Note `json` is a custom helper to parse JSON responses
         expect(json).not_to be_empty
-        expect((json)['items'].count).to eql(20)
+        expect((json)['items'].count).to eql(10)
         expect(response).to have_http_status(200)        
       end
     end
