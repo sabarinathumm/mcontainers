@@ -132,9 +132,9 @@ class Api::V1::RepairListManagement::Shared::RepairListItemsController < Api::V1
         end
 
         if params[:container_damaged_area].present? && params[:container_damaged_area].to_i == 1
-            @repair_list_items = @repair_list_items.include(:container_damaged_area).order('container_damaged_areas.name asc')
+            @repair_list_items = @repair_list_items.includes(:container_damaged_area).order('container_damaged_areas.name asc')
         elsif params[:container_damaged_area].present? && params[:container_damaged_area].to_i == -1
-            @repair_list_items = @repair_list_items.include(:container_damaged_area).order('container_damaged_areas.name desc')
+            @repair_list_items = @repair_list_items.includes(:container_damaged_area).order('container_damaged_areas.name desc')
         end
 
         if params[:container_repair_area].present? && params[:container_repair_area].to_i == 1
@@ -146,7 +146,7 @@ class Api::V1::RepairListManagement::Shared::RepairListItemsController < Api::V1
         if params[:repair_type].present? && params[:repair_type].to_i == 1
             @repair_list_items = @repair_list_items.includes(:repair_type).order('repair_types.name asc')
         elsif params[:repair_type].present? && params[:repair_type].to_i == -1
-            @repair_list_items = @repair_list_items..includes(:repair_type).order('repair_types.name desc')
+            @repair_list_items = @repair_list_items.includes(:repair_type).order('repair_types.name desc')
         end
     end
 
