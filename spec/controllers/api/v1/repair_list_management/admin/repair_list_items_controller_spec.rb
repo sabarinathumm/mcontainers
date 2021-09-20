@@ -4,7 +4,7 @@ RSpec.describe 'RepairListItems::', type: :request do
   # initialize test data 
   let!(:admin){ create(:admin) }
   let!(:headers) { get_admin_headers(admin) }
-  let!(:repair_type){ create(:repair_type) }
+  let!(:repair_type){ create(:repair_type, name:'Beta') }
   let!(:container_damaged_area){ create(:container_damaged_area) }
   let!(:container_repair_area){ create(:container_repair_area) }
   let!(:component){ create(:component) }
@@ -34,7 +34,7 @@ RSpec.describe 'RepairListItems::', type: :request do
 
             before { get "/api/v1/repair_list_management/admin/repair_list/#{repair_list.id}/items", headers: headers[:auth], as: :json }
 
-            it 'returns token' do
+            it 'returns 20 items' do
                 # Note `json` is a custom helper to parse JSON responses
                 #puts json
                 expect(json).not_to be_empty
@@ -63,7 +63,7 @@ RSpec.describe 'RepairListItems::', type: :request do
 
             before { get "/api/v1/repair_list_management/admin/repair_list/#{repair_list.id}/items?page=2", headers: headers[:auth], as: :json }
 
-            it 'returns token' do
+            it 'returns Second page' do
                 # Note `json` is a custom helper to parse JSON responses
                 #puts json
                 expect(json).not_to be_empty
@@ -83,7 +83,7 @@ RSpec.describe 'RepairListItems::', type: :request do
             end
         end
 
-        context 'Filtering of Repair Lists' do
+        context 'Filtering of Repair List Items' do
             
             let!(:repair_list_item){ create_list(:repair_list_item, 10, repair_list: repair_list, repair_type: repair_type, \
                 container_damaged_area: container_damaged_area, container_repair_area: container_repair_area, \
@@ -96,7 +96,7 @@ RSpec.describe 'RepairListItems::', type: :request do
 
             before { get "/api/v1/repair_list_management/admin/repair_list/#{repair_list.id}/items?search_text=&container_repair_area_id=#{container_repair_area.id}&container_damaged_area_id=#{container_damaged_area.id}&repair_type_id=#{repair_type.id}", headers: headers[:auth], as: :json }
 
-            it 'returns token' do
+            it 'returns filtered Repair List Items' do
                 # Note `json` is a custom helper to parse JSON responses
                 #puts json
                 expect(json).not_to be_empty
@@ -104,6 +104,43 @@ RSpec.describe 'RepairListItems::', type: :request do
                 expect(json['repair_list_items'][0]['repair_type']['name']).to eql(repair_type.name)
                 expect(json['repair_list_items'][0]['container_damaged_area']['name']).to eql(container_damaged_area.name)
                 expect(json['repair_list_items'][0]['container_repair_area']['name']).to eql(container_repair_area.name)
+                expect(json['repair_list_items'][0]['component']['name']).to eql(component.name)
+                expect(json['repair_list_items'][0]['comp']['name']).to eql(comp.name)
+                expect(json['repair_list_items'][0]['dam']['name']).to eql(dam.name)
+                expect(json['repair_list_items'][0]['rep']['name']).to eql(rep.name)
+                expect(json['repair_list_items'][0]['mode_number']['name']).to eql(mode_number.name)
+                expect(json['repair_list_items'][0]['repair_mode']['name']).to eql(repair_mode.name)
+                expect(json['repair_list_items'][0]['event']['name']).to eql(event.name)
+                expect(json['repair_list_items'][0]['unit']['name']).to eql(unit.name)
+                expect(response).to have_http_status(200)
+            end
+        end
+
+
+        context 'Sorting of Repair List Items' do
+            
+            let!(:repair_list_item){ create_list(:repair_list_item, 10, repair_list: repair_list, repair_type: repair_type, \
+                container_damaged_area: container_damaged_area, container_repair_area: container_repair_area, \
+                component: component, comp: comp, dam: dam, rep: rep, mode_number: mode_number, repair_mode: repair_mode, \
+                event: event, unit: unit) }
+
+            let!(:repair_type2){ create(:repair_type, name: 'Alpha') }
+
+            let!(:repair_list_item2){ create_list(:repair_list_item, 10, repair_list: repair_list, repair_type: repair_type2, \
+                container_repair_area: container_repair_area, container_damaged_area: container_damaged_area, \
+                component: component, comp: comp, dam: dam, rep: rep, mode_number: mode_number, repair_mode: repair_mode, \
+                event: event, unit: unit) }
+
+            before { get "/api/v1/repair_list_management/admin/repair_list/#{repair_list.id}/items?repair_type=1", headers: headers[:auth], as: :json }
+
+            it 'returns token' do
+                # Note `json` is a custom helper to parse JSON responses
+                #puts json
+                expect(json).not_to be_empty
+                expect(json['repair_list_items'].count).to eql(20)
+                expect(json['repair_list_items'][0]['container_damaged_area']['name']).to eql(container_damaged_area.name)
+                expect(json['repair_list_items'][0]['container_repair_area']['name']).to eql(container_repair_area.name)
+                expect(json['repair_list_items'][0]['repair_type']['name']).to eql(repair_type2.name)
                 expect(json['repair_list_items'][0]['component']['name']).to eql(component.name)
                 expect(json['repair_list_items'][0]['comp']['name']).to eql(comp.name)
                 expect(json['repair_list_items'][0]['dam']['name']).to eql(dam.name)
@@ -148,24 +185,6 @@ RSpec.describe 'RepairListItems::', type: :request do
                 expect(json['repair_list_item']['event']['name']).to eql(event.name)
                 expect(json['repair_list_item']['unit']['name']).to eql(unit.name)
                 expect(json['repair_list_item']['deleted_at']).to eql(nil)
-                expect(response).to have_http_status(200)
-            end
-        end
-
-        context 'Get next Unique ID for Repair List Item' do
-            
-            let!(:repair_list_item){ create(:repair_list_item, uid: 'RID44506' ,repair_list: repair_list, repair_type: repair_type, \
-                container_damaged_area: container_damaged_area, container_repair_area: container_repair_area, \
-                component: component, comp: comp, dam: dam, rep: rep, mode_number: mode_number, repair_mode: repair_mode, \
-                event: event, unit: unit) }
-
-            before { get "/api/v1/repair_list_management/admin/repair_list/#{repair_list.id}/items/get_uid", headers: headers[:auth], as: :json }
-
-            it 'returns token' do
-                # Note `json` is a custom helper to parse JSON responses
-                #puts json
-                expect(json).not_to be_empty
-                expect(json['uid']).to eq('RID4507')
                 expect(response).to have_http_status(200)
             end
         end
@@ -323,6 +342,5 @@ RSpec.describe 'RepairListItems::', type: :request do
                     expect(response).to have_http_status(201)
                 end
             end
-        end
-    
+    end
 end

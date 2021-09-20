@@ -103,7 +103,7 @@ class RepairListItem < ApplicationRecord
                 if row['uid'].present? && RepairListItem.find_by(uid: row['uid']).present?
                     repair_list_item = RepairListItem.find_by(uid: row['uid'])
                 else
-                    repair_list_item = RepairListItem.new(repair_list_id: repair_list_id )
+                    repair_list_item = RepairListItem.new(repair_list_id: repair_list_id, uid: row['uid'] )
                 end
                 repair_list_item.container_repair_area = ContainerRepairArea.find_by(name: row['container_repair_area']) unless row['container_repair_area'].blank?
                 repair_list_item.container_damaged_area = ContainerDamagedArea.where(name: row['container_damaged_area']).first  unless row['container_damaged_area'].blank?
