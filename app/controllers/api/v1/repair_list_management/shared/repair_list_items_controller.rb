@@ -121,7 +121,7 @@ class Api::V1::RepairListManagement::Shared::RepairListItemsController < Api::V1
 
     def filter_items
         @repair_list_items = RepairListItem.where(repair_list: @repair_list, deleted_at: nil)
-        @repair_list_items = @repair_list_items.filter_by_container_damaged_area_id(params[:container_repair_area_id]) unless params[:container_repair_area_id].nil? ||  @repair_list_items.nil?
+        @repair_list_items = @repair_list_items.filter_by_container_repair_area_id(params[:container_repair_area_id]) unless params[:container_repair_area_id].nil? ||  @repair_list_items.nil?
         @repair_list_items = @repair_list_items.filter_by_container_damaged_area_id(params[:container_damaged_area_id]) unless params[:container_damaged_area_id].nil? ||  @repair_list_items.nil?
         @repair_list_items = @repair_list_items.filter_by_repair_type_id(params[:repair_type_id]) unless params[:repair_type_id].nil? ||  @repair_list_items.nil?
 

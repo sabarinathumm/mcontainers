@@ -10,7 +10,7 @@ class CreateAdminResetPasswordJob < ApplicationJob
               end
             
             admin.reset_password_sent_at = Time.now
-            url = redirect_url.to_s+'?'+"reset_password_token=#{admin.reset_password_token}"
+            url = redirect_url.to_s+'?'+"email=#{admin.email}&password_reset_token=#{admin.reset_password_token}"
   
             if admin.save
                 AdminMailer.send_reset_password_link(admin, url).deliver_now
