@@ -62,7 +62,7 @@ config.action_mailer.smtp_settings = {
 
 :address => 'smtp.sendgrid.net',
 
-:port => 587,
+:port => 465,
 
 :authentication => :plain,
 
