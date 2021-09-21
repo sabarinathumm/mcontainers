@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_09_16_021637) do
+ActiveRecord::Schema.define(version: 2021_09_21_030143) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -155,7 +155,7 @@ ActiveRecord::Schema.define(version: 2021_09_16_021637) do
     t.index ["repair_list_id"], name: "index_repair_list_items_on_repair_list_id"
     t.index ["repair_mode_id"], name: "index_repair_list_items_on_repair_mode_id"
     t.index ["repair_type_id"], name: "index_repair_list_items_on_repair_type_id"
-    t.index ["uid"], name: "index_repair_list_items_on_uid", unique: true
+    t.index ["uid", "repair_list_id"], name: "index_repair_list_items_on_uid_and_repair_list_id", unique: true
     t.index ["unit_id"], name: "index_repair_list_items_on_unit_id"
   end
 

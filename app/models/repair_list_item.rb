@@ -18,6 +18,8 @@ class RepairListItem < ApplicationRecord
     monetize :mearsk_max_material_cost_cents
     monetize :mearsk_unit_material_cost_cents
 
+    validates_uniqueness_of :uid, scope: :repair_list_id
+
     # after_create :set_uid
     before_update :check_not_applicable
 
@@ -100,8 +102,8 @@ class RepairListItem < ApplicationRecord
 
             (2..spreadsheet.last_row).each do |i|
                 row = Hash[[header, spreadsheet.row(i)].transpose]
-                if row['uid'].present? && RepairListItem.find_by(uid: row['uid']).present?
-                    repair_list_item = RepairListItem.find_by(uid: row['uid'])
+                if row['uid'].present? && RepairListItem.find_by(uid: row['uid'], repair_list_id: repair_list_id).present?
+                    repair_list_item = RepairListItem.find_by(uid: row['uid'], repair_list_id: repair_list_id)
                 else
                     repair_list_item = RepairListItem.new(repair_list_id: repair_list_id, uid: row['uid'] )
                 end
