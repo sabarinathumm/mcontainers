@@ -57,6 +57,7 @@ Rails.application.routes.draw do
           post 'auth/forgot_password'
           post 'auth/validate_reset_password_token'
           put 'auth/reset_password'
+          resources :customers, only: [:index, :update, :create]
         end
 
         namespace :customer do

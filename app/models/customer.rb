@@ -14,6 +14,11 @@ class Customer < ApplicationRecord
 
   monetize :hourly_rate_cents
 
+  has_many :customer_repair_lists
+
+  belongs_to :city, optional: true
+  belongs_to :province, optional: true
+
   class << self
     def authenticate(email, password)
       customer = Customer.find_for_authentication(email: email)
@@ -27,6 +32,14 @@ class Customer < ApplicationRecord
     else
       return false
     end 
+  end
+
+  def customer_repair_list
+    if self.customer_repair_lists.where(is_active: true).present?
+      self.customer_repair_lists.where(is_active: true).first.name
+    else
+      nil
+    end
   end
   
 end
