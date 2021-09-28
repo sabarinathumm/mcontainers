@@ -1,4 +1,5 @@
 Rails.application.routes.draw do
+  #devise_for :customers
   use_doorkeeper
   #devise_for :users
   # For details on the DSL available within this file, see https://guides.rubyonrails.org/routing.html
@@ -51,6 +52,14 @@ Rails.application.routes.draw do
         end
 
         namespace :admin do
+          delete 'auth/logout'
+          post 'auth/login'
+          post 'auth/forgot_password'
+          post 'auth/validate_reset_password_token'
+          put 'auth/reset_password'
+        end
+
+        namespace :customer do
           delete 'auth/logout'
           post 'auth/login'
           post 'auth/forgot_password'

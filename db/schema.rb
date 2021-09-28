@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_09_21_030143) do
+ActiveRecord::Schema.define(version: 2021_09_28_101925) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -32,6 +32,14 @@ ActiveRecord::Schema.define(version: 2021_09_21_030143) do
     t.datetime "updated_at", precision: 6, null: false
     t.index ["email"], name: "index_admins_on_email", unique: true
     t.index ["reset_password_token"], name: "index_admins_on_reset_password_token", unique: true
+  end
+
+  create_table "cities", force: :cascade do |t|
+    t.string "name"
+    t.bigint "province_id", null: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["province_id"], name: "index_cities_on_province_id"
   end
 
   create_table "components", force: :cascade do |t|
@@ -56,6 +64,33 @@ ActiveRecord::Schema.define(version: 2021_09_21_030143) do
     t.string "name"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+  end
+
+  create_table "customers", force: :cascade do |t|
+    t.string "email", default: "", null: false
+    t.string "encrypted_password", default: "", null: false
+    t.string "reset_password_token"
+    t.datetime "reset_password_sent_at"
+    t.datetime "remember_created_at"
+    t.string "full_name"
+    t.string "owner_name"
+    t.string "billing_name"
+    t.integer "hourly_rate_cents", default: 0, null: false
+    t.string "hourly_rate_currency", default: "USD", null: false
+    t.float "gst"
+    t.float "pst"
+    t.bigint "city_id"
+    t.bigint "province_id"
+    t.text "address"
+    t.string "zipcode"
+    t.integer "customer_type"
+    t.boolean "is_active"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["city_id"], name: "index_customers_on_city_id"
+    t.index ["email"], name: "index_customers_on_email", unique: true
+    t.index ["province_id"], name: "index_customers_on_province_id"
+    t.index ["reset_password_token"], name: "index_customers_on_reset_password_token", unique: true
   end
 
   create_table "dams", force: :cascade do |t|
@@ -98,6 +133,12 @@ ActiveRecord::Schema.define(version: 2021_09_21_030143) do
     t.index ["refresh_token"], name: "index_oauth_access_tokens_on_refresh_token", unique: true
     t.index ["resource_owner_id"], name: "index_oauth_access_tokens_on_resource_owner_id"
     t.index ["token"], name: "index_oauth_access_tokens_on_token", unique: true
+  end
+
+  create_table "provinces", force: :cascade do |t|
+    t.string "name"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
   end
 
   create_table "repair_list_item_uploads", force: :cascade do |t|
@@ -205,6 +246,9 @@ ActiveRecord::Schema.define(version: 2021_09_21_030143) do
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
   end
 
+  add_foreign_key "cities", "provinces"
+  add_foreign_key "customers", "cities"
+  add_foreign_key "customers", "provinces"
   add_foreign_key "repair_list_items", "components"
   add_foreign_key "repair_list_items", "comps"
   add_foreign_key "repair_list_items", "container_damaged_areas"
