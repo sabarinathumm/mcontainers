@@ -4,10 +4,10 @@ FactoryBot.define do
   end
 
   sequence(:cus_uid) do
-    uid = Faker::Number.number(digits: 4)
-    while RepairListItem.where(uid: uid).exists?
-      uid = Faker::Number.number(digits: 4)
+    cus_uid = Faker::Number.number(digits: 4)
+    while CustomerRepairListItem.where(uid: cus_uid).exists?
+      cus_uid = Faker::Number.number(digits: 4)
     end
-    uid
+    cus_uid
   end
 end
