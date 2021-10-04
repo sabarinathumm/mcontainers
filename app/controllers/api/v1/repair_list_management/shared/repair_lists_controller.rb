@@ -7,6 +7,15 @@ class Api::V1::RepairListManagement::Shared::RepairListsController < Api::V1::Ba
         render json: @repair_lists, each_serializer: RepairListSerializer
     end
 
+    def all_customer_lists
+        @repair_lists = CustomerRepairList.all.where(is_active: true).to_a
+        #puts  @repair_lists.as_json
+        @repair_lists << RepairList.where(is_active: true).first
+        #puts  @repair_lists.as_json
+        @repair_lists.last.id = 0
+        render json: @repair_lists, each_serializer: RepairListSerializer
+    end
+
     def create
         
         ActiveRecord::Base.transaction do

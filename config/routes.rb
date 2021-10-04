@@ -20,6 +20,8 @@ Rails.application.routes.draw do
         resources :units, only: [:index]
         resources :components, only: [:index]
         resources :reps, only: [:index]
+        resources :provinces, only: [:index]
+        resources :cities, only: [:index]
       end
 
       namespace :repair_list_management do
@@ -54,6 +56,10 @@ Rails.application.routes.draw do
             put "items/:id", to: 'repair_list_items#update'
             delete "items/:id",  to: 'repair_list_items#delete'
           end
+        end
+
+        namespace :shared do
+          get 'all_customer_lists',  to: 'repair_lists#all_customer_lists'
         end
       end
 

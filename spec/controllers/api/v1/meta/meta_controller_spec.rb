@@ -15,6 +15,8 @@ RSpec.describe 'Meta::', type: :request do
   let!(:repair_modes){ create_list(:repair_mode, 10) }
   let!(:events){ create_list(:event, 10) }
   let!(:units){ create_list(:unit, 10) }
+  let!(:provinces){ create_list(:province, 10) }
+  let!(:cities){ create_list(:city, 10, province: provinces.first) }
 
     describe 'List all Repair Types' do
     # valid payload
@@ -176,6 +178,36 @@ RSpec.describe 'Meta::', type: :request do
                     # Note `json` is a custom helper to parse JSON responses
                     expect(json).not_to be_empty
                     expect((json)['units'].count).to eql(10)
+                    expect(response).to have_http_status(200)
+                end
+            end
+        end
+
+    describe 'List all Provinces' do
+        # valid payload
+            context 'success' do
+    
+            before { get '/api/v1/meta/provinces', headers: headers[:auth], as: :json }
+    
+                it 'returns token' do
+                    # Note `json` is a custom helper to parse JSON responses
+                    expect(json).not_to be_empty
+                    expect((json)['provinces'].count).to eql(10)
+                    expect(response).to have_http_status(200)
+                end
+            end
+        end
+
+    describe 'List all Cities under a province' do
+        # valid payload
+            context 'success' do
+    
+            before { get "/api/v1/meta/cities?province_id=#{provinces.first.id}", headers: headers[:auth], as: :json }
+    
+                it 'returns token' do
+                    # Note `json` is a custom helper to parse JSON responses
+                    expect(json).not_to be_empty
+                    expect((json)['cities'].count).to eql(10)
                     expect(response).to have_http_status(200)
                 end
             end
