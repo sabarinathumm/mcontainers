@@ -12,6 +12,8 @@ class Admin < ApplicationRecord
   validates :password, presence: true, allow_blank: true, format: { with: /^(?=.*\d)(?=.*([a-z]|[A-Z]))([\x20-\x7E]){8,40}$/, multiline: true }, on: :update
  
   enum role: [:administrator, :employee]
+
+  has_many :activities, :as=>:assigned_to
   
   class << self
     def authenticate(email, password)

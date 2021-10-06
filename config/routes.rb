@@ -7,6 +7,14 @@ Rails.application.routes.draw do
   	namespace :v1 do
   		resources :items, except: [:new, :edit]
 
+      
+      namespace :activity_management do
+        namespace :admin do
+          get 'activities',  to: 'activities#index'
+          get 'container_activities', to:'activities#container_activity'
+        end
+      end
+      
       namespace :container_management do
         namespace :admin do
           resources :containers, only: [:index, :create, :update, :show]

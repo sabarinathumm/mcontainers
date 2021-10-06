@@ -6,6 +6,7 @@ class Container < ApplicationRecord
     belongs_to :container_type
 
     has_many :container_attachments
+    has_many :activities
 
     validates_uniqueness_of :container_uid
 

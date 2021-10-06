@@ -10,10 +10,58 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_10_05_181155) do
+ActiveRecord::Schema.define(version: 2021_10_06_145806) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
+
+  create_table "activities", force: :cascade do |t|
+    t.bigint "container_id", null: false
+    t.string "activity_uid"
+    t.integer "activity_type"
+    t.integer "activity_status"
+    t.string "assigned_to_type"
+    t.bigint "assigned_to_id"
+    t.text "inspection_comment"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["assigned_to_type", "assigned_to_id"], name: "index_activities_on_assigned_to_type_and_assigned_to_id"
+    t.index ["container_id"], name: "index_activities_on_container_id"
+  end
+
+  create_table "activity_attachments", force: :cascade do |t|
+    t.bigint "activity_id", null: false
+    t.integer "attachment_type"
+    t.json "attachment"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["activity_id"], name: "index_activity_attachments_on_activity_id"
+  end
+
+  create_table "activity_items", force: :cascade do |t|
+    t.bigint "activity_id", null: false
+    t.string "repair_code"
+    t.bigint "container_repair_area_id"
+    t.bigint "container_damaged_area_id"
+    t.bigint "repair_type_id"
+    t.integer "quantity"
+    t.text "location"
+    t.float "hours"
+    t.integer "labour_cost_cents", default: 0, null: false
+    t.string "labour_cost_currency", default: "USD", null: false
+    t.integer "material_cost_cents", default: 0, null: false
+    t.string "material_cost_currency", default: "USD", null: false
+    t.integer "total_cost_cents", default: 0, null: false
+    t.string "total_cost_currency", default: "USD", null: false
+    t.json "damaged_area_image"
+    t.json "repaired_area_image"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["activity_id"], name: "index_activity_items_on_activity_id"
+    t.index ["container_damaged_area_id"], name: "index_activity_items_on_container_damaged_area_id"
+    t.index ["container_repair_area_id"], name: "index_activity_items_on_container_repair_area_id"
+    t.index ["repair_type_id"], name: "index_activity_items_on_repair_type_id"
+  end
 
   create_table "admins", force: :cascade do |t|
     t.string "email", default: "", null: false
