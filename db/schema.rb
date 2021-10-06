@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_09_28_114328) do
+ActiveRecord::Schema.define(version: 2021_10_05_181155) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -54,6 +54,15 @@ ActiveRecord::Schema.define(version: 2021_09_28_114328) do
     t.datetime "updated_at", precision: 6, null: false
   end
 
+  create_table "container_attachments", force: :cascade do |t|
+    t.bigint "container_id", null: false
+    t.json "attachment"
+    t.integer "attachment_type"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["container_id"], name: "index_container_attachments_on_container_id"
+  end
+
   create_table "container_damaged_areas", force: :cascade do |t|
     t.string "name"
     t.datetime "created_at", precision: 6, null: false
@@ -64,6 +73,32 @@ ActiveRecord::Schema.define(version: 2021_09_28_114328) do
     t.string "name"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+  end
+
+  create_table "container_types", force: :cascade do |t|
+    t.string "name"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+  end
+
+  create_table "containers", force: :cascade do |t|
+    t.string "container_uid"
+    t.bigint "yard_id"
+    t.bigint "customer_id"
+    t.string "container_owner_name"
+    t.string "submitter_initials"
+    t.float "container_length"
+    t.float "container_width"
+    t.bigint "container_type_id"
+    t.integer "manufacture_year"
+    t.text "location"
+    t.text "comments"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["container_type_id"], name: "index_containers_on_container_type_id"
+    t.index ["container_uid"], name: "index_containers_on_container_uid", unique: true
+    t.index ["customer_id"], name: "index_containers_on_customer_id"
+    t.index ["yard_id"], name: "index_containers_on_yard_id"
   end
 
   create_table "customer_repair_list_items", force: :cascade do |t|
@@ -308,7 +343,16 @@ ActiveRecord::Schema.define(version: 2021_09_28_114328) do
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
   end
 
+  create_table "yards", force: :cascade do |t|
+    t.string "name"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+  end
+
   add_foreign_key "cities", "provinces"
+  add_foreign_key "container_attachments", "containers"
+  add_foreign_key "containers", "customers"
+  add_foreign_key "containers", "yards"
   add_foreign_key "customer_repair_list_items", "components"
   add_foreign_key "customer_repair_list_items", "comps"
   add_foreign_key "customer_repair_list_items", "container_damaged_areas"

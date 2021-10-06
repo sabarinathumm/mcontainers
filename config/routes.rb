@@ -7,6 +7,12 @@ Rails.application.routes.draw do
   	namespace :v1 do
   		resources :items, except: [:new, :edit]
 
+      namespace :container_management do
+        namespace :admin do
+          resources :containers, only: [:index, :create, :update, :show]
+        end
+      end
+
       namespace :meta do
         resources :repair_types, only: [:index]
         resources :container_repair_areas, only: [:index]
@@ -22,6 +28,8 @@ Rails.application.routes.draw do
         resources :reps, only: [:index]
         resources :provinces, only: [:index]
         resources :cities, only: [:index]
+        resources :container_types, only: [:index]
+        resources :yards, only: [:index]
       end
 
       namespace :repair_list_management do

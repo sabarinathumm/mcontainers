@@ -1,5 +1,5 @@
 require 'rails_helper'
 
-RSpec.describe City, type: :model do
+RSpec.describe ContainerType, type: :model do
   it { should validate_presence_of(:name) }
 end

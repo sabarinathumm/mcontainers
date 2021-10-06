@@ -2,9 +2,11 @@ class Api::V1::UserManagement::Admin::CustomersController < Api::V1::BaseControl
     before_action :doorkeeper_authorize!
 	before_action :validate_admin!
     before_action :set_customer, only: [:update, :show]
+    before_action :sort_customers, only: [:index]
 
     def index
-        @customers = paginate Customer.all
+        @customers = @customers.where("lower(full_name) LIKE ?", params[:search_text].downcase) unless params[:search_text].blank?
+        @customers = paginate @customers.page(params[:page])
         render json: @customers, each_serializer: CustomerSerializer, meta: pagination_dict(@customers)
     end
 
@@ -80,6 +82,21 @@ class Api::V1::UserManagement::Admin::CustomersController < Api::V1::BaseControl
 
     def set_customer
         @customer = Customer.find(params[:id])
+    end
+
+    def sort_customers
+        @customers = Customer.all
+        if params[:id].present? && params[:id].to_i == 1
+            @customers = @customers.order(id: :asc)
+        elsif params[:id].present? && params[:id].to_i == -1
+            @customers = @customers.order(id: :desc)
+        end
+
+        if params[:full_name].present? && params[:full_name].to_i == 1
+            @customers = @customers..order(full_name: :asc)
+        elsif params[:full_name].present? && params[:full_name].to_i == -1
+            @customers = @customers..order(full_name: :desc)
+        end
     end
 
     def customer_params
