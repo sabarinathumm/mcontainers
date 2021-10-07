@@ -12,7 +12,7 @@ class Api::V1::RepairListManagement::Shared::RepairListsController < Api::V1::Ba
         @repair_lists << RepairList.where(is_active: true).first
         @repair_lists.last.id = 0
         #render json: @repair_lists, each_serializer: RepairListSerializer
-        render json: { customer_repair_lists: ActiveModel::Serializer::CollectionSerializer.new(@repair_lists, each_serializer: RepairListSerializer) }
+        render json: { customer_repair_lists: ActiveModel::Serializer::CollectionSerializer.new(@repair_lists, serializer: RepairListSerializer) }
     end
 
     def create
