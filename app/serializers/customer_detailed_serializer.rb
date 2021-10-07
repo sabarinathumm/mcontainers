@@ -1,6 +1,6 @@
 class CustomerDetailedSerializer < ActiveModel::Serializer
     attributes :id, :full_name, :email, :owner_name, :billing_name, :hourly_rate_dollars, :hourly_rate_cents, :hourly_rate_currency, \
-        :gst, :pst, :address, :zipcode, :customer_repair_list
+        :gst, :pst, :address, :zipcode, :customer_repair_list, :is_active
 
     belongs_to :city, serializer: MetaSerializer
     belongs_to :province, serializer: MetaSerializer
