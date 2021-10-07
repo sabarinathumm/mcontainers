@@ -5,9 +5,10 @@ class Activity < ApplicationRecord
     belongs_to :container
     belongs_to :assigned_to, polymorphic: true
 
-    enum activity_type: [:quote, :repair, :inspection]
+    enum activity_type: [:quote, :repair]
 
-    enum activity_status: [:draft, :issued, :pending, :pending_customer_approval, :approved, :ready_for_billing, :billed, :done]
+    enum activity_status: [:quote_draft, :issued, :pending_admin_approval, :pending_customer_approval, :ready_for_repair, \
+                            :repair_draft, :repair_done, :repair_pending_admin_approval, :ready_for_billing, :billed ]
 
     def self.search_by(uid)
         if uid.nil?
@@ -36,6 +37,11 @@ class Activity < ApplicationRecord
 
     def self.filter_by_customer_id(customer_id_params)
         joins(:container).where("containers.customer_id = ?",customer_id_params)
+    end
+
+    def self.filter_by_status(status_params)
+        statuses = [:draft]
+        where(activity_status: activity_status_params)
     end
     
     def container_number
