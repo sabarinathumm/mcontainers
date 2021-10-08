@@ -176,6 +176,30 @@ RSpec.describe 'Admin::Customers', type: :request do
         end
     end
 
+    describe 'Show a Customer ' do
+    # valid payload
+        context 'success' do
+
+        let!(:customer){ create(:customer) }
+
+        before { get "/api/v1/user_management/admin/customers/#{customer.id}", headers: headers[:auth], as: :json }
+
+            it 'returns token' do
+                # Note `json` is a custom helper to parse JSON responses
+                #puts json
+                expect(json).not_to be_empty
+                expect(json['customer']['full_name']).to eq(customer.full_name)
+                expect(json['customer']['email']).to eq(customer.email)
+                expect(json['customer']['owner_name']).to eq(customer.owner_name)
+                expect(json['customer']['billing_name']).to eq(customer.billing_name)
+                expect(json['customer']['address']).to eq(customer.address)
+                expect(json['customer']['gst']).to eq(customer.gst)
+                expect(json['customer']['pst']).to eq(customer.pst)
+                expect(response).to have_http_status(200)
+            end
+        end
+    end
+
     describe 'Update a Customer with a repair list id' do
     # valid payload
         context 'success' do
