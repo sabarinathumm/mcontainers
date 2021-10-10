@@ -1,7 +1,7 @@
 class Api::V1::ContainerManagement::Shared::ContainersController < Api::V1::BaseController
     before_action :doorkeeper_authorize!
 	before_action :validate_token!
-    before_action :set_container, only: [:show, :update]
+    before_action :set_container, only: [:show, :update, :download]
 
     def index
         @containers = Container.all
@@ -27,6 +27,14 @@ class Api::V1::ContainerManagement::Shared::ContainersController < Api::V1::Base
             render json: @container, serializer: ContainerSerializer
         else
             throw_error('Container could not be updated', status: :unprocessable_entity)
+        end
+    end
+
+    def download
+        @container_attachments = @container.container_attachments
+        @container_attachments.each do |ca|
+            new_file = File.join('public', ca.attachment_url)
+            send_file new_file, :disposition => 'attachment' if File.exists?(new_file)
         end
     end
 

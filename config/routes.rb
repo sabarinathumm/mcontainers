@@ -18,6 +18,9 @@ Rails.application.routes.draw do
       namespace :container_management do
         namespace :admin do
           resources :containers, only: [:index, :create, :update, :show]
+          scope "containers/:id" do
+            get 'download', to: 'containers#download'
+          end
         end
       end
 

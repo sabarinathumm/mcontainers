@@ -148,30 +148,44 @@ RSpec.describe 'Admin::ContainerManagement::', type: :request do
             end
         end
 
-        describe 'Show a Container' do
-        # valid payload
-            context 'success' do
-    
-                before { get "/api/v1/container_management/admin/containers/#{container.id}", headers: headers[:auth], as: :json }
-    
-                it 'returns token' do
-                    # Note `json` is a custom helper to parse JSON responses
-                    #puts json
-                    expect(json).not_to be_empty
-                    expect(json['container']['container_uid']).to eql(container.container_uid)
-                    expect(json['container']['container_owner_name']).to eql(container.container_owner_name)
-                    expect(json['container']['submitter_initials']).to eql(container.submitter_initials)
-                    expect(json['container']['container_length']).to eql(container.container_length)
-                    expect(json['container']['container_width']).to eql(container.container_width)
-                    expect(json['container']['location']).to eql(container.location)
-                    expect(json['container']['comments']).to eql(container.comments)
-                    expect(json['container']['container_type']['name']).to eql(container_type.name)
-                    expect(json['container']['customer']['full_name']).to eql(customer.full_name)
-                    expect(json['container']['container_attachments'].count).to eql(1)
-                    expect(json['container']['container_attachments'][0]['attachment_url']).not_to be_empty
-                    expect(json['container']['container_attachments'][0]['attachment_type']).to eql('left_side_photo')
-                    expect(response).to have_http_status(200)
-                end
+    describe 'Show a Container' do
+    # valid payload
+        context 'success' do
+
+            before { get "/api/v1/container_management/admin/containers/#{container.id}", headers: headers[:auth], as: :json }
+
+            it 'returns token' do
+                # Note `json` is a custom helper to parse JSON responses
+                #puts json
+                expect(json).not_to be_empty
+                expect(json['container']['container_uid']).to eql(container.container_uid)
+                expect(json['container']['container_owner_name']).to eql(container.container_owner_name)
+                expect(json['container']['submitter_initials']).to eql(container.submitter_initials)
+                expect(json['container']['container_length']).to eql(container.container_length)
+                expect(json['container']['container_width']).to eql(container.container_width)
+                expect(json['container']['location']).to eql(container.location)
+                expect(json['container']['comments']).to eql(container.comments)
+                expect(json['container']['container_type']['name']).to eql(container_type.name)
+                expect(json['container']['customer']['full_name']).to eql(customer.full_name)
+                expect(json['container']['container_attachments'].count).to eql(1)
+                expect(json['container']['container_attachments'][0]['attachment_url']).not_to be_empty
+                expect(json['container']['container_attachments'][0]['attachment_type']).to eql('left_side_photo')
+                expect(response).to have_http_status(200)
             end
         end
+    end
+
+    describe 'Download attachments of a Container' do
+        # valid payload
+        context 'success' do
+    
+            before { get "/api/v1/container_management/admin/containers/#{container.id}/download", headers: headers[:auth], as: :json }
+    
+            it 'returns token' do
+                    # Note `json` is a custom helper to parse JSON responses
+                    puts response.as_json
+                    expect(response).to have_http_status(200)
+            end
+        end
+    end
 end
