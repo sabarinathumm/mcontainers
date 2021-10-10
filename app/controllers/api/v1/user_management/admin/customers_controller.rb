@@ -93,9 +93,9 @@ class Api::V1::UserManagement::Admin::CustomersController < Api::V1::BaseControl
         end
 
         if params[:full_name].present? && params[:full_name].to_i == 1
-            @customers = @customers..order(full_name: :asc)
+            @customers = @customers.order(full_name: :asc)
         elsif params[:full_name].present? && params[:full_name].to_i == -1
-            @customers = @customers..order(full_name: :desc)
+            @customers = @customers.order(full_name: :desc)
         end
     end
 
