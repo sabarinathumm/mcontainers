@@ -10,6 +10,11 @@ class Api::V1::UserManagement::Admin::CustomersController < Api::V1::BaseControl
         render json: @customers, each_serializer: CustomerSerializer, meta: pagination_dict(@customers)
     end
 
+    def all_customers
+        @customers = Customer.all
+        render json: @customers, each_serializer: CustomerNameSerializer
+    end
+
     def create
         if customer_params[:password].nil?
             customer_create_params = customer_params.merge!(password:'Password@123')
