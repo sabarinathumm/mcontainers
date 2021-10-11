@@ -43,13 +43,13 @@ class Activity < ApplicationRecord
         if status == 'all'
             where(nil)
         elsif status == 'draft'
-            where(status: ['quote_draft', 'repair_draft'])
+            where(activity_status: ['quote_draft', 'repair_draft'])
         elsif status == 'admin_pending'
-            where(status: ['pending_admin_approval', 'repair_pending_admin_approval'])
+            where(activity_status: ['pending_admin_approval', 'repair_pending_admin_approval'])
         elsif status == 'customer_pending'
-            where(status: 'pending_customer_approval')
+            where(activity_status: 'pending_customer_approval')
         elsif status == 'customer_approved'
-            where(status: [:ready_for_repair, :repair_draft, :repair_done, :repair_pending_admin_approval, :ready_for_billing, :billed])
+            where(activity_status: [:ready_for_repair, :repair_draft, :repair_done, :repair_pending_admin_approval, :ready_for_billing, :billed])
         end
     end
     
