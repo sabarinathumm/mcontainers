@@ -40,15 +40,15 @@ class Activity < ApplicationRecord
     end
 
     def self.filter_by_status(status_params)
-        if status == 'all'
+        if status_params == 'all'
             where(nil)
-        elsif status == 'draft'
+        elsif status_params == 'draft'
             where(activity_status: ['quote_draft', 'repair_draft'])
-        elsif status == 'admin_pending'
+        elsif status_params == 'admin_pending'
             where(activity_status: ['pending_admin_approval', 'repair_pending_admin_approval'])
-        elsif status == 'customer_pending'
+        elsif status_params == 'customer_pending'
             where(activity_status: 'pending_customer_approval')
-        elsif status == 'customer_approved'
+        elsif status_params == 'customer_approved'
             where(activity_status: [:ready_for_repair, :repair_draft, :repair_done, :repair_pending_admin_approval, :ready_for_billing, :billed])
         end
     end
