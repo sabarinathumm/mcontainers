@@ -15,4 +15,27 @@ class Container < ApplicationRecord
     def container_attachments=(params)
         self.container_attachments_attributes = params
     end
+
+    def next_id
+
+        if Container.where("id > ?", self.id).order(id: :asc).first.present?
+            Container.where("id > ?", self.id).order(id: :asc).first.id
+        else
+            nil
+        end
+    end
+    
+    def prev_id
+
+        if Container.where("id < ?", self.id).order(id: :asc).first.present?
+            Container.where("id < ?", self.id).order(id: :asc).first.id
+        else
+            nil
+        end
+    end
+
+    def position
+        Container.all.order(id: :asc).map(&:id).index(id) + 1
+    end
+
 end

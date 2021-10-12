@@ -28,7 +28,7 @@ RSpec.describe 'Admin::ActivityManagement::', type: :request do
                 expect(json['activities'][0]['customer_name']).to eql(customer.full_name)
                 expect(json['activities'][0]['owner_name']).to eql(container.container_owner_name)
                 expect(json['activities'][0]['activity_type']).to eql('quote')
-                expect(json['activities'][0]['activity_status']).to eql('pending')
+                expect(json['activities'][0]['activity_status']).to eql('quote_draft')
                 expect(json['activities'][0]['created_at']).to eql(activity.created_at.strftime("%d-%b-%Y"))
                 expect(json['activities'][0]['container']['id']).to eql(container.id)
                 expect(response).to have_http_status(200)
@@ -40,7 +40,7 @@ RSpec.describe 'Admin::ActivityManagement::', type: :request do
         # valid payload
         context 'success' do
     
-            before { get "/api/v1/activity_management/admin/activities?date=#{Time.now.utc.to_date}&customer_id=#{customer.id}&activity_status=pending&activity_type=quote&yard_id=#{yard.id}", headers: headers[:auth], as: :json }
+            before { get "/api/v1/activity_management/admin/activities?date=#{Time.now.utc.to_date}&customer_id=#{customer.id}&activity_status=quote_draft&activity_type=quote&yard_id=#{yard.id}", headers: headers[:auth], as: :json }
     
             it 'returns the filtered activity' do
                 # Note `json` is a custom helper to parse JSON responses
@@ -52,7 +52,7 @@ RSpec.describe 'Admin::ActivityManagement::', type: :request do
                 expect(json['activities'][0]['customer_name']).to eql(customer.full_name)
                 expect(json['activities'][0]['owner_name']).to eql(container.container_owner_name)
                 expect(json['activities'][0]['activity_type']).to eql('quote')
-                expect(json['activities'][0]['activity_status']).to eql('pending')
+                expect(json['activities'][0]['activity_status']).to eql('quote_draft')
                 expect(json['activities'][0]['created_at']).to eql(activity.created_at.strftime("%d-%b-%Y"))
                 expect(json['activities'][0]['container']['id']).to eql(container.id)
                 expect(response).to have_http_status(200)
@@ -78,9 +78,49 @@ RSpec.describe 'Admin::ActivityManagement::', type: :request do
                 expect(json['activities'][0]['customer_name']).to eql(customer.full_name)
                 expect(json['activities'][0]['owner_name']).to eql(container.container_owner_name)
                 expect(json['activities'][0]['activity_type']).to eql('quote')
-                expect(json['activities'][0]['activity_status']).to eql('pending')
+                expect(json['activities'][0]['activity_status']).to eql('quote_draft')
                 expect(json['activities'][0]['created_at']).to eql(activity.created_at.strftime("%d-%b-%Y"))
                 expect(json['activities'][0]['container']['id']).to eql(container.id)
+                expect(response).to have_http_status(200)
+            end
+        end
+    end
+
+    describe 'Update activity statuses' do
+        # valid payload
+        context 'success' do
+    
+            let!(:activity2) { create_list(:activity, 5, container: container, assigned_to: admin) }
+            let!(:valid_attributes){
+                {
+                    activity_ids: [activity2.first.id, activity2.second.id],
+                    activity_status: 'ready_for_billing'
+                }
+            }
+            before { post "/api/v1/activity_management/admin/activities/update_status", params: valid_attributes ,headers: headers[:auth], as: :json }
+    
+            it 'returns the filtered activity' do
+                # Note `json` is a custom helper to parse JSON responses
+                #puts json
+                expect(json).not_to be_empty
+                expect(response).to have_http_status(200)
+            end
+        end
+    end
+
+    describe 'Export Activities' do
+        # valid payload
+        context 'success' do
+    
+            let!(:activity2) { create_list(:activity, 5, container: container, assigned_to: admin) }
+
+            before { get "/api/v1/activity_management/admin/activities/export", headers: headers[:auth], as: :json }
+    
+            it 'returns token' do
+                # Note `json` is a custom helper to parse JSON responses
+                #puts response.body
+                # puts response.headers
+                expect(response.headers['Content-Type']).to eq('text/csv')
                 expect(response).to have_http_status(200)
             end
         end

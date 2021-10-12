@@ -2,7 +2,7 @@ FactoryBot.define do
   factory :activity do
     activity_uid {generate(:activity_uid)}
     activity_type { 'quote' }
-    activity_status { 'pending' }
+    activity_status { 'quote_draft' }
     inspection_comment { 'No Comments Simply Waste' }   
   end
   sequence(:activity_uid) do

@@ -152,6 +152,7 @@ RSpec.describe 'Admin::ContainerManagement::', type: :request do
     # valid payload
         context 'success' do
 
+            let!(:containers) { create_list(:container, 10, container_type: container_type, yard: yard, customer: customer) }
             before { get "/api/v1/container_management/admin/containers/#{container.id}", headers: headers[:auth], as: :json }
 
             it 'returns token' do

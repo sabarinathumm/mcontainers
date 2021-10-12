@@ -11,6 +11,8 @@ Rails.application.routes.draw do
       namespace :activity_management do
         namespace :admin do
           get 'activities',  to: 'activities#index'
+          post 'activities/update_status',  to: 'activities#update_status'
+          get 'activities/export',  to: 'activities#export'
           get 'container_activities', to:'activities#container_activity'
         end
       end

@@ -68,4 +68,13 @@ class Activity < ApplicationRecord
     def owner_name
         self.container.container_owner_name
     end
+
+    def self.export(options = {})
+        CSV.generate(options) do |csv|
+          csv << %w{uid activity_status activity_type container_number yard_name customer_name owner_name}
+          all.each do |activity|
+            csv << [ activity.activity_uid, activity.activity_status, activity.activity_type, activity.container_number , activity.yard_name , activity.customer_name , activity.owner_name]
+          end
+        end
+    end
 end
