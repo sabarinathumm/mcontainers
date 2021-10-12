@@ -14,7 +14,7 @@ class Activity < ApplicationRecord
         if uid.nil?
             where(nil)
         else
-            joins(:container).where("container.container_uid LIKE ?", uid)
+            joins(:container).where("containers.container_uid LIKE ?", uid)
         end
     end
 
