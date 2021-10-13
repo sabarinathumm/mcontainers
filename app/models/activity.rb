@@ -11,10 +11,10 @@ class Activity < ApplicationRecord
                             :repair_draft, :repair_done, :repair_pending_admin_approval, :ready_for_billing, :billed ]
 
     def self.search_by(uid)
-        if uid.nil?
+        if uid.blank?
             where(nil)
         else
-            joins(:container).where("containers.container_uid LIKE ?", uid)
+            joins(:container).where("containers.container_uid LIKE CONCAT('%',?,'%')", uid)
         end
     end
 

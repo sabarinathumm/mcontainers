@@ -154,6 +154,43 @@ RSpec.describe 'Admin::CustomerRepairListItems::', type: :request do
                 expect(response).to have_http_status(200)
             end
         end
+
+        context 'Searching of a Customer Repair List Items' do
+            
+            let!(:customer_repair_list_item){ create_list(:customer_repair_list_item, 10, customer_repair_list: customer_repair_list, repair_type: repair_type, \
+                container_damaged_area: container_damaged_area, container_repair_area: container_repair_area, \
+                component: component, comp: comp, dam: dam, rep: rep, mode_number: mode_number, repair_mode: repair_mode, \
+                event: event, unit: unit) }
+
+            let!(:repair_type2){ create(:repair_type, name: 'Alpha') }
+
+            let!(:customer_repair_list_item2){ create_list(:customer_repair_list_item, 10, customer_repair_list: customer_repair_list, repair_type: repair_type2, \
+                container_repair_area: container_repair_area, container_damaged_area: container_damaged_area, \
+                component: component, comp: comp, dam: dam, rep: rep, mode_number: mode_number, repair_mode: repair_mode, \
+                event: event, unit: unit) }
+
+            before { get "/api/v1/repair_list_management/admin/customer_repair_list/#{customer_repair_list.id}/items?search_text=#{customer_repair_list_item.first.uid[0..2]}", headers: headers[:auth], as: :json }
+
+            it 'returns token' do
+                # Note `json` is a custom helper to parse JSON responses
+                puts json
+                expect(json).not_to be_empty
+                expect(json['customer_repair_list_items'].count).to eql(1)
+                expect(json['customer_repair_list_items'][0]['uid']).to eql(customer_repair_list_item.first.uid)
+                expect(json['customer_repair_list_items'][0]['container_damaged_area']['name']).to eql(container_damaged_area.name)
+                expect(json['customer_repair_list_items'][0]['container_repair_area']['name']).to eql(container_repair_area.name)
+                expect(json['customer_repair_list_items'][0]['repair_type']['name']).to eql(repair_type.name)
+                expect(json['customer_repair_list_items'][0]['component']['name']).to eql(component.name)
+                expect(json['customer_repair_list_items'][0]['comp']['name']).to eql(comp.name)
+                expect(json['customer_repair_list_items'][0]['dam']['name']).to eql(dam.name)
+                expect(json['customer_repair_list_items'][0]['rep']['name']).to eql(rep.name)
+                expect(json['customer_repair_list_items'][0]['mode_number']['name']).to eql(mode_number.name)
+                expect(json['customer_repair_list_items'][0]['repair_mode']['name']).to eql(repair_mode.name)
+                expect(json['customer_repair_list_items'][0]['event']['name']).to eql(event.name)
+                expect(json['customer_repair_list_items'][0]['unit']['name']).to eql(unit.name)
+                expect(response).to have_http_status(200)
+            end
+        end
     end
 
     describe 'Show Repair List item' do

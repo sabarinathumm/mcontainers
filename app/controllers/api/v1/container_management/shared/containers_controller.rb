@@ -19,7 +19,7 @@ class Api::V1::ContainerManagement::Shared::ContainersController < Api::V1::Base
 
     def show
         render json: { container: ContainerSerializer.new(@container).as_json, navigation: {total_count: Container.all.count, \
-            next_id: @container.next_id, previous_id: @container.prev_id}, position: @container.position}
+            next_id: @container.next_id, previous_id: @container.prev_id, position: @container.position}}
     end
 
     def update

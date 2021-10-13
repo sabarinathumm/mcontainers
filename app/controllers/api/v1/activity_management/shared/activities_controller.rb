@@ -5,7 +5,7 @@ class Api::V1::ActivityManagement::Shared::ActivitiesController < Api::V1::BaseC
     before_action :set_format, only: [:export]
 
     def index
-        @activities = Activity.all.search_by(params[:search_text]).filters(filter_params)
+        @activities = Activity.all.filters(filter_params).search_by(params[:search_text])
         render json:  @activities, each_serializer: ActivitySerializer
     end
 

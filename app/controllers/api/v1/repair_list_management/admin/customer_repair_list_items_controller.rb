@@ -8,7 +8,7 @@ class Api::V1::RepairListManagement::Admin::CustomerRepairListItemsController < 
     before_action :validate_upload, only: [:upload]
 
     def index
-        @repair_list_items = @repair_list_items.where("lower(uid) LIKE CONCAT('%',?,'%')", params[:search_text].to_s.downcase) unless params[:search_text].blank?
+        @repair_list_items = @repair_list_items.where("lower(uid) LIKE CONCAT('%',?,'%')", params[:search_text].downcase) unless params[:search_text].blank?
         @repair_list_items = paginate @repair_list_items.page(params[:page])
         
         render json: @repair_list_items, each_serializer: RepairListItemSerializer, meta: pagination_dict(@repair_list_items)

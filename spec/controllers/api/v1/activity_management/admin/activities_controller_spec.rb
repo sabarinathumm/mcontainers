@@ -60,6 +60,32 @@ RSpec.describe 'Admin::ActivityManagement::', type: :request do
         end
     end
 
+    describe 'Search Activities - With Status filters' do
+        # valid payload
+        context 'success' do
+
+            let!(:activity2) { create(:activity, container: container, assigned_to: admin, activity_status: 'pending_customer_approval') }
+    
+            before { get "/api/v1/activity_management/admin/activities?status=customer_pending&search_text=", headers: headers[:auth], as: :json }
+    
+            it 'returns the filtered activity' do
+                # Note `json` is a custom helper to parse JSON responses
+                #puts json
+                expect(json).not_to be_empty
+                expect(json['activities'][0]['activity_uid']).to eql(activity2.activity_uid)
+                expect(json['activities'][0]['container_number']).to eql(container.container_uid)
+                expect(json['activities'][0]['yard_name']).to eql(yard.name)
+                expect(json['activities'][0]['customer_name']).to eql(customer.full_name)
+                expect(json['activities'][0]['owner_name']).to eql(container.container_owner_name)
+                expect(json['activities'][0]['activity_type']).to eql('quote')
+                expect(json['activities'][0]['activity_status']).to eql('pending_customer_approval')
+                expect(json['activities'][0]['created_at']).to eql(activity2.created_at.strftime("%d-%b-%Y"))
+                expect(json['activities'][0]['container']['id']).to eql(container.id)
+                expect(response).to have_http_status(200)
+            end
+        end
+    end
+
     describe 'List activities of a container' do
         # valid payload
         context 'success' do
