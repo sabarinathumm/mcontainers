@@ -46,7 +46,8 @@ class Api::V1::RepairListManagement::Admin::CustomerRepairListItemsController < 
     end
 
     def validate_upload
-        @repair_list_item_upload = RepairListItemUpload.create!(attachment: upload_params[:attachment])
+        @uploaded_file = UploadedFile.find(upload_params[:uploaded_file_id]) unless upload_params[:uploaded_file_id].nil?
+        @repair_list_item_upload = RepairListItemUpload.create!(attachment: @uploaded_file.attachment)
 
         #repair_list_item_upload = RepairListItemUpload.create!(attachment: upload_params[:attachment])
         #puts repair_list_item_upload.attachment
@@ -98,7 +99,7 @@ class Api::V1::RepairListManagement::Admin::CustomerRepairListItemsController < 
     end
 
     def upload_params
-        params.slice(:attachment)
+        params.permit(:uploaded_file_id)
     end
 
     def set_format

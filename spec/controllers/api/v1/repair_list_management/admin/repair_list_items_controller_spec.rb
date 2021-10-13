@@ -364,14 +364,15 @@ RSpec.describe 'RepairListItems::', type: :request do
         # valid payload
             context 'success' do
                 let!(:attachment) { Rack::Test::UploadedFile.new(File.open(File.join(Rails.root, '/Repair_list_sample.csv'))) }
+                let!(:uploaded_file){ create(:uploaded_file, attachment: attachment, user: admin) }
                 let!(:valid_attributes){
                     {
-                        attachment: attachment
+                        uploaded_file_id: uploaded_file.id
                     }
                 }
 
                 before { post "/api/v1/repair_list_management/admin/repair_list/#{repair_list.id}/items/upload", params: valid_attributes , \
-                    headers: headers[:auth].merge('CONTENT_TYPE' => 'multipart/form-data') }
+                    headers: headers[:auth], as: :json  }
     
                 it 'returns token' do
                     # Note `json` is a custom helper to parse JSON responses
