@@ -11,4 +11,8 @@ class ContainerAttachment < ApplicationRecord
     def attachment_url
         self.attachment.attachment_url if self.attachment.present?
     end
+
+    def attachment_id
+        self.attachment.id if self.attachment.present?
+    end
 end

@@ -24,6 +24,8 @@ class Api::V1::ContainerManagement::Shared::ContainersController < Api::V1::Base
 
     def update
         
+        @container.container_attachments.destroy_all if container_params[:container_attachments].present?
+        
         if @container.update!(container_params)
             render json: @container, serializer: ContainerSerializer
         else
@@ -33,10 +35,26 @@ class Api::V1::ContainerManagement::Shared::ContainersController < Api::V1::Base
 
     def download
         @container_attachments = @container.container_attachments
-        @container_attachments.each do |ca|
-            new_file = File.join('public', ca.attachment_url)
-            send_file new_file, :disposition => 'attachment' if File.exists?(new_file)
+
+        folder_path = "#{Rails.root}/public/downloads/"
+        zipfile_name = "#{Rails.root}/public/archive.zip"
+
+        FileUtils.remove_dir(folder_path) if Dir.exist?(folder_path)
+        FileUtils.remove_entry(zipfile_name) if File.exist?(zipfile_name)
+        Dir.mkdir("#{Rails.root}/public/downloads")
+
+        Zip::File.open(Rails.root.join(zipfile_name), Zip::File::CREATE) do |zip|
+            @container_attachments.each do |ca|
+              unless ca.attachment_url.nil?
+                filename = "public/downloads/container_attachment_#{ca.id}_#{DateTime.now.to_i}.jpeg"
+                IO.copy_stream(open(ca.attachment_url),  Rails.root.join(filename))
+                zip.add( "#{@container.container_uid}-attachments/#{ca.attachment_type}_#{ca.id}.jpeg",Rails.root.join(filename))
+              end
+            end
         end
+        
+        send_file(File.join("#{Rails.root}/public/", 'archive.zip'), :type => 'application/zip', :filename => "#{Time.now.to_date}.zip")
+
     end
 
     private

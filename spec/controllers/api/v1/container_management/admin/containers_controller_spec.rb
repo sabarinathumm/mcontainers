@@ -142,7 +142,7 @@ RSpec.describe 'Admin::ContainerManagement::', type: :request do
                     expect(json['container']['container_type']['name']).to eql(container_type.name)
                     expect(json['container']['customer']['full_name']).to eql(customer.full_name)
                     expect(json['container']['container_attachments']).not_to be_empty
-                    expect(json['container']['container_attachments'].count).to eql(4)
+                    expect(json['container']['container_attachments'].count).to eql(3)
                     expect(json['container']['container_attachments'][0]['attachment_url']).not_to be_empty
                     expect(response).to have_http_status(200)
                 end
@@ -185,7 +185,7 @@ RSpec.describe 'Admin::ContainerManagement::', type: :request do
     
             it 'returns token' do
                     # Note `json` is a custom helper to parse JSON responses
-                    puts response.as_json
+                    expect(response.headers['Content-Type']).to eq('application/zip')
                     expect(response).to have_http_status(200)
             end
         end
