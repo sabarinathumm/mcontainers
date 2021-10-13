@@ -4,9 +4,10 @@ class Api::V1::ActivityManagement::Shared::ActivitiesController < Api::V1::BaseC
     before_action :set_container, only: [:container_activity]
     before_action :set_format, only: [:export]
 
-    def index
-        @activities = Activity.all.filters(filter_params).search_by(params[:search_text])
-        render json:  @activities, each_serializer: ActivitySerializer
+    def index    
+        @activities = Activity.all.filters(filter_params).search_by(params[:search_text]).sorts(sort_params)  
+        @activities = paginate @activities.page(params[:page])
+        render json:  @activities, each_serializer: ActivitySerializer, meta: pagination_dict(@activities)
     end
 
     def container_activity
@@ -31,6 +32,10 @@ class Api::V1::ActivityManagement::Shared::ActivitiesController < Api::V1::BaseC
     end
 
     private
+
+    def sort_params
+        params.permit(:yard_name, :owner_name, :activity_status_sort, :activity_type_sort, :customer_name, :created_at)
+    end
 
     def set_format
         request.format = 'csv'

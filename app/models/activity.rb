@@ -1,6 +1,7 @@
 class Activity < ApplicationRecord
 
     include Filterable
+    include Sortable
 
     belongs_to :container
     belongs_to :assigned_to, polymorphic: true
@@ -50,6 +51,66 @@ class Activity < ApplicationRecord
             where(activity_status: 'pending_customer_approval')
         elsif status_params == 'customer_approved'
             where(activity_status: [:ready_for_repair, :repair_draft, :repair_done, :repair_pending_admin_approval, :ready_for_billing, :billed])
+        end
+    end
+
+    def self.sort_by_yard_name(yard_name_params)
+        if yard_name_params.to_i == 1
+            joins(container: :yard).order("yards.name ASC")
+        elsif yard_name_params.to_i == -1
+            joins(container: :yard).order("yards.name DESC")
+        else
+            where(nil)
+        end
+    end
+
+    def self.sort_by_owner_name(owner_name_params)
+        if owner_name_params.to_i == 1
+            joins(:container).order("containers.container_owner_name ASC")
+        elsif owner_name_params.to_i == -1
+            joins(:container).order("containers.container_owner_name DESC")
+        else
+            where(nil)
+        end
+    end
+
+    def self.sort_by_activity_status_sort(activity_status_params)
+        if activity_status_params.to_i == 1
+            order(activity_status: :asc)
+        elsif activity_status_params.to_i == -1
+            order(activity_status: :desc)
+        else
+            where(nil)
+        end      
+    end
+
+    def self.sort_by_activity_type_sort(activity_type_params)
+        if activity_type_params.to_i == 1
+            order(activity_type: :asc)
+        elsif activity_type_params.to_i == -1
+            order(activity_type: :desc)
+        else
+            where(nil)
+        end        
+    end
+
+    def self.sort_by_customer_name(customer_name_params)
+        if customer_name_params.to_i == 1
+            joins(container: :customer).order("customers.full_name ASC")
+        elsif customer_name_params.to_i == -1
+            joins(container: :customer).order("customers.full_name DESC")
+        else
+            where(nil)
+        end
+    end
+
+    def self.sort_by_created_at(created_at_params)
+        if created_at_params.to_i == 1
+            order(created_at: :asc)
+        elsif created_at_params.to_i == -1
+            order(created_at: :desc)
+        else
+            where(nil)
         end
     end
     
