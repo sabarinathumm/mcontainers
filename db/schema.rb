@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_10_06_145806) do
+ActiveRecord::Schema.define(version: 2021_10_13_112007) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -104,10 +104,11 @@ ActiveRecord::Schema.define(version: 2021_10_06_145806) do
 
   create_table "container_attachments", force: :cascade do |t|
     t.bigint "container_id", null: false
-    t.json "attachment"
     t.integer "attachment_type"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+    t.bigint "attachment_id", null: false
+    t.index ["attachment_id"], name: "index_container_attachments_on_attachment_id"
     t.index ["container_id"], name: "index_container_attachments_on_container_id"
   end
 
@@ -376,6 +377,15 @@ ActiveRecord::Schema.define(version: 2021_10_06_145806) do
     t.datetime "updated_at", precision: 6, null: false
   end
 
+  create_table "uploaded_files", force: :cascade do |t|
+    t.string "attachment"
+    t.string "user_type", null: false
+    t.bigint "user_id", null: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["user_type", "user_id"], name: "index_uploaded_files_on_user_type_and_user_id"
+  end
+
   create_table "users", force: :cascade do |t|
     t.string "email", default: "", null: false
     t.string "encrypted_password", default: "", null: false
@@ -399,6 +409,7 @@ ActiveRecord::Schema.define(version: 2021_10_06_145806) do
 
   add_foreign_key "cities", "provinces"
   add_foreign_key "container_attachments", "containers"
+  add_foreign_key "container_attachments", "uploaded_files", column: "attachment_id"
   add_foreign_key "containers", "customers"
   add_foreign_key "containers", "yards"
   add_foreign_key "customer_repair_list_items", "components"

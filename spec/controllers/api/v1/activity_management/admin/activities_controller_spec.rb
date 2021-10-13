@@ -8,8 +8,9 @@ RSpec.describe 'Admin::ActivityManagement::', type: :request do
     let!(:yard){ create(:yard, name: 'Alpha') }
     let!(:container_type){ create(:container_type) }
     let!(:attachment) { Rack::Test::UploadedFile.new(File.open(File.join(Rails.root, '/README.md'))) }
+    let!(:uploaded_file){ create(:uploaded_file, attachment: attachment, user: admin) }
     let!(:container) { create(:container, container_type: container_type, yard: yard, customer: customer) }
-    let!(:container_attachment) { create(:container_attachment, attachment: attachment, attachment_type: 'left_side_photo', container: container) } 
+    let!(:container_attachment) { create(:container_attachment, attachment: uploaded_file, attachment_type: 'left_side_photo', container: container) } 
     let!(:activity) { create(:activity, container: container, assigned_to: admin) }
 
     describe 'List all Activities' do

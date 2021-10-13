@@ -14,6 +14,7 @@ class Admin < ApplicationRecord
   enum role: [:administrator, :employee]
 
   has_many :activities, :as=>:assigned_to
+  has_many :uploaded_files, :as=>:user
   
   class << self
     def authenticate(email, password)

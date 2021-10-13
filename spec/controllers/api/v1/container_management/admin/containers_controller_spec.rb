@@ -8,8 +8,9 @@ RSpec.describe 'Admin::ContainerManagement::', type: :request do
     let!(:yard){ create(:yard) }
     let!(:container_type){ create(:container_type) }
     let!(:attachment) { Rack::Test::UploadedFile.new(File.open(File.join(Rails.root, '/README.md'))) }
+    let!(:uploaded_file){ create(:uploaded_file, attachment: attachment, user: admin) }
     let!(:container) { create(:container, container_type: container_type, yard: yard, customer: customer) }
-    let!(:container_attachment) { create(:container_attachment, attachment: attachment, attachment_type: 'left_side_photo', container: container) } 
+    let!(:container_attachment) { create(:container_attachment, attachment: uploaded_file, attachment_type: 'left_side_photo', container: container) } 
 
     describe 'List all Containers' do
     # valid payload
@@ -51,22 +52,22 @@ RSpec.describe 'Admin::ContainerManagement::', type: :request do
                         container_attachments: [
                             {
                                 attachment_type: 'left_side_photo',
-                                attachment: attachment
+                                attachment_id: uploaded_file.id
                             },
                             {
                                 attachment_type: 'right_side_photo',
-                                attachment: attachment
+                                attachment_id: uploaded_file.id
                             },
                             {
                                 attachment_type: 'csc_plate_number',
-                                attachment: attachment
+                                attachment_id: uploaded_file.id
                             }
                         ]
                     }
                 }
             }
 
-            before { post '/api/v1/container_management/admin/containers', params: valid_attributes, headers: headers[:auth] }
+            before { post '/api/v1/container_management/admin/containers', params: valid_attributes, headers: headers[:auth], as: :json }
 
             it 'returns token' do
                 # Note `json` is a custom helper to parse JSON responses
@@ -110,22 +111,22 @@ RSpec.describe 'Admin::ContainerManagement::', type: :request do
                             container_attachments: [
                                 {
                                     attachment_type: 'left_side_photo',
-                                    attachment: attachment
+                                    attachment_id: uploaded_file.id
                                 },
                                 {
                                     attachment_type: 'right_side_photo',
-                                    attachment: attachment
+                                    attachment_id: uploaded_file.id
                                 },
                                 {
                                     attachment_type: 'csc_plate_number',
-                                    attachment: attachment
+                                    attachment_id: uploaded_file.id
                                 }
                             ]
                         }
                     }
                 }
     
-                before { put "/api/v1/container_management/admin/containers/#{container.id}", params: valid_attributes, headers: headers[:auth] }
+                before { put "/api/v1/container_management/admin/containers/#{container.id}", params: valid_attributes, headers: headers[:auth], as: :json }
     
                 it 'returns token' do
                     # Note `json` is a custom helper to parse JSON responses

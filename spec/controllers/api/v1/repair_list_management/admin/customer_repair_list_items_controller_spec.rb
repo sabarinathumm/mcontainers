@@ -169,7 +169,7 @@ RSpec.describe 'Admin::CustomerRepairListItems::', type: :request do
                 component: component, comp: comp, dam: dam, rep: rep, mode_number: mode_number, repair_mode: repair_mode, \
                 event: event, unit: unit) }
 
-            before { get "/api/v1/repair_list_management/admin/customer_repair_list/#{customer_repair_list.id}/items?search_text=#{customer_repair_list_item.first.uid[0..2]}", headers: headers[:auth], as: :json }
+            before { get "/api/v1/repair_list_management/admin/customer_repair_list/#{customer_repair_list.id}/items?search_text=#{customer_repair_list_item.first.uid[0..2]}&container_repair_area_id=&container_damaged_area_id=&repair_type_id=", headers: headers[:auth], as: :json }
 
             it 'returns token' do
                 # Note `json` is a custom helper to parse JSON responses

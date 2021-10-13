@@ -26,6 +26,10 @@ Rails.application.routes.draw do
         end
       end
 
+      namespace :file_management do
+        post 'uploaded_files', to: "uploaded_files#create"
+      end
+
       namespace :meta do
         resources :repair_types, only: [:index]
         resources :container_repair_areas, only: [:index]
