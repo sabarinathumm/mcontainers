@@ -27,8 +27,8 @@ class Container < ApplicationRecord
     
     def prev_id
 
-        if Container.where("id < ?", self.id).order(id: :asc).first.present?
-            Container.where("id < ?", self.id).order(id: :asc).first.id
+        if Container.where("id < ?", self.id).order(id: :asc).last.present?
+            Container.where("id < ?", self.id).order(id: :asc).last.id
         else
             nil
         end
