@@ -11,7 +11,7 @@ class Api::V1::ActivityManagement::Shared::ActivitiesController < Api::V1::BaseC
     end
 
     def container_activity
-        @activities = @container.activities
+        @activities = @container.activities.where.not(activity_status: 'idle')
         render json:  @activities, each_serializer: ActivitySerializer
     end
 
