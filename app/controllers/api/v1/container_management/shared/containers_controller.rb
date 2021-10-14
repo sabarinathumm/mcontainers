@@ -12,7 +12,7 @@ class Api::V1::ContainerManagement::Shared::ContainersController < Api::V1::Base
 
         ActiveRecord::Base.transaction do
             @container = Container.create!(container_params)
-            @container.activity.create!(activity_status: idle)
+            @container.activities.create!(activity_status: 'idle', assigned_to: current_admin)
         end
         
         if @container.save!
