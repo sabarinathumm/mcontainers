@@ -8,6 +8,14 @@ class Api::V1::ContainerManagement::Shared::ContainersController < Api::V1::Base
         render json:  @containers, each_serializer: ContainerSerializer
     end
 
+    def validate_container
+         if ValidateContainerUidJob.perform_now(validate_container_params[:container_uid])
+            render json: { success: true }
+         else
+            render json: { success: false }
+         end
+    end
+
     def create
 
         ActiveRecord::Base.transaction do
@@ -66,6 +74,10 @@ class Api::V1::ContainerManagement::Shared::ContainersController < Api::V1::Base
 
     def set_container
         @container = Container.find(params[:id])
+    end
+
+    def validate_container_params
+        params.permit(:container_uid)
     end
 
     def container_params

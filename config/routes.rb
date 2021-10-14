@@ -20,6 +20,7 @@ Rails.application.routes.draw do
       namespace :container_management do
         namespace :admin do
           resources :containers, only: [:index, :create, :update, :show]
+          post 'containers/validate_container', to: "conatiners#validate_container"
           scope "containers/:id" do
             get 'download', to: 'containers#download'
           end
