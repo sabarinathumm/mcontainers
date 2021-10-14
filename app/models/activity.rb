@@ -42,7 +42,7 @@ class Activity < ApplicationRecord
 
     def self.filter_by_status(status_params)
         if status_params == 'all'
-            where(nil)
+            where.not(activity_status: 'repair_pending_admin_approval')
         elsif status_params == 'draft'
             where(activity_status: ['quote_draft', 'repair_draft'])
         elsif status_params == 'admin_pending'
@@ -50,7 +50,7 @@ class Activity < ApplicationRecord
         elsif status_params == 'customer_pending'
             where(activity_status: 'pending_customer_approval')
         elsif status_params == 'customer_approved'
-            where(activity_status: [:ready_for_repair, :repair_draft, :repair_done, :repair_pending_admin_approval, :ready_for_billing, :billed])
+            where(activity_status: 'ready_for_repair')
         end
     end
 
