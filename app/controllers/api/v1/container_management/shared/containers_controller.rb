@@ -9,7 +9,12 @@ class Api::V1::ContainerManagement::Shared::ContainersController < Api::V1::Base
     end
 
     def create
-        @container = Container.new(container_params)
+
+        ActiveRecord::Base.transaction do
+            @container = Container.create!(container_params)
+            @container.activity.create!(activity_status: idle)
+        end
+        
         if @container.save!
             render json: @container, serializer: ContainerSerializer
         else
