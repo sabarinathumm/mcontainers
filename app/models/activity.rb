@@ -94,6 +94,16 @@ class Activity < ApplicationRecord
         end        
     end
 
+    def self.sort_by_activity_uid_sort(activity_uid_params)
+        if activity_uid_params.to_i == 1
+            order(activity_uid: :asc)
+        elsif activity_uid_params.to_i == -1
+            order(activity_uid: :desc)
+        else
+            where(nil)
+        end        
+    end
+
     def self.sort_by_customer_name(customer_name_params)
         if customer_name_params.to_i == 1
             joins(container: :customer).order("customers.full_name ASC")
