@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_11_10_162113) do
+ActiveRecord::Schema.define(version: 2021_11_10_165023) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -54,14 +54,17 @@ ActiveRecord::Schema.define(version: 2021_11_10_162113) do
     t.string "material_cost_currency", default: "USD", null: false
     t.integer "total_cost_cents", default: 0, null: false
     t.string "total_cost_currency", default: "USD", null: false
-    t.json "damaged_area_image"
-    t.json "repaired_area_image"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+    t.bigint "damaged_area_image_id"
+    t.bigint "repaired_area_image_id"
+    t.text "comments"
     t.index ["activity_id"], name: "index_activity_items_on_activity_id"
     t.index ["container_damaged_area_id"], name: "index_activity_items_on_container_damaged_area_id"
     t.index ["container_repair_area_id"], name: "index_activity_items_on_container_repair_area_id"
+    t.index ["damaged_area_image_id"], name: "index_activity_items_on_damaged_area_image_id"
     t.index ["repair_type_id"], name: "index_activity_items_on_repair_type_id"
+    t.index ["repaired_area_image_id"], name: "index_activity_items_on_repaired_area_image_id"
   end
 
   create_table "activity_timelines", force: :cascade do |t|
@@ -418,6 +421,8 @@ ActiveRecord::Schema.define(version: 2021_11_10_162113) do
     t.datetime "updated_at", precision: 6, null: false
   end
 
+  add_foreign_key "activity_items", "uploaded_files", column: "damaged_area_image_id"
+  add_foreign_key "activity_items", "uploaded_files", column: "repaired_area_image_id"
   add_foreign_key "activity_timelines", "activities"
   add_foreign_key "cities", "provinces"
   add_foreign_key "container_attachments", "containers"

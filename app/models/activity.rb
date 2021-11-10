@@ -6,6 +6,7 @@ class Activity < ApplicationRecord
     belongs_to :container
     belongs_to :assigned_to, polymorphic: true
     has_many :activity_timelines
+    has_many :activity_items
 
     before_update :set_activity_timeline
     
