@@ -242,12 +242,12 @@ RSpec.describe 'Admin::ActivityManagement::', type: :request do
     
             let!(:activity2) { create_list(:activity, 5, container: container, assigned_to: admin) }
 
-            before { get "/api/v1/activity_management/admin/activities/export", headers: headers[:auth], as: :json }
+            before { get "/api/v1/activity_management/admin/activities_export", headers: headers[:auth], as: :json }
     
             it 'returns token' do
                 # Note `json` is a custom helper to parse JSON responses
-                puts response.body
-                puts response.headers
+                #puts response.body
+                #puts response.headers
                 expect(response.headers['Content-Type']).to eq('text/csv')
                 expect(response).to have_http_status(200)
             end
