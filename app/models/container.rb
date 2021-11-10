@@ -12,6 +12,8 @@ class Container < ApplicationRecord
 
     accepts_nested_attributes_for :container_attachments
 
+    enum container_status: [:idle, :active]
+
     def container_attachments=(params)
         self.container_attachments_attributes = params
     end
