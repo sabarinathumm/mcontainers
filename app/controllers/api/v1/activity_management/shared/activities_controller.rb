@@ -45,7 +45,7 @@ class Api::V1::ActivityManagement::Shared::ActivitiesController < Api::V1::BaseC
 
     def update_date 
         @activities = Activity.where(id: update_date_params[:activity_id])
-        @activities.update(activity_date: update_date_params[:activity_date])
+        @activities.update  (activity_date: update_date_params[:activity_date])
 
         render json: { succes: true }, status: :ok
     end

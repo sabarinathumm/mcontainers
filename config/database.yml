@@ -22,8 +22,8 @@ default: &default
   pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
 
   #Sabarinath's local DB configs
-  host: localhost 
-  port: 5432
+  # host: localhost 
+  # port: 5432
 
 development:
   <<: *default
