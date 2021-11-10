@@ -2,6 +2,7 @@ class Api::V1::ActivityManagement::Shared::ActivitiesController < Api::V1::BaseC
     before_action :doorkeeper_authorize!
 	before_action :validate_token!
     before_action :set_container, only: [:container_activity]
+    before_action :set_activity, only: [:show, :delete, :update]
     before_action :set_format, only: [:export]
 
     def index    
@@ -13,12 +14,34 @@ class Api::V1::ActivityManagement::Shared::ActivitiesController < Api::V1::BaseC
     def container_activity
         @activities = @container.activities.where.not(activity_status: 'idle')
         render json:  @activities, each_serializer: ActivitySerializer
+        
+    end
+
+    def create
+        puts "CREATE"
+        @activity = Activity.create(activity_params)
+        render json: @activity, serializer: ActivitySerializer
+    end 
+
+    def show
+        render json:  @activity, serializer: ActivitySerializer
+    end
+
+    def update
+        @activity.update_attributes(activity_params)
+        render json: @activity
+        puts @activity.to_json
+    end
+
+    def delete
+        Activity.destroy(params[:id])
     end
 
     def update_status
         @activities = Activity.where(id: update_status_params[:activity_ids])
         @activities.update(activity_status: update_status_params[:activity_status])
-
+        puts "update status"
+        # puts @activities.to_json
         render json: { succes: true }, status: :ok
     end
 
@@ -45,6 +68,11 @@ class Api::V1::ActivityManagement::Shared::ActivitiesController < Api::V1::BaseC
         @container = Container.find(params[:container_id])
     end
 
+    def set_activity
+        @activity = Activity.find(params[:id])
+        puts "SET_ACTVITY"
+    end
+
     def filter_params
         params.permit(:date, :activity_type, :activity_status, :yard_id, :customer_id, :status)
     end
@@ -54,5 +82,8 @@ class Api::V1::ActivityManagement::Shared::ActivitiesController < Api::V1::BaseC
             update_status_params.require(:activity_status)
         end
     end
+    def activity_params
+        params.require(:activity).permit(:activity_type, :activity_date)
+      end
 
 end

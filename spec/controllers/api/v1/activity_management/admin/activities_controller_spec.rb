@@ -209,6 +209,7 @@ RSpec.describe 'Admin::ActivityManagement::', type: :request do
                 expect(json['activities'][0]['created_at']).to eql(activity.created_at.strftime("%d-%b-%Y"))
                 expect(json['activities'][0]['container']['id']).to eql(container.id)
                 expect(response).to have_http_status(200)
+                puts "Container Activities ch ahe"
             end
         end
     end
@@ -248,6 +249,76 @@ RSpec.describe 'Admin::ActivityManagement::', type: :request do
                 #puts response.body
                 # puts response.headers
                 expect(response.headers['Content-Type']).to eq('text/csv')
+                expect(response).to have_http_status(200)
+            end
+        end
+    end
+
+    describe 'show each activty of a container' do
+        context 'sucess' do
+            let!(:container2) { create(:container, container_type: container_type, yard: yard, customer: customer, container_owner_name: 'ZZZZZZ') }
+            let!(:activity2) { create_list(:activity, 5, container: container, assigned_to: admin) }
+            before { get "/api/v1/activity_management/admin/activities/#{activity.id}", headers: headers[:auth], as: :json }
+
+            it 'returns the filtered activity' do
+                # Note `json` is a custom helper to parse JSON responses
+                # puts json
+                expect(json).not_to be_empty
+                puts response.body
+                # expect(json['activity'][0]['activity_uid']).to eql(activity.activity_uid)
+                # expect(json['activity'][0]['container_number']).to eql(container2.container_uid)
+                # expect(json['activity'][0]['yard_name']).to eql(yard.name)
+                # expect(json['activity'][0]['customer_name']).to eql(customer.full_name)
+                # expect(json['activity'][0]['owner_name']).to eql(container2.container_owner_name)
+                # expect(json['activity'][0]['activity_type']).to eql('repair')
+                # expect(json['activity'][0]['activity_status']).to eql('repair_pending_admin_approval')
+                # expect(json['activity'][0]['created_at']).to eql(activity2.created_at.strftime("%d-%b-%Y"))
+                # expect(json['activity'][0]['container']['id']).to eql(container2.id)
+                expect(response).to have_http_status(200)
+            end
+        end
+    end
+
+    describe 'Delete' do
+        context 'sucessful delete' do 
+            before { delete "/api/v1/activity_management/admin/activities/#{activity.id}", headers: headers[:auth], as: :json }
+            it 'return 204' do 
+                # puts json
+                expect(response).to have_http_status(204)
+            end
+        end
+    end
+
+    describe 'Add activity / Create activity' do
+        context 'Sucessful creation' do
+            let!(:valid_attributes){
+                    {
+                        activity_type: "quote",
+                        activity_date: "20-Aug-2021"
+                    }
+                }
+            before {post "/api/v1/activity_management/admin/activities",params: valid_attributes, headers: headers[:auth], as: :json}
+            it 'return 200' do
+                expect(json).not_to be_empty
+                expect(response).to have_http_status(200)
+            end
+        end
+    end
+
+    describe 'Update activity status' do
+        context 'Sucessful updation' do
+            let!(:valid_attributes){
+                {
+                    "activity":
+                        {
+                            "activity_status": "repair_done",
+                            "activity_type": "repair"
+                        }
+                }
+                }
+            before {put "/api/v1/activity_management/admin/activities/#{activity.id}",params: valid_attributes, headers: headers[:auth], as: :json}
+            it 'return 200' do
+                expect(json).not_to be_empty
                 expect(response).to have_http_status(200)
             end
         end

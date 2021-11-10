@@ -10,10 +10,15 @@ Rails.application.routes.draw do
       
       namespace :activity_management do
         namespace :admin do
+          resources :activities, only: [:index, :update, :show, :delete]
           get 'activities',  to: 'activities#index'
           post 'activities/update_status',  to: 'activities#update_status'
           get 'activities/export',  to: 'activities#export'
           get 'container_activities', to:'activities#container_activity'
+          get 'activities', to: 'activities#show'
+          delete 'activities/:id', to: 'activities#delete'
+          post 'activities', to: 'activities#create'
+          put 'activities/:id',  to: 'activities#update'
         end
       end
       

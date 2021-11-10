@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_10_13_112007) do
+ActiveRecord::Schema.define(version: 2021_11_10_035150) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -25,6 +25,7 @@ ActiveRecord::Schema.define(version: 2021_10_13_112007) do
     t.text "inspection_comment"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+    t.datetime "activity_date"
     t.index ["assigned_to_type", "assigned_to_id"], name: "index_activities_on_assigned_to_type_and_assigned_to_id"
     t.index ["container_id"], name: "index_activities_on_container_id"
   end
@@ -61,6 +62,15 @@ ActiveRecord::Schema.define(version: 2021_10_13_112007) do
     t.index ["container_damaged_area_id"], name: "index_activity_items_on_container_damaged_area_id"
     t.index ["container_repair_area_id"], name: "index_activity_items_on_container_repair_area_id"
     t.index ["repair_type_id"], name: "index_activity_items_on_repair_type_id"
+  end
+
+  create_table "activity_timelines", force: :cascade do |t|
+    t.integer "history_status"
+    t.datetime "history_date"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.bigint "activity_id", null: false
+    t.index ["activity_id"], name: "index_activity_timelines_on_activity_id"
   end
 
   create_table "admins", force: :cascade do |t|
@@ -407,6 +417,7 @@ ActiveRecord::Schema.define(version: 2021_10_13_112007) do
     t.datetime "updated_at", precision: 6, null: false
   end
 
+  add_foreign_key "activity_timelines", "activities"
   add_foreign_key "cities", "provinces"
   add_foreign_key "container_attachments", "containers"
   add_foreign_key "container_attachments", "uploaded_files", column: "attachment_id"

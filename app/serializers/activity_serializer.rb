@@ -3,6 +3,7 @@ class ActivitySerializer < ActiveModel::Serializer
         :activity_type, :activity_status, :created_at
 
     belongs_to :container, serializer: ContainerSerializer
+    has_many :activity_timelines, each_serializer: ActivityTimelineSerializer
 
     def created_at
         object.created_at.strftime("%d-%b-%Y")
