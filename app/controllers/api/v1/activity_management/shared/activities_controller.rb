@@ -1,7 +1,7 @@
 class Api::V1::ActivityManagement::Shared::ActivitiesController < Api::V1::BaseController
     before_action :doorkeeper_authorize!
 	before_action :validate_token!
-    before_action :set_container, only: [:container_activity]
+    before_action :set_container, only: [:container_activity, :create]
     before_action :set_activity, only: [:show, :delete, :update]
     before_action :set_format, only: [:export]
 
@@ -18,9 +18,18 @@ class Api::V1::ActivityManagement::Shared::ActivitiesController < Api::V1::BaseC
     end
 
     def create
-        puts "CREATE"
-        @activity = Activity.create(activity_params)
-        render json: @activity, serializer: ActivitySerializer
+        activity_create_params = activity_params.merge(assigned_to: current_admin, container: @container)
+       
+        ActiveRecord::Base.transaction do
+            @activity = Activity.create!(activity_create_params)
+            ActivityTimeline.create!(activity: @activity, history_status: @activity.activity_status, history_date: Date.today)
+        end 
+
+        if @activity.save
+            render json: @activity, serializer: ActivitySerializer
+        else
+            render json: { error: 'Could not create new activity List'}, status: :unprocessable_entity
+        end
     end 
 
     def show
@@ -28,10 +37,19 @@ class Api::V1::ActivityManagement::Shared::ActivitiesController < Api::V1::BaseC
     end
 
     def update
-        @activity.update_attributes(activity_params)
-        render json: @activity
-        puts @activity.to_json
+       
+            @activity.update!(activity_params)
+            render json: @activity, serializer: ActivitySerializer
+        
     end
+
+    def update_date 
+        @activities = Activity.where(id: update_date_params[:activity_id])
+        @activities.update(activity_date: update_date_params[:activity_date])
+
+        render json: { succes: true }, status: :ok
+    end
+    
 
     def delete
         Activity.destroy(params[:id])
@@ -40,8 +58,6 @@ class Api::V1::ActivityManagement::Shared::ActivitiesController < Api::V1::BaseC
     def update_status
         @activities = Activity.where(id: update_status_params[:activity_ids])
         @activities.update(activity_status: update_status_params[:activity_status])
-        puts "update status"
-        # puts @activities.to_json
         render json: { succes: true }, status: :ok
     end
 
@@ -70,7 +86,6 @@ class Api::V1::ActivityManagement::Shared::ActivitiesController < Api::V1::BaseC
 
     def set_activity
         @activity = Activity.find(params[:id])
-        puts "SET_ACTVITY"
     end
 
     def filter_params
@@ -82,8 +97,14 @@ class Api::V1::ActivityManagement::Shared::ActivitiesController < Api::V1::BaseC
             update_status_params.require(:activity_status)
         end
     end
+
+    def update_date_params
+        params.permit(:activity_date, activity_id: []).tap do |update_date_params|
+            update_date_params.require(:activity_date)
+        end
+    end
+
     def activity_params
         params.require(:activity).permit(:activity_type, :activity_date)
-      end
-
+    end
 end

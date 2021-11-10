@@ -7,6 +7,8 @@ class Activity < ApplicationRecord
     belongs_to :assigned_to, polymorphic: true
     has_many :activity_timelines
 
+    before_update :set_activity_timeline
+    
     enum activity_type: [:quote, :repair]
 
     enum activity_status: [:quote_draft, :quote_issued, :pending_admin_approval, :pending_customer_approval, :ready_for_repair, \
@@ -147,6 +149,16 @@ class Activity < ApplicationRecord
           all.each do |activity|
             csv << [ activity.activity_uid, activity.activity_status, activity.activity_type, activity.container_number , activity.yard_name , activity.customer_name , activity.owner_name]
           end
+        end
+    end
+
+    
+
+
+
+    def set_activity_timeline
+        if self.activity_status_was.present? == self.activity_status
+            self.activity_status = self.activity_status_was
         end
     end
 end

@@ -209,7 +209,7 @@ RSpec.describe 'Admin::ActivityManagement::', type: :request do
                 expect(json['activities'][0]['created_at']).to eql(activity.created_at.strftime("%d-%b-%Y"))
                 expect(json['activities'][0]['container']['id']).to eql(container.id)
                 expect(response).to have_http_status(200)
-                puts "Container Activities ch ahe"
+               
             end
         end
     end
@@ -246,7 +246,7 @@ RSpec.describe 'Admin::ActivityManagement::', type: :request do
     
             it 'returns token' do
                 # Note `json` is a custom helper to parse JSON responses
-                #puts response.body
+                # puts response.body
                 # puts response.headers
                 expect(response.headers['Content-Type']).to eq('text/csv')
                 expect(response).to have_http_status(200)
@@ -264,7 +264,7 @@ RSpec.describe 'Admin::ActivityManagement::', type: :request do
                 # Note `json` is a custom helper to parse JSON responses
                 # puts json
                 expect(json).not_to be_empty
-                puts response.body
+                #puts response.body
                 # expect(json['activity'][0]['activity_uid']).to eql(activity.activity_uid)
                 # expect(json['activity'][0]['container_number']).to eql(container2.container_uid)
                 # expect(json['activity'][0]['yard_name']).to eql(yard.name)
@@ -297,8 +297,9 @@ RSpec.describe 'Admin::ActivityManagement::', type: :request do
                         activity_date: "20-Aug-2021"
                     }
                 }
-            before {post "/api/v1/activity_management/admin/activities",params: valid_attributes, headers: headers[:auth], as: :json}
+            before {post "/api/v1/activity_management/admin/activities?container_id=#{container.id}",params: valid_attributes, headers: headers[:auth], as: :json}
             it 'return 200' do
+                # puts json
                 expect(json).not_to be_empty
                 expect(response).to have_http_status(200)
             end
@@ -323,4 +324,26 @@ RSpec.describe 'Admin::ActivityManagement::', type: :request do
             end
         end
     end
+
+    describe 'Update activity date' do
+        # valid payload
+        context 'success' do
+    
+            let!(:activity2) { create_list(:activity, 5, container: container, assigned_to: admin) }
+            let!(:valid_attributes){
+                {
+                    activity_ids: [activity2.first.id, activity2.second.id],
+                    activity_date: '20-Aug-2021'
+                }
+            }
+            before { post "/api/v1/activity_management/admin/activities/update_date", params: valid_attributes ,headers: headers[:auth], as: :json }
+    
+            it 'returns the filtered activity' do
+                # Note `json` is a custom helper to parse JSON responses
+                #puts json
+                expect(json).not_to be_empty
+                expect(response).to have_http_status(200)
+            end
+        end
+    end 
 end

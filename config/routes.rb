@@ -19,6 +19,7 @@ Rails.application.routes.draw do
           delete 'activities/:id', to: 'activities#delete'
           post 'activities', to: 'activities#create'
           put 'activities/:id',  to: 'activities#update'
+          post 'activities/update_date',  to: 'activities#update_date'
         end
       end
       
