@@ -332,7 +332,7 @@ RSpec.describe 'Admin::ActivityManagement::', type: :request do
             let!(:activity2) { create_list(:activity, 5, container: container, assigned_to: admin) }
             let!(:valid_attributes){
                 {
-                    activity_ids: [activity2.first.id, activity2.second.id],
+                    activity_id: activity2.first.id,
                     activity_date: '20-Aug-2021'
                 }
             }

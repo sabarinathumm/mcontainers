@@ -18,7 +18,13 @@ class Api::V1::ActivityManagement::Shared::ActivitiesController < Api::V1::BaseC
     end
 
     def create
-        activity_create_params = activity_params.merge(assigned_to: current_admin, container: @container)
+        if activity_params[:activity_type] == 'quote'
+            status = 'quote_draft'
+        elsif activity_params[:activity_type] == 'repair'
+            status = 'repair_draft'
+        end
+
+        activity_create_params = activity_params.merge(assigned_to: current_admin, container: @container, activity_status: status)
        
         ActiveRecord::Base.transaction do
             @activity = Activity.create!(activity_create_params)
@@ -36,18 +42,16 @@ class Api::V1::ActivityManagement::Shared::ActivitiesController < Api::V1::BaseC
         render json:  @activity, serializer: ActivitySerializer
     end
 
-    def update
-       
-            @activity.update!(activity_params)
-            render json: @activity, serializer: ActivitySerializer
-        
+    def update       
+        @activity.update!(activity_params)
+        render json: @activity, serializer: ActivitySerializer       
     end
 
     def update_date 
-        @activities = Activity.where(id: update_date_params[:activity_id])
-        @activities.update(activity_date: update_date_params[:activity_date])
+        @activity = Activity.where(id: update_date_params[:activity_id]).first
+        @activity.update(activity_date: update_date_params[:activity_date])
 
-        render json: { succes: true }, status: :ok
+        render json: @activity, serializer: ActivitySerializer
     end
     
 
@@ -99,12 +103,10 @@ class Api::V1::ActivityManagement::Shared::ActivitiesController < Api::V1::BaseC
     end
 
     def update_date_params
-        params.permit(:activity_date, activity_id: []).tap do |update_date_params|
-            update_date_params.require(:activity_date)
-        end
+        params.permit(:activity_date, :activity_id)
     end
 
     def activity_params
-        params.require(:activity).permit(:activity_type, :activity_date)
+        params.require(:activity).permit(:activity_type, :activity_date, :activity_status)
     end
 end
