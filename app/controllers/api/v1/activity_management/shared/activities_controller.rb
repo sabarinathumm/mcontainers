@@ -19,14 +19,14 @@ class Api::V1::ActivityManagement::Shared::ActivitiesController < Api::V1::BaseC
     def activity_status
 
         @activity = Activity.find(params[:activity_id])
-        
+
         if @activity.activity_status == 'quote_draft'
             render json: {activity_statuses: ['quote_issued']}
         elsif @activity.activity_status == 'quote_issued'
             render json: {activity_statuses: ['quote_draft', 'pending_admin_approval']}
         elsif @activity.activity_status == 'pending_admin_approval'
             render json: {activity_statuses:['quote_draft', 'pending_customer_approval']}
-        elsif @activity.activity_status == 'pending_for_customer_approval'
+        elsif @activity.activity_status == 'pending_customer_approval'
             render json: {activity_statuses: ['quote_draft','ready_for_repair']}
         elsif @activity.activity_status == 'ready_for_repair'
             render json: {activity_statuses: ['quote_draft','repair_draft']}
