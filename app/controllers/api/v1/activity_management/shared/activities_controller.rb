@@ -2,7 +2,7 @@ class Api::V1::ActivityManagement::Shared::ActivitiesController < Api::V1::BaseC
     before_action :doorkeeper_authorize!
 	before_action :validate_token!
     before_action :set_container, only: [:container_activity, :create]
-    before_action :set_activity, only: [:show, :delete, :update]
+    before_action :set_activity, only: [:show, :delete, :update,]
     before_action :set_format, only: [:export]
 
     def index    
@@ -14,6 +14,31 @@ class Api::V1::ActivityManagement::Shared::ActivitiesController < Api::V1::BaseC
     def container_activity
         @activities = @container.activities.where.not(activity_status: ['idle','deleted']).order(created_at: :desc)
         render json:  @activities, each_serializer: ActivitySerializer
+    end
+
+    def activity_status
+
+        @activity = Activity.find(params[:activity_id])
+        
+        if @activity.activity_status == 'quote_draft'
+            render json: {activity_statuses: ['quote_issued']}
+        elsif @activity.activity_status == 'quote_issued'
+            render json: {activity_statuses: ['quote_draft', 'pending_admin_approval']}
+        elsif @activity.activity_status == 'pending_admin_approval'
+            render json: {activity_statuses:['quote_draft', 'pending_customer_approval']}
+        elsif @activity.activity_status == 'pending_for_customer_approval'
+            render json: {activity_statuses: ['quote_draft','ready_for_repair']}
+        elsif @activity.activity_status == 'ready_for_repair'
+            render json: {activity_statuses: ['quote_draft','repair_draft']}
+        elsif @activity.activity_status == 'repair_draft'
+            render json: {activity_statuses: ['repair_done']}
+        elsif @activity.activity_status == 'repair_done'
+            render json: {activity_statuses: ['ready_for_billing','repair_draft']}
+        elsif @activity.activity_status == 'ready_for_billing'
+            render json: {activity_statuses: ['repair_done','billed'] }
+        elsif @activity.activity_status == 'billed'
+            render json: {activity_statuses: ['repair_done']}
+        end
     end
 
     def create

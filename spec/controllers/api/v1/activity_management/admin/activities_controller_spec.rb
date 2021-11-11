@@ -347,6 +347,30 @@ RSpec.describe 'Admin::ActivityManagement::', type: :request do
             end
         end
     end
+
+    describe 'List Activity Statuses available for an activity' do
+        # valid payload
+        context 'success' do
+    
+            let!(:activity2) { create(:activity, container: container, assigned_to: admin, activity_status: 'quote_issued') }
+            let!(:valid_attributes){
+                {
+                    activity_id: activity2.id
+                }
+            }
+            before { post "/api/v1/activity_management/admin/activity_statuses", params: valid_attributes ,headers: headers[:auth], as: :json }
+    
+            it 'returns the statuses available' do
+                # Note `json` is a custom helper to parse JSON responses
+                #puts json
+                expect(json['activity_statuses'].count).to eq(2)
+                expect(json['activity_statuses'][0]).to eq('quote_draft')
+                expect(json['activity_statuses'][1]).to eq('pending_admin_approval')
+                expect(json).not_to be_empty
+                expect(response).to have_http_status(200)
+            end
+        end
+    end
     
     describe 'Auto populate damage and repair area code' do
         # valid payload
