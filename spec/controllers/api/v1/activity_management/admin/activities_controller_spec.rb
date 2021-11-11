@@ -11,7 +11,7 @@ RSpec.describe 'Admin::ActivityManagement::', type: :request do
     let!(:uploaded_file){ create(:uploaded_file, attachment: attachment, user: admin) }
     let!(:container) { create(:container, container_type: container_type, yard: yard, customer: customer) }
     let!(:container_attachment) { create(:container_attachment, attachment: uploaded_file, attachment_type: 'left_side_photo', container: container) } 
-    let!(:activity) { create(:activity, container: container, assigned_to: admin) }
+    let!(:activity) { create(:activity, container: container, assigned_to: admin,activity_type: 'quote') }
 
     describe 'List all Activities' do
     # valid payload
@@ -21,7 +21,8 @@ RSpec.describe 'Admin::ActivityManagement::', type: :request do
 
             it 'returns token' do
                 # Note `json` is a custom helper to parse JSON responses
-                #puts json
+                # puts json
+                
                 expect(json).not_to be_empty
                 expect(json['activities'][0]['activity_uid']).to eql(activity.activity_uid)
                 expect(json['activities'][0]['container_number']).to eql(container.container_uid)
@@ -199,7 +200,7 @@ RSpec.describe 'Admin::ActivityManagement::', type: :request do
                 #puts json
                 expect(json).not_to be_empty
                 expect(json['activities'].count).to eql(6)
-                expect(json['activities'][0]['activity_uid']).to eql(activity.activity_uid)
+                expect(json['activities'][0]['activity_uid']).to eql(activity2.last.activity_uid)
                 expect(json['activities'][0]['container_number']).to eql(container.container_uid)
                 expect(json['activities'][0]['yard_name']).to eql(yard.name)
                 expect(json['activities'][0]['customer_name']).to eql(customer.full_name)
@@ -345,5 +346,44 @@ RSpec.describe 'Admin::ActivityManagement::', type: :request do
                 expect(response).to have_http_status(200)
             end
         end
-    end 
+    end
+    
+    describe 'Auto populate damage and repair area code' do
+        # valid payload
+        context 'success' do
+    
+            let!(:activity2) { create_list(:activity, 5, container: container, assigned_to: admin) }
+            let!(:repair_type){ create(:repair_type, name:'Beta') }
+            let!(:container_damaged_area){ create(:container_damaged_area) }
+            let!(:container_repair_area){ create(:container_repair_area) }
+            let!(:component){ create(:component) }
+            let!(:comp){ create(:comp) }
+            let!(:rep){ create(:rep) }
+            let!(:dam){ create(:dam) }
+            let!(:mode_number){ create(:mode_number) }
+            let!(:repair_mode){ create(:repair_mode) }
+            let!(:event){ create(:event) }
+            let!(:unit){ create(:unit) }
+            let!(:repair_list){ create(:repair_list, is_active: true) }
+            let!(:repair_list_item){ create_list(:repair_list_item, 30, repair_list: repair_list, repair_type: repair_type, \
+                container_damaged_area: container_damaged_area, container_repair_area: container_repair_area, \
+                component: component, comp: comp, dam: dam, rep: rep, mode_number: mode_number, repair_mode: repair_mode, \
+                event: event, unit: unit) 
+            }
+
+            let!(:valid_attributes){
+                {
+                    repair_code: repair_list_item.first.uid
+                }
+            }
+            before { post "/api/v1/activity_management/admin/activities/auto_populate", params: valid_attributes ,headers: headers[:auth], as: :json }
+    
+            it 'returns the damage codes' do
+                # Note `json` is a custom helper to parse JSON responses
+                # puts json
+                expect(json).not_to be_empty
+                expect(response).to have_http_status(200)
+            end
+        end
+    end
 end

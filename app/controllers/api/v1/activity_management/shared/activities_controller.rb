@@ -12,9 +12,8 @@ class Api::V1::ActivityManagement::Shared::ActivitiesController < Api::V1::BaseC
     end
 
     def container_activity
-        @activities = @container.activities.where.not(activity_status: 'idle')
+        @activities = @container.activities.where.not(activity_status: ['idle','deleted']).order(created_at: :desc)
         render json:  @activities, each_serializer: ActivitySerializer
-        
     end
 
     def create
@@ -28,7 +27,8 @@ class Api::V1::ActivityManagement::Shared::ActivitiesController < Api::V1::BaseC
        
         ActiveRecord::Base.transaction do
             @activity = Activity.create!(activity_create_params)
-            ActivityTimeline.create!(activity: @activity, history_status: @activity.activity_status, history_date: Date.today)
+            ActivityTimeline.create!(activity: @activity, history_status: @activity.activity_status, history_date: @activity.activity_date)
+            @activity.container.update!(container_status: 'active')
         end 
 
         if @activity.save
@@ -56,7 +56,8 @@ class Api::V1::ActivityManagement::Shared::ActivitiesController < Api::V1::BaseC
     
 
     def delete
-        Activity.destroy(params[:id])
+        @activity.update!(activity_status: 'deleted')
+        # Activity.destroy(params[:id])
     end
 
     def update_status
@@ -74,6 +75,17 @@ class Api::V1::ActivityManagement::Shared::ActivitiesController < Api::V1::BaseC
 
     end
 
+    def auto_populate
+        @repairlistitems = RepairListItem.where(uid: params[:repair_code])
+        @repairlistitems.each do |item|
+            if item.repair_list.is_active?
+                render json: {container_repair_area_id: item.container_repair_area_id, container_damaged_area_id: item.container_damaged_area_id, repair_type_id: item.repair_type_id}
+                break
+            else
+                throw_error('Item not available', :unprocessable_entity)
+            end
+        end
+    end
     private
 
     def sort_params

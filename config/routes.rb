@@ -20,6 +20,7 @@ Rails.application.routes.draw do
           post 'activities', to: 'activities#create'
           put 'activities/:id',  to: 'activities#update'
           post 'activities/update_date',  to: 'activities#update_date'
+          post 'activities/auto_populate',  to: 'activities#auto_populate'
           scope "activities/:activity_id" do
             resources :activity_items, only: [:index, :create ,:update, :show]
             delete "activity_items/:id", to: 'activity_items#delete'

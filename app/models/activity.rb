@@ -9,11 +9,13 @@ class Activity < ApplicationRecord
     has_many :activity_items
 
     before_update :set_activity_timeline
+    after_create :set_activity_uid
+    before_update :set_container_status
     
     enum activity_type: [:quote, :repair]
 
     enum activity_status: [:quote_draft, :quote_issued, :pending_admin_approval, :pending_customer_approval, :ready_for_repair, \
-                            :repair_draft, :repair_done, :repair_pending_admin_approval, :ready_for_billing, :billed , :idle]
+                            :repair_draft, :repair_done, :repair_pending_admin_approval, :ready_for_billing, :billed , :idle, :deleted]
 
     def self.search_by(uid)
         if uid.blank?
@@ -158,8 +160,39 @@ class Activity < ApplicationRecord
 
 
     def set_activity_timeline
-        if self.activity_status_was.present? == self.activity_status
-            self.activity_status = self.activity_status_was
+        if self.activity_status_was.present? && self.activity_status != self.activity_status_was
+            self.activity_timelines.create!(history_status: self.activity_status, history_date: Date.today)
+        end
+    end
+
+    def set_activity_uid
+            if self.activity_type == "quote"
+                uid = 'QF'+rand(11111..99999).to_s
+                if self.activity_uid == uid
+                    uid = 'RF' + rand(11111..99999).to_s
+                end
+            elsif self.activity_type == "repair"
+                uid = 'RF'+rand(11111..99999).to_s
+                if self.activity_uid == uid
+                    uid = 'RF' + rand(11111..99999).to_s
+                end
+            end
+        self.activity_uid = uid
+        self.save!
+    end
+
+    def set_container_status
+        if self.activity_status_was != self.activity_status && self.activity_status_was.present? && self.activity_status=='ready_for_billing' || self.activity_status=='billed' || self.activity_status=='idle' || self.activity_status=='deleted'
+            if self.container.activities.present?
+                status = true
+                self.container.activities.each do |activity|
+                    unless activity.activity_status == 'idle' || activity.activity_status == 'ready_for_billing' || activity.activity_status == 'deleted' || activity.activity_status == 'billed'
+                        status = false
+                        break
+                    end
+                end
+                self.container.update!(container_status: 'idle') if status == true
+            end
         end
     end
 end
