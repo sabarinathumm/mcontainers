@@ -4,6 +4,7 @@ class ActivityItem < ApplicationRecord
     belongs_to :container_repair_area
     belongs_to :container_damaged_area
     belongs_to :repair_type
+    belongs_to :unit
 
     belongs_to :damaged_area_image, class_name: 'UploadedFile', optional: true
     belongs_to :repaired_area_image, class_name: 'UploadedFile', optional: true

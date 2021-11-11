@@ -39,7 +39,7 @@ class Api::V1::ActivityManagement::Shared::ActivityItemsController < Api::V1::Ba
     end
 
     def activity_item_params
-        params.require(:activity_item).permit(:repair_code, :quantity, :location, :hours, :labour_cost, \
+        params.require(:activity_item).permit(:repair_code, :length, :width, :unit_id, :location, :hours, :labour_cost, \
             :material_cost, :total_cost, :damaged_area_image_id, :repaired_area_image_id, :container_repair_area_id, :container_damaged_area_id, \
             :repair_type_id, :comments)
     end

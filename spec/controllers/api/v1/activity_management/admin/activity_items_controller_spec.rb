@@ -13,10 +13,11 @@ RSpec.describe 'Admin::ActivityManagement::', type: :request do
     let!(:container_attachment) { create(:container_attachment, attachment: uploaded_file, attachment_type: 'left_side_photo', container: container) } 
     let!(:activity) { create(:activity, container: container, assigned_to: admin) }
     let!(:repair_type){ create(:repair_type, name:'Beta') }
+    let!(:unit){ create(:unit, name: 'Feet') }
     let!(:container_damaged_area){ create(:container_damaged_area) }
     let!(:container_repair_area){ create(:container_repair_area) }
     let!(:activity_item) { create(:activity_item, activity: activity, repair_type: repair_type, container_damaged_area: container_damaged_area, \
-        container_repair_area: container_repair_area, damaged_area_image: uploaded_file, repaired_area_image: uploaded_file) }
+        container_repair_area: container_repair_area, damaged_area_image: uploaded_file, repaired_area_image: uploaded_file, unit: unit) }
 
     describe 'List all Activity Items for an activity' do
     # valid payload
@@ -29,7 +30,7 @@ RSpec.describe 'Admin::ActivityManagement::', type: :request do
                 #puts json
                 expect(json).not_to be_empty
                 expect(json['activity_items'][0]['repair_code']).to eql(activity_item.repair_code)
-                expect(json['activity_items'][0]['quantity']).to eql(activity_item.quantity)
+                expect(json['activity_items'][0]['length']).to eql(activity_item.length)
                 expect(json['activity_items'][0]['location']).to eql(activity_item.location)
                 expect(json['activity_items'][0]['hours']).to eql(activity_item.hours)
                 expect(json['activity_items'][0]['repair_type']['name']).to eql(repair_type.name)
@@ -53,7 +54,7 @@ RSpec.describe 'Admin::ActivityManagement::', type: :request do
                 #puts json
                 expect(json).not_to be_empty
                 expect(json['activity_item']['repair_code']).to eql(activity_item.repair_code)
-                expect(json['activity_item']['quantity']).to eql(activity_item.quantity)
+                expect(json['activity_item']['length']).to eql(activity_item.length)
                 expect(json['activity_item']['location']).to eql(activity_item.location)
                 expect(json['activity_item']['hours']).to eql(activity_item.hours)
                 expect(json['activity_item']['repair_type']['name']).to eql(repair_type.name)
@@ -77,7 +78,9 @@ RSpec.describe 'Admin::ActivityManagement::', type: :request do
                         repair_type_id: repair_type.id,
                         container_damaged_area_id: container_damaged_area.id,
                         container_repair_area_id: container_repair_area.id,
-                        quantity: "566",
+                        length: 45.0,
+                        width: 79.7,
+                        unit_id: unit.id,
                         hours: 55.0,
                         damaged_area_image_id: uploaded_file.id,
                         repaired_area_image_id: uploaded_file.id,
@@ -96,7 +99,7 @@ RSpec.describe 'Admin::ActivityManagement::', type: :request do
                 #puts json
                 expect(json).not_to be_empty
                 expect(json['activity_item']['repair_code']).to eql('4570')
-                expect(json['activity_item']['quantity']).to eql(566)
+                expect(json['activity_item']['length']).to eql(45.0)
                 expect(json['activity_item']['labour_cost_dollars']).to eql('500.0')
                 expect(json['activity_item']['hours']).to eql(55.0)
                 expect(json['activity_item']['repair_type']['name']).to eql(repair_type.name)
@@ -120,7 +123,8 @@ RSpec.describe 'Admin::ActivityManagement::', type: :request do
                         repair_type_id: repair_type.id,
                         container_damaged_area_id: container_damaged_area.id,
                         container_repair_area_id: container_repair_area.id,
-                        quantity: "566",
+                        length: 45.0,
+                        width: 79.7,
                         hours: 55.0,
                         damaged_area_image_id: uploaded_file.id,
                         repaired_area_image_id: uploaded_file.id,
@@ -139,7 +143,7 @@ RSpec.describe 'Admin::ActivityManagement::', type: :request do
                 #puts json
                 expect(json).not_to be_empty
                 expect(json['activity_item']['repair_code']).to eql('4570')
-                expect(json['activity_item']['quantity']).to eql(566)
+                expect(json['activity_item']['length']).to eql(45.0)
                 expect(json['activity_item']['labour_cost_dollars']).to eql('500.0')
                 expect(json['activity_item']['hours']).to eql(55.0)
                 expect(json['activity_item']['comments']).to eql('No comments Simple waste')
