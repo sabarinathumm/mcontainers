@@ -100,11 +100,20 @@ class Api::V1::ActivityManagement::Shared::ActivitiesController < Api::V1::BaseC
 
     end
 
+    # def export_quote_issued
+    #     activities = Activity.all.search_by(params[:search_text]).filters(filter_params)
+    #     respond_to do |format|
+    #         format.csv { send_data activities.export, filename: "Activities_#{Date.today}.csv", \
+    #         type: "text/csv" , disposition: 'attachment', status: :ok }
+    #     end
+
+    # end
+
     def auto_populate
         @repairlistitems = RepairListItem.where(uid: params[:repair_code])
         @repairlistitems.each do |item|
             if item.repair_list.is_active?
-                render json: {container_repair_area_id: item.container_repair_area_id, container_damaged_area_id: item.container_damaged_area_id, repair_type_id: item.repair_type_id}
+                render json: {container_repair_area_id: item.container_repair_area_id, container_damaged_area_id: item.container_damaged_area_id, repair_type_id: item.repair_type_id, length: item.length, width: item.width}
                 break
             else
                 throw_error('Item not available', :unprocessable_entity)

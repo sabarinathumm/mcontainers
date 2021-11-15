@@ -255,6 +255,24 @@ RSpec.describe 'Admin::ActivityManagement::', type: :request do
         end
     end
 
+    # describe 'Export Quote issued' do
+    #     # valid payload
+    #     context 'success' do
+    
+    #         let!(:activity2) { create_list(:activity, 5, container: container, assigned_to: admin) }
+
+    #         before { get "/api/v1/activity_management/admin/activities/export_quote_issued", headers: headers[:auth], as: :json }
+    
+    #         it 'returns token' do
+    #             # Note `json` is a custom helper to parse JSON responses
+    #             #puts response.body
+    #             #puts response.headers
+    #             expect(response.headers['Content-Type']).to eq('text/csv')
+    #             expect(response).to have_http_status(200)
+    #         end
+    #     end
+    # end
+
     describe 'show each activty of a container' do
         context 'sucess' do
             let!(:container2) { create(:container, container_type: container_type, yard: yard, customer: customer, container_owner_name: 'ZZZZZZ') }
