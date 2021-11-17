@@ -2,7 +2,8 @@ class CustomerRepairListItem < ApplicationRecord
     include ItemHelper
     
     belongs_to :customer_repair_list
-
+    belongs_to :length, optional: true
+    belongs_to :width, optional: true
     belongs_to :container_repair_area, optional: true
     belongs_to :container_damaged_area, optional: true
     belongs_to :repair_type, optional: true

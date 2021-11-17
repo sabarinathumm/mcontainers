@@ -1,7 +1,7 @@
 class RepairListItemSerializer < ActiveModel::Serializer
     attributes :id, :uid, :is_non_mearsk_not_applicable, :non_mearsk_hours, \
         :non_mearsk_material_cost_dollars, :non_mearsk_material_cost_cents, :non_mearsk_material_cost_currency, \
-        :non_mearsk_description, :non_mearsk_id_source, :location, :length, :width, :is_mearsk_not_applicable, \
+        :non_mearsk_description, :non_mearsk_id_source, :location, :is_mearsk_not_applicable, \
         :mearsk_max_material_cost_dollars, :mearsk_max_material_cost_cents, :mearsk_max_material_cost_currency, \
         :mearsk_unit_material_cost_dollars, :mearsk_unit_material_cost_cents, :mearsk_unit_material_cost_currency, \
         :mearsk_hours_per_unit, :mearsk_hours_per_unit, \
@@ -15,6 +15,8 @@ class RepairListItemSerializer < ActiveModel::Serializer
     belongs_to :dam, serializer: MetaSerializer
     belongs_to :event, serializer: MetaSerializer
     belongs_to :unit, serializer: MetaSerializer
+    belongs_to :length, serializer: MetaSerializer
+    belongs_to :width, serializer: MetaSerializer
     belongs_to :repair_mode, serializer: MetaSerializer
     belongs_to :mode_number, serializer: MetaSerializer
     belongs_to :component, serializer: MetaSerializer

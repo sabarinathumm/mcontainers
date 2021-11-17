@@ -16,6 +16,8 @@ RSpec.describe 'Admin::CustomerRepairListItems::', type: :request do
   let!(:repair_mode){ create(:repair_mode) }
   let!(:event){ create(:event) }
   let!(:unit){ create(:unit) }
+  let!(:length){ create(:length) }
+  let!(:width){ create(:width) }
   let!(:customer_repair_list){ create(:customer_repair_list, customer: customer) }
   let!(:customer_repair_list_item){ create(:customer_repair_list_item, customer_repair_list: customer_repair_list)}
   

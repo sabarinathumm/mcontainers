@@ -55,7 +55,7 @@ RSpec.describe 'Admin::CustomerRepairLists::', type: :request do
         
             it 'returns token' do
                 # Note `json` is a custom helper to parse JSON responses
-                puts json
+                # puts json
                 #puts repair_list.reload.as_json
                 expect(json).not_to be_empty
                 # expect(json['customer_repair_lists'].count).to eql(1)

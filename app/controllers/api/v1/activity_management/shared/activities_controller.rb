@@ -123,9 +123,8 @@ class Api::V1::ActivityManagement::Shared::ActivitiesController < Api::V1::BaseC
 
     def auto_populate_all
         @repair_list_item = @repair_list.repair_list_items.where('container_damaged_area_id': params[:container_damaged_area], 'container_repair_area_id': params[:container_repair_area_id],  'repair_type_id': params[:repair_type_id]).first 
-        throw_error('Item not available', :unprocessable_entity) if @repair_list_item.empty?
-        puts @repair_list_item.pluck(:uid, :length, :width, :unit_id)
-        render json: {uids: @repair_list_item.pluck(:uid, :length, :width, :unit_id)}
+        throw_error('Item not available', :unprocessable_entity) if @repair_list_item.blank?
+        render json: {length_id: @repair_list_item.length_id, width_id: @repair_list_item.width_id, unit_id: @repair_list_item.unit_id, repair_code: @repair_list_item.uid}
     end
     private
 

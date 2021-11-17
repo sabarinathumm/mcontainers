@@ -15,6 +15,8 @@ RSpec.describe 'RepairListItems::', type: :request do
   let!(:repair_mode){ create(:repair_mode) }
   let!(:event){ create(:event) }
   let!(:unit){ create(:unit) }
+  let!(:length){ create(:length) }
+  let!(:width){ create(:width) }
   let!(:repair_list){ create(:repair_list) }
   
 

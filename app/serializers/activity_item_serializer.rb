@@ -1,5 +1,5 @@
 class ActivityItemSerializer < ActiveModel::Serializer
-    attributes :id, :repair_code, :length, :width, :location, :hours, :labour_cost_cents, \
+    attributes :id, :repair_code, :location, :hours, :labour_cost_cents, \
         :labour_cost_dollars, :labour_cost_currency, :material_cost_cents, :material_cost_dollars, :material_cost_currency, \
         :total_cost_cents, :total_cost_dollars, :total_cost_currency, :comments
 
@@ -7,6 +7,8 @@ class ActivityItemSerializer < ActiveModel::Serializer
     belongs_to :container_damaged_area, serializer: MetaSerializer
     belongs_to :repair_type, serializer: MetaSerializer
     belongs_to :unit, serializer: MetaSerializer
+    belongs_to :length, serializer: MetaSerializer
+    belongs_to :width, serializer: MetaSerializer
     belongs_to :damaged_area_image, serializer: UploadedFileSerializer
     belongs_to :repaired_area_image, serializer: UploadedFileSerializer
 
