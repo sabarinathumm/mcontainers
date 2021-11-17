@@ -14,8 +14,8 @@ class Activity < ApplicationRecord
     
     enum activity_type: [:quote, :repair]
 
-    enum activity_status: [:quote_draft, :quote_issued, :pending_admin_approval, :pending_customer_approval, :ready_for_repair, \
-                            :repair_draft, :repair_done, :repair_pending_admin_approval, :ready_for_billing, :billed , :idle, :deleted]
+    enum activity_status: [:quote_draft, :pending_admin_approval, :pending_customer_approval, :ready_for_repair, \
+                            :repair_draft, :repair_pending_admin_approval, :ready_for_billing, :billed , :idle, :deleted]
 
     def self.search_by(uid)
         if uid.blank?

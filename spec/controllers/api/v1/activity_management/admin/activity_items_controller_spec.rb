@@ -14,10 +14,12 @@ RSpec.describe 'Admin::ActivityManagement::', type: :request do
     let!(:activity) { create(:activity, container: container, assigned_to: admin) }
     let!(:repair_type){ create(:repair_type, name:'Beta') }
     let!(:unit){ create(:unit, name: 'Feet') }
+    let!(:length){ create(:length) }
+    let!(:width){ create(:width) }
     let!(:container_damaged_area){ create(:container_damaged_area) }
     let!(:container_repair_area){ create(:container_repair_area) }
     let!(:activity_item) { create(:activity_item, activity: activity, repair_type: repair_type, container_damaged_area: container_damaged_area, \
-        container_repair_area: container_repair_area, damaged_area_image: uploaded_file, repaired_area_image: uploaded_file, unit: unit) }
+        container_repair_area: container_repair_area, damaged_area_image: uploaded_file, repaired_area_image: uploaded_file, unit: unit, length: length, width: width) }
 
     describe 'List all Activity Items for an activity' do
     # valid payload
@@ -78,8 +80,8 @@ RSpec.describe 'Admin::ActivityManagement::', type: :request do
                         repair_type_id: repair_type.id,
                         container_damaged_area_id: container_damaged_area.id,
                         container_repair_area_id: container_repair_area.id,
-                        length: 45.0,
-                        width: 79.7,
+                        length_id: length.id,
+                        width_id: width.id,
                         unit_id: unit.id,
                         hours: 55.0,
                         damaged_area_image_id: uploaded_file.id,

@@ -23,6 +23,15 @@ class Api::V1::RepairListManagement::Admin::CustomerRepairListsController < Api:
         end
     end
 
+    def version_activation
+    puts "hi"
+        ActiveRecord::Base.transaction do
+            CustomerRepairList.update(is_active: false)
+            @repair_list = CustomerRepairList.find(params[:id])
+            @repair_list.update!(is_active: true)
+        end
+        render json: @repair_list, serializer: RepairListSerializer
+    end
     private
 
     def set_customer

@@ -4,6 +4,7 @@ class Api::V1::ActivityManagement::Shared::ActivitiesController < Api::V1::BaseC
     before_action :set_container, only: [:container_activity, :create]
     before_action :set_activity, only: [:show, :delete, :update,]
     before_action :set_format, only: [:export]
+    before_action :set_repair_list, only: [:auto_populate_repair_area, :auto_populate_repair_type, :auto_populate_all]
 
     def index    
         @activities = Activity.all.filters(filter_params).search_by(params[:search_text]).sorts(sort_params)  
@@ -21,9 +22,7 @@ class Api::V1::ActivityManagement::Shared::ActivitiesController < Api::V1::BaseC
         @activity = Activity.find(params[:activity_id])
 
         if @activity.activity_status == 'quote_draft'
-            render json: {activity_statuses: ['quote_issued']}
-        elsif @activity.activity_status == 'quote_issued'
-            render json: {activity_statuses: ['quote_draft', 'pending_admin_approval']}
+            render json: {activity_statuses: ['pending_admin_approval']}
         elsif @activity.activity_status == 'pending_admin_approval'
             render json: {activity_statuses:['quote_draft', 'pending_customer_approval']}
         elsif @activity.activity_status == 'pending_customer_approval'
@@ -31,13 +30,9 @@ class Api::V1::ActivityManagement::Shared::ActivitiesController < Api::V1::BaseC
         elsif @activity.activity_status == 'ready_for_repair'
             render json: {activity_statuses: ['quote_draft','repair_draft']}
         elsif @activity.activity_status == 'repair_draft'
-            render json: {activity_statuses: ['repair_done']}
-        elsif @activity.activity_status == 'repair_done'
             render json: {activity_statuses: ['ready_for_billing','repair_draft']}
         elsif @activity.activity_status == 'ready_for_billing'
-            render json: {activity_statuses: ['repair_done','billed'] }
-        elsif @activity.activity_status == 'billed'
-            render json: {activity_statuses: ['repair_done']}
+            render json: {activity_statuses: ['billed'] }
         end
     end
 
@@ -82,7 +77,6 @@ class Api::V1::ActivityManagement::Shared::ActivitiesController < Api::V1::BaseC
 
     def delete
         @activity.update!(activity_status: 'deleted')
-        # Activity.destroy(params[:id])
     end
 
     def update_status
@@ -100,15 +94,6 @@ class Api::V1::ActivityManagement::Shared::ActivitiesController < Api::V1::BaseC
 
     end
 
-    # def export_quote_issued
-    #     activities = Activity.all.search_by(params[:search_text]).filters(filter_params)
-    #     respond_to do |format|
-    #         format.csv { send_data activities.export, filename: "Activities_#{Date.today}.csv", \
-    #         type: "text/csv" , disposition: 'attachment', status: :ok }
-    #     end
-
-    # end
-
     def auto_populate
         @repairlistitems = RepairListItem.where(uid: params[:repair_code])
         @repairlistitems.each do |item|
@@ -120,7 +105,33 @@ class Api::V1::ActivityManagement::Shared::ActivitiesController < Api::V1::BaseC
             end
         end
     end
+
+    def auto_populate_repair_area
+        @repair_list_items = @repair_list.repair_list_items.where('container_damaged_area_id': params[:container_damaged_area])
+        throw_error('Item not available', :unprocessable_entity) if @repair_list_items.empty?
+        @repair_list_items.pluck(:container_repair_area_id)
+        render json: {container_repair_area_ids: @repair_list_items.pluck(:container_repair_area_id)}
+    end
+
+
+    def auto_populate_repair_type
+        @repair_list_items = @repair_list.repair_list_items.where('container_damaged_area_id': params[:container_damaged_area], 'container_repair_area_id': params[:container_repair_area_id])
+        throw_error('Item not available', :unprocessable_entity) if @repair_list_items.empty?
+        @repair_list_items.pluck(:repair_type_id)
+        render json: {repair_type_ids: @repair_list_items.pluck(:repair_type_id)}
+    end
+
+    def auto_populate_all
+        @repair_list_item = @repair_list.repair_list_items.where('container_damaged_area_id': params[:container_damaged_area], 'container_repair_area_id': params[:container_repair_area_id],  'repair_type_id': params[:repair_type_id]).first 
+        throw_error('Item not available', :unprocessable_entity) if @repair_list_item.empty?
+        puts @repair_list_item.pluck(:uid, :length, :width, :unit_id)
+        render json: {uids: @repair_list_item.pluck(:uid, :length, :width, :unit_id)}
+    end
     private
+
+    # def auto_populate_params
+    #     params.permit(:container_damaged_area_id, :container_repair_area_id, :repair_type_id)
+    # end
 
     def sort_params
         params.permit(:yard_name, :owner_name, :activity_status_sort, :activity_type_sort, :customer_name, :created_at, :activity_uid)
@@ -154,5 +165,9 @@ class Api::V1::ActivityManagement::Shared::ActivitiesController < Api::V1::BaseC
 
     def activity_params
         params.require(:activity).permit(:activity_type, :activity_date, :activity_status)
+    end
+
+    def set_repair_list
+        @repair_list = RepairList.where(is_active: true).first
     end
 end

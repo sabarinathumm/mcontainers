@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_11_11_113559) do
+ActiveRecord::Schema.define(version: 2021_11_17_083949) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -58,16 +58,18 @@ ActiveRecord::Schema.define(version: 2021_11_11_113559) do
     t.bigint "damaged_area_image_id"
     t.bigint "repaired_area_image_id"
     t.text "comments"
-    t.float "length"
-    t.float "width"
     t.bigint "unit_id"
+    t.bigint "length_id"
+    t.bigint "width_id"
     t.index ["activity_id"], name: "index_activity_items_on_activity_id"
     t.index ["container_damaged_area_id"], name: "index_activity_items_on_container_damaged_area_id"
     t.index ["container_repair_area_id"], name: "index_activity_items_on_container_repair_area_id"
     t.index ["damaged_area_image_id"], name: "index_activity_items_on_damaged_area_image_id"
+    t.index ["length_id"], name: "index_activity_items_on_length_id"
     t.index ["repair_type_id"], name: "index_activity_items_on_repair_type_id"
     t.index ["repaired_area_image_id"], name: "index_activity_items_on_repaired_area_image_id"
     t.index ["unit_id"], name: "index_activity_items_on_unit_id"
+    t.index ["width_id"], name: "index_activity_items_on_width_id"
   end
 
   create_table "activity_timelines", force: :cascade do |t|
@@ -185,8 +187,6 @@ ActiveRecord::Schema.define(version: 2021_11_11_113559) do
     t.bigint "event_id"
     t.text "location"
     t.bigint "unit_id"
-    t.float "length"
-    t.float "width"
     t.string "non_mearsk_id_source"
     t.boolean "is_mearsk_not_applicable"
     t.integer "mearsk_max_material_cost_cents", default: 0, null: false
@@ -205,6 +205,8 @@ ActiveRecord::Schema.define(version: 2021_11_11_113559) do
     t.datetime "deleted_at"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+    t.bigint "width_id"
+    t.bigint "length_id"
     t.index ["comp_id"], name: "index_customer_repair_list_items_on_comp_id"
     t.index ["component_id"], name: "index_customer_repair_list_items_on_component_id"
     t.index ["container_damaged_area_id"], name: "index_customer_repair_list_items_on_container_damaged_area_id"
@@ -212,12 +214,14 @@ ActiveRecord::Schema.define(version: 2021_11_11_113559) do
     t.index ["customer_repair_list_id"], name: "index_customer_repair_list_items_on_customer_repair_list_id"
     t.index ["dam_id"], name: "index_customer_repair_list_items_on_dam_id"
     t.index ["event_id"], name: "index_customer_repair_list_items_on_event_id"
+    t.index ["length_id"], name: "index_customer_repair_list_items_on_length_id"
     t.index ["mode_number_id"], name: "index_customer_repair_list_items_on_mode_number_id"
     t.index ["rep_id"], name: "index_customer_repair_list_items_on_rep_id"
     t.index ["repair_mode_id"], name: "index_customer_repair_list_items_on_repair_mode_id"
     t.index ["repair_type_id"], name: "index_customer_repair_list_items_on_repair_type_id"
     t.index ["uid", "customer_repair_list_id"], name: "customer_repair_list_items_uid_index", unique: true
     t.index ["unit_id"], name: "index_customer_repair_list_items_on_unit_id"
+    t.index ["width_id"], name: "index_customer_repair_list_items_on_width_id"
   end
 
   create_table "customer_repair_lists", force: :cascade do |t|
@@ -276,6 +280,12 @@ ActiveRecord::Schema.define(version: 2021_11_11_113559) do
     t.datetime "updated_at", precision: 6, null: false
   end
 
+  create_table "lengths", force: :cascade do |t|
+    t.string "name"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+  end
+
   create_table "mode_numbers", force: :cascade do |t|
     t.string "name"
     t.datetime "created_at", precision: 6, null: false
@@ -328,8 +338,6 @@ ActiveRecord::Schema.define(version: 2021_11_11_113559) do
     t.bigint "event_id"
     t.text "location"
     t.bigint "unit_id"
-    t.float "length"
-    t.float "width"
     t.string "non_mearsk_id_source"
     t.boolean "is_mearsk_not_applicable"
     t.integer "mearsk_max_material_cost_cents", default: 0, null: false
@@ -348,12 +356,15 @@ ActiveRecord::Schema.define(version: 2021_11_11_113559) do
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.datetime "deleted_at"
+    t.bigint "length_id"
+    t.bigint "width_id"
     t.index ["comp_id"], name: "index_repair_list_items_on_comp_id"
     t.index ["component_id"], name: "index_repair_list_items_on_component_id"
     t.index ["container_damaged_area_id"], name: "index_repair_list_items_on_container_damaged_area_id"
     t.index ["container_repair_area_id"], name: "index_repair_list_items_on_container_repair_area_id"
     t.index ["dam_id"], name: "index_repair_list_items_on_dam_id"
     t.index ["event_id"], name: "index_repair_list_items_on_event_id"
+    t.index ["length_id"], name: "index_repair_list_items_on_length_id"
     t.index ["mode_number_id"], name: "index_repair_list_items_on_mode_number_id"
     t.index ["rep_id"], name: "index_repair_list_items_on_rep_id"
     t.index ["repair_list_id"], name: "index_repair_list_items_on_repair_list_id"
@@ -361,6 +372,7 @@ ActiveRecord::Schema.define(version: 2021_11_11_113559) do
     t.index ["repair_type_id"], name: "index_repair_list_items_on_repair_type_id"
     t.index ["uid", "repair_list_id"], name: "index_repair_list_items_on_uid_and_repair_list_id", unique: true
     t.index ["unit_id"], name: "index_repair_list_items_on_unit_id"
+    t.index ["width_id"], name: "index_repair_list_items_on_width_id"
   end
 
   create_table "repair_lists", force: :cascade do |t|
@@ -418,15 +430,23 @@ ActiveRecord::Schema.define(version: 2021_11_11_113559) do
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
   end
 
+  create_table "widths", force: :cascade do |t|
+    t.string "name"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+  end
+
   create_table "yards", force: :cascade do |t|
     t.string "name"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
   end
 
+  add_foreign_key "activity_items", "lengths"
   add_foreign_key "activity_items", "units"
   add_foreign_key "activity_items", "uploaded_files", column: "damaged_area_image_id"
   add_foreign_key "activity_items", "uploaded_files", column: "repaired_area_image_id"
+  add_foreign_key "activity_items", "widths"
   add_foreign_key "activity_timelines", "activities"
   add_foreign_key "cities", "provinces"
   add_foreign_key "container_attachments", "containers"
@@ -440,11 +460,13 @@ ActiveRecord::Schema.define(version: 2021_11_11_113559) do
   add_foreign_key "customer_repair_list_items", "customer_repair_lists"
   add_foreign_key "customer_repair_list_items", "dams"
   add_foreign_key "customer_repair_list_items", "events"
+  add_foreign_key "customer_repair_list_items", "lengths"
   add_foreign_key "customer_repair_list_items", "mode_numbers"
   add_foreign_key "customer_repair_list_items", "repair_modes"
   add_foreign_key "customer_repair_list_items", "repair_types"
   add_foreign_key "customer_repair_list_items", "reps"
   add_foreign_key "customer_repair_list_items", "units"
+  add_foreign_key "customer_repair_list_items", "widths"
   add_foreign_key "customer_repair_lists", "customers"
   add_foreign_key "customers", "cities"
   add_foreign_key "customers", "provinces"
@@ -454,10 +476,12 @@ ActiveRecord::Schema.define(version: 2021_11_11_113559) do
   add_foreign_key "repair_list_items", "container_repair_areas"
   add_foreign_key "repair_list_items", "dams"
   add_foreign_key "repair_list_items", "events"
+  add_foreign_key "repair_list_items", "lengths"
   add_foreign_key "repair_list_items", "mode_numbers"
   add_foreign_key "repair_list_items", "repair_lists"
   add_foreign_key "repair_list_items", "repair_modes"
   add_foreign_key "repair_list_items", "repair_types"
   add_foreign_key "repair_list_items", "reps"
   add_foreign_key "repair_list_items", "units"
+  add_foreign_key "repair_list_items", "widths"
 end

@@ -29,6 +29,18 @@ units = meta_sheet.column(7).compact
     Unit.create!(name: units[i])
 end
 
+lengths = meta_sheet.column(5).compact
+
+lengths.each do |i|
+    Length.create!(name: lengths[i])
+end
+
+widths = meta_sheet.column(6).compact
+
+widths.each do |i|
+    Width.create!(name: widths[i])
+end
+
 repair_types = meta_sheet.column(4).compact
 
 repair_types.each do |cra|

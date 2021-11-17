@@ -255,24 +255,6 @@ RSpec.describe 'Admin::ActivityManagement::', type: :request do
         end
     end
 
-    # describe 'Export Quote issued' do
-    #     # valid payload
-    #     context 'success' do
-    
-    #         let!(:activity2) { create_list(:activity, 5, container: container, assigned_to: admin) }
-
-    #         before { get "/api/v1/activity_management/admin/activities/export_quote_issued", headers: headers[:auth], as: :json }
-    
-    #         it 'returns token' do
-    #             # Note `json` is a custom helper to parse JSON responses
-    #             #puts response.body
-    #             #puts response.headers
-    #             expect(response.headers['Content-Type']).to eq('text/csv')
-    #             expect(response).to have_http_status(200)
-    #         end
-    #     end
-    # end
-
     describe 'show each activty of a container' do
         context 'sucess' do
             let!(:container2) { create(:container, container_type: container_type, yard: yard, customer: customer, container_owner_name: 'ZZZZZZ') }
@@ -331,7 +313,7 @@ RSpec.describe 'Admin::ActivityManagement::', type: :request do
                 {
                     "activity":
                         {
-                            "activity_status": "repair_done",
+                            "activity_status": "repair_draft",
                             "activity_type": "repair"
                         }
                 }
@@ -370,7 +352,7 @@ RSpec.describe 'Admin::ActivityManagement::', type: :request do
         # valid payload
         context 'success' do
     
-            let!(:activity2) { create(:activity, container: container, assigned_to: admin, activity_status: 'quote_issued') }
+            let!(:activity2) { create(:activity, container: container, assigned_to: admin, activity_status: 'pending_admin_approval') }
             let!(:valid_attributes){
                 {
                     activity_id: activity2.id
@@ -383,14 +365,14 @@ RSpec.describe 'Admin::ActivityManagement::', type: :request do
                 #puts json
                 expect(json['activity_statuses'].count).to eq(2)
                 expect(json['activity_statuses'][0]).to eq('quote_draft')
-                expect(json['activity_statuses'][1]).to eq('pending_admin_approval')
+                expect(json['activity_statuses'][1]).to eq('pending_customer_approval')
                 expect(json).not_to be_empty
                 expect(response).to have_http_status(200)
             end
         end
     end
     
-    describe 'Auto populate damage and repair area code' do
+    describe 'Auto populate damaged, repair area, repair types' do
         # valid payload
         context 'success' do
     
@@ -406,11 +388,13 @@ RSpec.describe 'Admin::ActivityManagement::', type: :request do
             let!(:repair_mode){ create(:repair_mode) }
             let!(:event){ create(:event) }
             let!(:unit){ create(:unit) }
+            let!(:length){ create(:length) }
+            let!(:width){ create(:width) }
             let!(:repair_list){ create(:repair_list, is_active: true) }
             let!(:repair_list_item){ create_list(:repair_list_item, 30, repair_list: repair_list, repair_type: repair_type, \
                 container_damaged_area: container_damaged_area, container_repair_area: container_repair_area, \
                 component: component, comp: comp, dam: dam, rep: rep, mode_number: mode_number, repair_mode: repair_mode, \
-                event: event, unit: unit) 
+                event: event, unit: unit, length: length, width: width) 
             }
 
             let!(:valid_attributes){
@@ -421,6 +405,132 @@ RSpec.describe 'Admin::ActivityManagement::', type: :request do
             before { post "/api/v1/activity_management/admin/activities/auto_populate", params: valid_attributes ,headers: headers[:auth], as: :json }
     
             it 'returns the damage codes' do
+                # Note `json` is a custom helper to parse JSON responses
+                # puts json
+                expect(json).not_to be_empty
+                expect(response).to have_http_status(200)
+            end
+        end
+    end
+
+    describe 'Auto populate repair area' do
+        # valid payload
+        context 'success' do
+    
+            let!(:activity2) { create_list(:activity, 5, container: container, assigned_to: admin) }
+            let!(:repair_type){ create(:repair_type, name:'Beta') }
+            let!(:container_damaged_area){ create(:container_damaged_area) }
+            let!(:container_repair_area){ create(:container_repair_area) }
+            let!(:component){ create(:component) }
+            let!(:comp){ create(:comp) }
+            let!(:rep){ create(:rep) }
+            let!(:dam){ create(:dam) }
+            let!(:mode_number){ create(:mode_number) }
+            let!(:repair_mode){ create(:repair_mode) }
+            let!(:event){ create(:event) }
+            let!(:unit){ create(:unit) }
+            let!(:length){ create(:length) }
+            let!(:width){ create(:width) }
+            let!(:repair_list){ create(:repair_list, is_active: true) }
+            let!(:repair_list_item){ create_list(:repair_list_item, 30, repair_list: repair_list, repair_type: repair_type, \
+                container_damaged_area: container_damaged_area, container_repair_area: container_repair_area, \
+                component: component, comp: comp, dam: dam, rep: rep, mode_number: mode_number, repair_mode: repair_mode, \
+                event: event, unit: unit, length: length, width: width) 
+            }
+
+            let!(:valid_attributes){
+                {
+                    container_damaged_area: repair_list_item.first.container_damaged_area_id
+                }
+            }
+            before { post "/api/v1/activity_management/admin/activities/auto_populate_repair_area", params: valid_attributes ,headers: headers[:auth], as: :json }
+    
+            it 'returns the damage codes' do
+                # Note `json` is a custom helper to parse JSON responses
+                # puts json
+                expect(json).not_to be_empty
+                expect(response).to have_http_status(200)
+            end
+        end
+    end
+
+    describe 'Auto populate repair type' do
+        # valid payload
+        context 'success' do
+    
+            let!(:activity2) { create_list(:activity, 5, container: container, assigned_to: admin) }
+            let!(:repair_type){ create(:repair_type, name:'Beta') }
+            let!(:container_damaged_area){ create(:container_damaged_area) }
+            let!(:container_repair_area){ create(:container_repair_area) }
+            let!(:component){ create(:component) }
+            let!(:comp){ create(:comp) }
+            let!(:rep){ create(:rep) }
+            let!(:dam){ create(:dam) }
+            let!(:mode_number){ create(:mode_number) }
+            let!(:repair_mode){ create(:repair_mode) }
+            let!(:event){ create(:event) }
+            let!(:unit){ create(:unit) }
+            let!(:length){ create(:length) }
+            let!(:width){ create(:width) }
+            let!(:repair_list){ create(:repair_list, is_active: true) }
+            let!(:repair_list_item){ create_list(:repair_list_item, 30, repair_list: repair_list, repair_type: repair_type, \
+                container_damaged_area: container_damaged_area, container_repair_area: container_repair_area, \
+                component: component, comp: comp, dam: dam, rep: rep, mode_number: mode_number, repair_mode: repair_mode, \
+                event: event, unit: unit, length: length, width: width) 
+            }
+
+            let!(:valid_attributes){
+                {
+                    container_repair_area_id: repair_list_item.first.container_repair_area_id,
+                    container_damaged_area: repair_list_item.first.container_damaged_area_id
+                }
+            }
+            before { post "/api/v1/activity_management/admin/activities/auto_populate_repair_type", params: valid_attributes ,headers: headers[:auth], as: :json }
+    
+            it 'returns the repair type ids' do
+                # Note `json` is a custom helper to parse JSON responses
+                # puts json
+                expect(json).not_to be_empty
+                expect(response).to have_http_status(200)
+            end
+        end
+    end
+
+    describe 'Auto populate length width unit and rest of data' do
+        # valid payload
+        context 'success' do
+    
+            let!(:activity2) { create_list(:activity, 5, container: container, assigned_to: admin) }
+            let!(:repair_type){ create(:repair_type, name:'Beta') }
+            let!(:container_damaged_area){ create(:container_damaged_area) }
+            let!(:container_repair_area){ create(:container_repair_area) }
+            let!(:component){ create(:component) }
+            let!(:comp){ create(:comp) }
+            let!(:rep){ create(:rep) }
+            let!(:dam){ create(:dam) }
+            let!(:mode_number){ create(:mode_number) }
+            let!(:repair_mode){ create(:repair_mode) }
+            let!(:event){ create(:event) }
+            let!(:unit){ create(:unit) }
+            let!(:length){ create(:length) }
+            let!(:width){ create(:width) }
+            let!(:repair_list){ create(:repair_list, is_active: true) }
+            let!(:repair_list_item){ create_list(:repair_list_item, 30, repair_list: repair_list, repair_type: repair_type, \
+                container_damaged_area: container_damaged_area, container_repair_area: container_repair_area, \
+                component: component, comp: comp, dam: dam, rep: rep, mode_number: mode_number, repair_mode: repair_mode, \
+                event: event, unit: unit) 
+            }
+
+            let!(:valid_attributes){
+                {
+                    container_repair_area_id: repair_list_item.first.container_repair_area_id,
+                    container_damaged_area: repair_list_item.first.container_damaged_area_id,
+                    repair_type_id: repair_list_item.first.repair_type_id
+                }
+            }
+            before { post "/api/v1/activity_management/admin/activities/auto_populate_all", params: valid_attributes ,headers: headers[:auth], as: :json }
+    
+            it 'returns the uids' do
                 # Note `json` is a custom helper to parse JSON responses
                 # puts json
                 expect(json).not_to be_empty

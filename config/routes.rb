@@ -22,6 +22,9 @@ Rails.application.routes.draw do
           post 'activities/update_date',  to: 'activities#update_date'
           post 'activities/auto_populate',  to: 'activities#auto_populate'
           post 'activity_statuses',  to: 'activities#activity_status'
+          post 'activities/auto_populate_repair_area',  to: 'activities#auto_populate_repair_area'
+          post 'activities/auto_populate_repair_type',  to: 'activities#auto_populate_repair_type'
+          post 'activities/auto_populate_all',  to: 'activities#auto_populate_all'
           scope "activities/:activity_id" do
             resources :activity_items, only: [:index, :create ,:update, :show]
             delete "activity_items/:id", to: 'activity_items#delete'
@@ -60,12 +63,15 @@ Rails.application.routes.draw do
         resources :cities, only: [:index]
         resources :container_types, only: [:index]
         resources :yards, only: [:index]
+        resources :lengths, only: [:index]
+        resources :widths, only: [:index]
       end
 
       namespace :repair_list_management do
         namespace :admin do
           get 'repair_list',  to: 'repair_lists#index'
           post 'repair_list', to: 'repair_lists#create'
+          put 'repair_list/version_activation/:id', to: 'repair_lists#version_activation'
           scope "/repair_list/:repair_list_id" do
             get 'items',  to: 'repair_list_items#index'
             post 'items', to: 'repair_list_items#create'
@@ -75,6 +81,7 @@ Rails.application.routes.draw do
 
           get 'customer_repair_list',  to: 'customer_repair_lists#index'
           post 'customer_repair_list', to: 'customer_repair_lists#create'
+          put 'customer_repair_list/version_activation/:id', to: 'customer_repair_lists#version_activation'
 
           scope "/customer_repair_list/:customer_repair_list_id" do
             get 'items',  to: 'customer_repair_list_items#index'

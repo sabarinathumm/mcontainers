@@ -48,6 +48,30 @@ RSpec.describe 'RepairLists::', type: :request do
                     expect(response).to have_http_status(200)
                 end
             end
+    end
+    describe 'Update status of repair_list versions' do
+        # valid payload
+        context 'success' do
+            let!(:repair_list){ create(:repair_list, is_active: true) }
+            let!(:valid_attributes){
+                {
+                    repair_list_id: repair_list.id 
+                }
+            }
+        
+            before { put "/api/v1/repair_list_management/admin/repair_list/version_activation/#{repair_list.id}", params: valid_attributes, headers: headers[:auth], as: :json }
+        
+            it 'returns token' do
+                # Note `json` is a custom helper to parse JSON responses
+                puts json
+                #puts repair_list.reload.as_json
+                expect(json).not_to be_empty
+                # expect(json['repair_lists'].count).to eql(1)
+                # expect(json['repair_lists'][0]['id']).to eql(0)
+                expect(response).to have_http_status(200)
+            end
         end
+    end
+        
     
 end
