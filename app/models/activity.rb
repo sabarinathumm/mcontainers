@@ -129,6 +129,10 @@ class Activity < ApplicationRecord
             where(nil)
         end
     end
+
+    def self.sub_total(total_cost_params)
+        
+    end
     
     def container_number
         self.container.container_uid

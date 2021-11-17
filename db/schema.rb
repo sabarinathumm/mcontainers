@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_11_17_083949) do
+ActiveRecord::Schema.define(version: 2021_11_17_123321) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -26,6 +26,7 @@ ActiveRecord::Schema.define(version: 2021_11_17_083949) do
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.datetime "activity_date"
+    t.float "sub_total"
     t.index ["assigned_to_type", "assigned_to_id"], name: "index_activities_on_assigned_to_type_and_assigned_to_id"
     t.index ["container_id"], name: "index_activities_on_container_id"
   end

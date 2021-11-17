@@ -86,7 +86,7 @@ class Api::V1::ActivityManagement::Shared::ActivitiesController < Api::V1::BaseC
     end
 
     def export
-        activities = Activity.all.search_by(params[:search_text]).filters(filter_params)
+        activities = Activity.where(id: params[:id])
         respond_to do |format|
             format.csv { send_data activities.export, filename: "Activities_#{Date.today}.csv", \
             type: "text/csv" , disposition: 'attachment', status: :ok }

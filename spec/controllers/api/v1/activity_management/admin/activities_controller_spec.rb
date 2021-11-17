@@ -242,8 +242,12 @@ RSpec.describe 'Admin::ActivityManagement::', type: :request do
         context 'success' do
     
             let!(:activity2) { create_list(:activity, 5, container: container, assigned_to: admin) }
-
-            before { get "/api/v1/activity_management/admin/activities_export", headers: headers[:auth], as: :json }
+            let!(:valid_attributes){
+                    {
+                        activity_id: activity.id
+                    }
+                }
+            before { post "/api/v1/activity_management/admin/activities_export", params: valid_attributes, headers: headers[:auth], as: :json }
     
             it 'returns token' do
                 # Note `json` is a custom helper to parse JSON responses
