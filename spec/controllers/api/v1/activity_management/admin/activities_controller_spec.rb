@@ -242,8 +242,12 @@ RSpec.describe 'Admin::ActivityManagement::', type: :request do
         context 'success' do
     
             let!(:activity2) { create_list(:activity, 5, container: container, assigned_to: admin) }
-
-            before { get "/api/v1/activity_management/admin/activities_export", headers: headers[:auth], as: :json }
+            let!(:valid_attributes){
+                    {
+                        activity_id: activity.id
+                    }
+                }
+            before { post "/api/v1/activity_management/admin/activities_export", params: valid_attributes, headers: headers[:auth], as: :json }
     
             it 'returns token' do
                 # Note `json` is a custom helper to parse JSON responses
@@ -258,7 +262,17 @@ RSpec.describe 'Admin::ActivityManagement::', type: :request do
     describe 'show each activty of a container' do
         context 'sucess' do
             let!(:container2) { create(:container, container_type: container_type, yard: yard, customer: customer, container_owner_name: 'ZZZZZZ') }
+            let!(:repair_type){ create(:repair_type, name:'Beta') }
+            let!(:unit){ create(:unit, name: 'Feet') }
+            let!(:length){ create(:length) }
+            let!(:width){ create(:width) }
+            let!(:container_damaged_area){ create(:container_damaged_area) }
+            let!(:container_repair_area){ create(:container_repair_area) }
+            let!(:activity_items) { create_list(:activity_item, 5, labour_cost: 500, material_cost: 500, total_cost: 1000, activity: activity, repair_type: repair_type, container_damaged_area: container_damaged_area, \
+                container_repair_area: container_repair_area, damaged_area_image: uploaded_file, repaired_area_image: uploaded_file, unit: unit, length: length, width: width) }
             let!(:activity2) { create_list(:activity, 5, container: container, assigned_to: admin) }
+           
+
             before { get "/api/v1/activity_management/admin/activities/#{activity.id}", headers: headers[:auth], as: :json }
 
             it 'returns the filtered activity' do

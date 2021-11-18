@@ -13,7 +13,7 @@ Rails.application.routes.draw do
           resources :activities, only: [:index, :update, :show, :delete]
           get 'activities',  to: 'activities#index'
           post 'activities/update_status',  to: 'activities#update_status'
-          get 'activities_export',  to: 'activities#export'
+          post 'activities_export',  to: 'activities#export'
           get 'container_activities', to:'activities#container_activity'
           get 'activities', to: 'activities#show'
           delete 'activities/:id', to: 'activities#delete'

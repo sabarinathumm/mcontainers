@@ -129,6 +129,17 @@ class Activity < ApplicationRecord
             where(nil)
         end
     end
+
+    def sub_total
+        # puts "HI"
+        @activity_items = self.activity_items
+        @total_cost_cents = @activity_items.pluck(:total_cost_cents)
+        return @total_cost_cents.sum/100
+
+        # @total_cost_cents.each do |sum|
+        #     sub_total = sub_total + sum.total_cost_dollars
+        # end
+    end
     
     def container_number
         self.container.container_uid
