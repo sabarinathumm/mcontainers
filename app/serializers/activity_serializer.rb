@@ -8,4 +8,6 @@ class ActivitySerializer < ActiveModel::Serializer
     def created_at
         object.created_at.strftime("%d-%b-%Y")
     end
+
+    puts "SERIALIZER"
 end  
