@@ -185,6 +185,35 @@ RSpec.describe 'Meta::', type: :request do
             end
         end
 
+    describe 'List all Lengths' do
+        # valid payload
+        context 'success' do
+        
+        before { get '/api/v1/meta/lengths', headers: headers[:auth], as: :json }
+        
+            it 'returns token' do
+                # Note `json` is a custom helper to parse JSON responses
+                expect(json).not_to be_empty
+                expect((json)['lengths'].count).to eql(10)
+                expect(response).to have_http_status(200)
+            end
+        end
+    end
+    describe 'List all Widths' do
+        # valid payload
+        context 'success' do
+        
+        before { get '/api/v1/meta/widths', headers: headers[:auth], as: :json }
+        
+            it 'returns token' do
+                # Note `json` is a custom helper to parse JSON responses
+                expect(json).not_to be_empty
+                expect((json)['widths'].count).to eql(10)
+                expect(response).to have_http_status(200)
+            end
+        end
+    end
+
     describe 'List all Provinces' do
         # valid payload
             context 'success' do
