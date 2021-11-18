@@ -1,7 +1,7 @@
 class Api::V1::RepairListManagement::Admin::CustomerRepairListsController < Api::V1::BaseController
     before_action :doorkeeper_authorize!
 	before_action :validate_token!
-    before_action :set_customer
+    before_action :set_customer, except: [:version_activation]
 
     def index
         @repair_lists = CustomerRepairList.where(customer: @customer)
@@ -26,9 +26,11 @@ class Api::V1::RepairListManagement::Admin::CustomerRepairListsController < Api:
     def version_activation
     puts "hi"
         ActiveRecord::Base.transaction do
-            CustomerRepairList.update(is_active: false)
+            # CustomerRepairList.update(is_active: false)
             @repair_list = CustomerRepairList.find(params[:id])
+            @repair_list.customer.customer_repair_lists.update(is_active: false)
             @repair_list.update!(is_active: true)
+            puts @repair_list.to_json
         end
         render json: @repair_list, serializer: RepairListSerializer
     end

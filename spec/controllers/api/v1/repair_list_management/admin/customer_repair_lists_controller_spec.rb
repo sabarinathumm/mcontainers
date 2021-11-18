@@ -45,13 +45,9 @@ RSpec.describe 'Admin::CustomerRepairLists::', type: :request do
         context 'success' do
             let!(:customer){ create(:customer) }
             let!(:customer_repair_lists){ create_list(:customer_repair_list, 10, is_active: true, customer: customer) }
-            let!(:valid_attributes){
-                {
-                    customer_id: customer.id 
-                }
-            }
+            
         
-            before { put "/api/v1/repair_list_management/admin/customer_repair_list/version_activation/#{customer.id}", params: valid_attributes, headers: headers[:auth], as: :json }
+            before { put "/api/v1/repair_list_management/admin/customer_repair_list/version_activation/#{customer_repair_lists.first.id}", headers: headers[:auth], as: :json }
         
             it 'returns token' do
                 # Note `json` is a custom helper to parse JSON responses

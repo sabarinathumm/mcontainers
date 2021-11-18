@@ -427,7 +427,7 @@ RSpec.describe 'Admin::ActivityManagement::', type: :request do
         end
     end
 
-    describe 'Auto populate repair area' do
+    describe 'Auto populate damage area' do
         # valid payload
         context 'success' do
     
@@ -454,10 +454,10 @@ RSpec.describe 'Admin::ActivityManagement::', type: :request do
 
             let!(:valid_attributes){
                 {
-                    container_damaged_area: repair_list_item.first.container_damaged_area_id
+                    container_repair_area: repair_list_item.first.container_repair_area_id
                 }
             }
-            before { post "/api/v1/activity_management/admin/activities/auto_populate_repair_area", params: valid_attributes ,headers: headers[:auth], as: :json }
+            before { post "/api/v1/activity_management/admin/activities/auto_populate_damage_area", params: valid_attributes ,headers: headers[:auth], as: :json }
     
             it 'returns the damage codes' do
                 # Note `json` is a custom helper to parse JSON responses

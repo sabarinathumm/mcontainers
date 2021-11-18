@@ -22,7 +22,7 @@ Rails.application.routes.draw do
           post 'activities/update_date',  to: 'activities#update_date'
           post 'activities/auto_populate',  to: 'activities#auto_populate'
           post 'activity_statuses',  to: 'activities#activity_status'
-          post 'activities/auto_populate_repair_area',  to: 'activities#auto_populate_repair_area'
+          post 'activities/auto_populate_damage_area',  to: 'activities#auto_populate_damage_area'
           post 'activities/auto_populate_repair_type',  to: 'activities#auto_populate_repair_type'
           post 'activities/auto_populate_all',  to: 'activities#auto_populate_all'
           scope "activities/:activity_id" do

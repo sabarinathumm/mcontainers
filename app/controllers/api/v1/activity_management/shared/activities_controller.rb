@@ -4,7 +4,7 @@ class Api::V1::ActivityManagement::Shared::ActivitiesController < Api::V1::BaseC
     before_action :set_container, only: [:container_activity, :create]
     before_action :set_activity, only: [:show, :delete, :update,]
     before_action :set_format, only: [:export]
-    before_action :set_repair_list, only: [:auto_populate_repair_area, :auto_populate_repair_type, :auto_populate_all]
+    before_action :set_repair_list, only: [:auto_populate_damage_area, :auto_populate_repair_type, :auto_populate_all]
 
     def index    
         @activities = Activity.all.filters(filter_params).search_by(params[:search_text]).sorts(sort_params)  
@@ -106,11 +106,11 @@ class Api::V1::ActivityManagement::Shared::ActivitiesController < Api::V1::BaseC
         end
     end
 
-    def auto_populate_repair_area
-        @repair_list_items = @repair_list.repair_list_items.where('container_damaged_area_id': params[:container_damaged_area])
+    def auto_populate_damage_area
+        @repair_list_items = @repair_list.repair_list_items.where('container_repair_area_id': params[:container_repair_area])
         throw_error('Item not available', :unprocessable_entity) if @repair_list_items.empty?
         @repair_list_items.pluck(:container_repair_area_id)
-        render json: {container_repair_area_ids: @repair_list_items.pluck(:container_repair_area_id)}
+        render json: {container_damaged_area_ids: @repair_list_items.pluck(:container_damaged_area_id)}
     end
 
 
