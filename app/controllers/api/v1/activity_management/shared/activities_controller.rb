@@ -122,7 +122,7 @@ class Api::V1::ActivityManagement::Shared::ActivitiesController < Api::V1::BaseC
     end
 
     def auto_populate_all
-        @repair_list_item = @repair_list.repair_list_items.where('container_damaged_area_id': params[:container_damaged_area].to_i, 'container_repair_area_id': params[:container_repair_area_id]to_i,  'repair_type_id': params[:repair_type_id]to_i).first 
+        @repair_list_item = @repair_list.repair_list_items.where('container_damaged_area_id': params[:container_damaged_area].to_i, 'container_repair_area_id': params[:container_repair_area_id].to_i,  'repair_type_id': params[:repair_type_id].to_i).first 
         throw_error('Item not available', :unprocessable_entity) if @repair_list_item.blank?
         render json: {length_id: @repair_list_item.length_id, width_id: @repair_list_item.width_id, unit_id: @repair_list_item.unit_id, repair_code: @repair_list_item.uid}
     end
