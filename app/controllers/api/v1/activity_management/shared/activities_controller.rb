@@ -98,7 +98,8 @@ class Api::V1::ActivityManagement::Shared::ActivitiesController < Api::V1::BaseC
         @repairlistitems = RepairListItem.where(uid: params[:repair_code])
         @repairlistitems.each do |item|
             if item.repair_list.is_active?
-                render json: {container_repair_area_id: item.container_repair_area_id, container_damaged_area_id: item.container_damaged_area_id, repair_type_id: item.repair_type_id, length: item.length, width: item.width}
+                render json: { container_repair_area_id: item.container_repair_area_id, container_damaged_area_id: item.container_damaged_area_id, repair_type_id: item.repair_type_id, length_id: item.length_id, width_id: item.width_id, \
+                    labour_cost: item.non_mearsk_material_cost.dollars, material_cost: item.non_mearsk_material_cost.dollars, total_cost: (item.non_mearsk_material_cost_cents + item.non_mearsk_material_cost_cents)/100, unit_id: item.unit_id, hours: item.mearsk_hours_per_unit}
                 break
             else
                 throw_error('Item not available', :unprocessable_entity)
