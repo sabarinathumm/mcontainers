@@ -15,6 +15,8 @@ RSpec.describe 'Meta::', type: :request do
   let!(:repair_modes){ create_list(:repair_mode, 10) }
   let!(:events){ create_list(:event, 10) }
   let!(:units){ create_list(:unit, 10) }
+  let!(:lengths){ create_list(:length, 10) }
+  let!(:widths){ create_list(:width, 10) }
   let!(:provinces){ create_list(:province, 10) }
   let!(:cities){ create_list(:city, 10, province: provinces.first) }
   let!(:yards){ create_list(:yard, 10) }
