@@ -2,7 +2,7 @@ class Api::V1::ActivityManagement::Shared::ActivitiesController < Api::V1::BaseC
     before_action :doorkeeper_authorize!
 	before_action :validate_token!
     before_action :set_container, only: [:container_activity, :create]
-    before_action :set_activity, only: [:show, :delete, :update,]
+    before_action :set_activity, only: [:show, :delete, :update]
     before_action :set_format, only: [:export]
     before_action :set_repair_list, only: [:auto_populate_damage_area, :auto_populate_repair_type, :auto_populate_all]
 
@@ -96,10 +96,11 @@ class Api::V1::ActivityManagement::Shared::ActivitiesController < Api::V1::BaseC
 
     def auto_populate
         @repairlistitems = RepairListItem.where(uid: params[:repair_code])
+        @customer = Customer.where.not(hourly_rate_cents: nil).first
         @repairlistitems.each do |item|
             if item.repair_list.is_active?
                 render json: { container_repair_area_id: item.container_repair_area_id, container_damaged_area_id: item.container_damaged_area_id, repair_type_id: item.repair_type_id, length_id: item.length_id, width_id: item.width_id, \
-                    labour_cost: item.non_mearsk_material_cost.dollars, material_cost: item.non_mearsk_material_cost.dollars, total_cost: (item.non_mearsk_material_cost_cents + item.non_mearsk_material_cost_cents)/100, unit_id: item.unit_id, hours: item.mearsk_hours_per_unit}
+                    labour_cost: (@customer.hourly_rate_cents * item.mearsk_hours_per_unit)/100, material_cost: item.non_mearsk_material_cost.dollars, total_cost: ((@customer.hourly_rate_cents * item.mearsk_hours_per_unit)/100 + item.non_mearsk_material_cost_cents)/100, unit_id: item.unit_id, hours: item.mearsk_hours_per_unit}
                 break
             else
                 throw_error('Item not available', :unprocessable_entity)
