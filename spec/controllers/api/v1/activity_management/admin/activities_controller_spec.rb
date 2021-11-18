@@ -454,14 +454,14 @@ RSpec.describe 'Admin::ActivityManagement::', type: :request do
 
             let!(:valid_attributes){
                 {
-                    container_repair_area: repair_list_item.first.container_repair_area_id
+                    container_repair_area_id: container_repair_area.id
                 }
             }
             before { post "/api/v1/activity_management/admin/activities/auto_populate_damage_area", params: valid_attributes ,headers: headers[:auth], as: :json }
     
             it 'returns the damage codes' do
                 # Note `json` is a custom helper to parse JSON responses
-                # puts json
+                puts json
                 expect(json).not_to be_empty
                 expect(response).to have_http_status(200)
             end
@@ -496,14 +496,14 @@ RSpec.describe 'Admin::ActivityManagement::', type: :request do
             let!(:valid_attributes){
                 {
                     container_repair_area_id: repair_list_item.first.container_repair_area_id,
-                    container_damaged_area: repair_list_item.first.container_damaged_area_id
+                    container_damaged_area_id: repair_list_item.first.container_damaged_area_id
                 }
             }
             before { post "/api/v1/activity_management/admin/activities/auto_populate_repair_type", params: valid_attributes ,headers: headers[:auth], as: :json }
     
             it 'returns the repair type ids' do
                 # Note `json` is a custom helper to parse JSON responses
-                # puts json
+                puts json
                 expect(json).not_to be_empty
                 expect(response).to have_http_status(200)
             end
@@ -538,7 +538,7 @@ RSpec.describe 'Admin::ActivityManagement::', type: :request do
             let!(:valid_attributes){
                 {
                     container_repair_area_id: repair_list_item.first.container_repair_area_id,
-                    container_damaged_area: repair_list_item.first.container_damaged_area_id,
+                    container_damaged_area_id: repair_list_item.first.container_damaged_area_id,
                     repair_type_id: repair_list_item.first.repair_type_id
                 }
             }
