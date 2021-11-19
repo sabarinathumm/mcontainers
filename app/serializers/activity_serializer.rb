@@ -13,5 +13,4 @@ class ActivitySerializer < ActiveModel::Serializer
         object.sub_total
     end
 
-    puts "SERIALIZER"
 end  
