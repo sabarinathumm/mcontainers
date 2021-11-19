@@ -112,8 +112,9 @@ class Api::V1::ActivityManagement::Shared::ActivitiesController < Api::V1::BaseC
     def auto_populate_damage_area
         @repair_list_items = @customer_repair_list.customer_repair_list_items.where('container_repair_area_id': params[:container_repair_area_id].to_i)
         throw_error('Item not available', :unprocessable_entity) if @repair_list_items.empty?
+
         ids = @repair_list_items.pluck(:container_damaged_area_id)
-        # puts ids
+        puts ids
         @container_damaged_areas = ContainerDamagedArea.where(id: ids)
         render json: @container_damaged_areas, each_serializer: MetaSerializer
     end
@@ -122,6 +123,7 @@ class Api::V1::ActivityManagement::Shared::ActivitiesController < Api::V1::BaseC
     def auto_populate_repair_type
         @repair_list_items = @customer_repair_list.customer_repair_list_items.where('container_damaged_area_id': params[:container_damaged_area_id].to_i, 'container_repair_area_id': params[:container_repair_area_id].to_i)
         throw_error('Item not available', :unprocessable_entity) if @repair_list_items.empty?
+
         ids = @repair_list_items.pluck(:repair_type_id)
         @repair_type = RepairType.where(id: ids)
         render json: @repair_type, each_serializer: MetaSerializer
@@ -177,10 +179,10 @@ class Api::V1::ActivityManagement::Shared::ActivitiesController < Api::V1::BaseC
         material_cost = @repair_list_items.non_mearsk_material_cost_cents
         item = @repair_list_items
         if @customer.billing_type == 'common' 
-            render json: { container_repair_area_id: item.container_repair_area_id, container_damaged_area_id: item.container_damaged_area_id, repair_type_id: item.repair_type_id, length_id: item.length_id, width_id: item.width_id, \
+            render json: { repair_code: uids, container_repair_area_id: item.container_repair_area_id, container_damaged_area_id: item.container_damaged_area_id, repair_type_id: item.repair_type_id, length_id: item.length_id, width_id: item.width_id, \
             labour_cost: (@customer.hourly_rate_cents * item.mearsk_hours_per_unit)/100, material_cost: item.non_mearsk_material_cost.dollars, total_cost: ((@customer.hourly_rate_cents * item.mearsk_hours_per_unit)/100) + (item.non_mearsk_material_cost_cents)/100, unit_id: item.unit_id, hours: item.mearsk_hours_per_unit}
         else
-            render json: { container_repair_area_id: item.container_repair_area_id, container_damaged_area_id: item.container_damaged_area_id, repair_type_id: item.repair_type_id, length_id: item.length_id, width_id: item.width_id, \
+            render json: {repair_code: uids, container_repair_area_id: item.container_repair_area_id, container_damaged_area_id: item.container_damaged_area_id, repair_type_id: item.repair_type_id, length_id: item.length_id, width_id: item.width_id, \
             labour_cost: (@customer.hourly_rate_cents * item.mearsk_hours_per_unit*item.mearsk_units)/100, material_cost: item.mearsk_units * item.mearsk_unit_material_cost_cents, total_cost: ((@customer.hourly_rate_cents * item.mearsk_hours_per_unit)/100) + (item.non_mearsk_material_cost_cents)/100, unit_id: item.unit_id, hours: item.mearsk_hours_per_unit}
         end
     end
