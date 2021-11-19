@@ -29,18 +29,6 @@ units = meta_sheet.column(7).compact
     Unit.create!(name: units[i])
 end
 
-lengths = meta_sheet.column(5).compact
-
-lengths.each do |i|
-    Length.create!(name: lengths[i])
-end
-
-widths = meta_sheet.column(6).compact
-
-widths.each do |i|
-    Width.create!(name: widths[i])
-end
-
 repair_types = meta_sheet.column(4).compact
 
 repair_types.each do |cra|
@@ -85,6 +73,17 @@ end
 
 container_meta_sheet = mlcan_excel.sheet(2)
 
+lengths = container_meta_sheet.column(1).compact
+
+(1..lengths.length-1).each do |i|
+Length.create!(name: lengths[i])
+end
+
+widths = container_meta_sheet.column(2).compact
+
+(1..widths.length-1).each do |i|
+Width.create!(name: widths[i])
+end
 yards = container_meta_sheet.column(4).compact
 
 (1..yards.length-1).each do |i|
@@ -123,8 +122,8 @@ repair_items_sheet = mlcan_excel.sheet(0)
     repair_list_item.non_mearsk_material_cost = row[16]
     repair_list_item.non_mearsk_description = row[13]
     repair_list_item.location = row[14]
-    repair_list_item.length = row[4]
-    repair_list_item.width = row[5]
+    repair_list_item.length = Length.where(name: row[4]).first  unless row[4].blank?
+    repair_list_item.width = Width.where(name: row[5]).first  unless row[5].blank?
     repair_list_item.non_mearsk_id_source = row[15]
     repair_list_item.mearsk_max_material_cost = row[22]
     repair_list_item.mearsk_unit_material_cost = row[19]

@@ -4,7 +4,7 @@ class Api::V1::ActivityManagement::Shared::ActivitiesController < Api::V1::BaseC
     before_action :set_container, only: [:container_activity, :create]
     before_action :set_activity, only: [:show, :delete, :update]
     before_action :set_format, only: [:export]
-    before_action :set_repair_list, only: [:auto_populate_damage_area, :auto_populate_repair_type, :auto_populate_all]
+    before_action :set_repair_list, only: [:auto_populate, :auto_populate_damage_area, :auto_populate_repair_type, :auto_populate_length,:auto_populate_width,:auto_populate_unit, :auto_populate_all]
 
     def index    
         @activities = Activity.all.filters(filter_params).search_by(params[:search_text]).sorts(sort_params)  
@@ -95,22 +95,17 @@ class Api::V1::ActivityManagement::Shared::ActivitiesController < Api::V1::BaseC
     end
 
     def auto_populate
-        @repairlistitems = RepairListItem.where(uid: params[:repair_code])
-        @customer = Customer.where.not(hourly_rate_cents: nil).first
-        @repairlistitems.each do |item|
-            if item.repair_list.is_active?
-                puts item.mearsk_hours_per_unit
-                render json: { container_repair_area_id: item.container_repair_area_id, container_damaged_area_id: item.container_damaged_area_id, repair_type_id: item.repair_type_id, length_id: item.length_id, width_id: item.width_id, \
-                    labour_cost: (@customer.hourly_rate_cents * item.mearsk_hours_per_unit)/100, material_cost: item.non_mearsk_material_cost.dollars, total_cost: ((@customer.hourly_rate_cents * item.mearsk_hours_per_unit)/100) + (item.non_mearsk_material_cost_cents)/100, unit_id: item.unit_id, hours: item.mearsk_hours_per_unit}
-                break
-            else
-                throw_error('Item not available', :unprocessable_entity)
-            end
-        end
+        @customer_repair_list_item = @customer_repair_list.customer_repair_list_items.where(uid: params[:repair_code]).first
+        throw_error('Item not available', :unprocessable_entity) if @customer_repair_list_item.blank?
+        item = @customer_repair_list_item
+
+        render json: { container_repair_area_id: item.container_repair_area_id, container_damaged_area_id: item.container_damaged_area_id, repair_type_id: item.repair_type_id, length_id: item.length_id, width_id: item.width_id, \
+        labour_cost: (@customer.hourly_rate_cents * item.mearsk_hours_per_unit)/100, material_cost: item.non_mearsk_material_cost.dollars, total_cost: ((@customer.hourly_rate_cents * item.mearsk_hours_per_unit)/100) + (item.non_mearsk_material_cost_cents)/100, unit_id: item.unit_id, hours: item.mearsk_hours_per_unit}
+
     end
 
     def auto_populate_damage_area
-        @repair_list_items = @repair_list.repair_list_items.where('container_repair_area_id': params[:container_repair_area_id].to_i)
+        @repair_list_items = @customer_repair_list.customer_repair_list_items.where('container_repair_area_id': params[:container_repair_area_id].to_i)
         throw_error('Item not available', :unprocessable_entity) if @repair_list_items.empty?
         ids = @repair_list_items.pluck(:container_repair_area_id)
         # puts ids
@@ -120,7 +115,7 @@ class Api::V1::ActivityManagement::Shared::ActivitiesController < Api::V1::BaseC
 
 
     def auto_populate_repair_type
-        @repair_list_items = @repair_list.repair_list_items.where('container_damaged_area_id': params[:container_damaged_area_id].to_i, 'container_repair_area_id': params[:container_repair_area_id].to_i)
+        @repair_list_items = @customer_repair_list.customer_repair_list_items.where('container_damaged_area_id': params[:container_damaged_area_id].to_i, 'container_repair_area_id': params[:container_repair_area_id].to_i)
         throw_error('Item not available', :unprocessable_entity) if @repair_list_items.empty?
         ids = @repair_list_items.pluck(:repair_type_id)
         @repair_type = RepairType.where(id: ids)
@@ -128,12 +123,57 @@ class Api::V1::ActivityManagement::Shared::ActivitiesController < Api::V1::BaseC
         # render json: {repair_type_ids: @repair_list_items.pluck(:repair_type_id)}
     end
 
+    def auto_populate_length
+        @repair_list_items = @customer_repair_list.customer_repair_list_items.where('container_damaged_area_id': params[:container_damaged_area_id].to_i, 'container_repair_area_id': params[:container_repair_area_id].to_i,'repair_type_id': params[:repair_type_id].to_i)
+
+        throw_error('Item not available', :unprocessable_entity) if @repair_list_items.empty?
+        ids = @repair_list_items.pluck(:length_id)
+
+        @length = Length.where(id: ids)
+        render json: @length, each_serializer: MetaSerializer
+        # render json: {repair_type_ids: @repair_list_items.pluck(:repair_type_id)}
+    end
+
+    def auto_populate_width
+        @repair_list_items = @customer_repair_list.customer_repair_list_items.where('container_damaged_area_id': params[:container_damaged_area_id].to_i, 'container_repair_area_id': params[:container_repair_area_id].to_i,'repair_type_id': params[:repair_type_id].to_i, 'length_id': params[:length_id].to_i)
+
+        throw_error('Item not available', :unprocessable_entity) if @repair_list_items.empty?
+        ids = @repair_list_items.pluck(:width_id)
+
+        @width = Width.where(id: ids)
+        render json: @width, each_serializer: MetaSerializer
+        # render json: {repair_type_ids: @repair_list_items.pluck(:repair_type_id)}
+    end
+
+    def auto_populate_unit
+        @repair_list_items = @customer_repair_list.customer_repair_list_items.where('container_damaged_area_id': params[:container_damaged_area_id].to_i, 'container_repair_area_id': params[:container_repair_area_id].to_i,'repair_type_id': params[:repair_type_id].to_i, 'length_id': params[:length_id].to_i, 'width_id': params[:width_id].to_i)
+
+        throw_error('Item not available', :unprocessable_entity) if @repair_list_items.empty?
+        ids = @repair_list_items.pluck(:unit_id)
+
+        @unit = Unit.where(id: ids)
+        render json: @unit, each_serializer: MetaSerializer
+        # render json: {repair_type_ids: @repair_list_items.pluck(:repair_type_id)}
+    end
+
     def auto_populate_all
-        @repair_list_item = @repair_list.repair_list_items.where('container_damaged_area_id': params[:container_damaged_area_id].to_i, 'container_repair_area_id': params[:container_repair_area_id].to_i,  'repair_type_id': params[:repair_type_id].to_i).first 
-        @customer = Customer.where.not(hourly_rate_cents: nil).first
-        throw_error('Item not available', :unprocessable_entity) if @repair_list_item.blank?
-        render json: {length_id: @repair_list_item.length_id, width_id: @repair_list_item.width_id, unit_id: @repair_list_item.unit_id, repair_code: @repair_list_item.uid, \
-          labour_cost: (@customer.hourly_rate_cents * @repair_list_item.mearsk_hours_per_unit)/100, material_cost: @repair_list_item.non_mearsk_material_cost.dollars, total_cost: ((@customer.hourly_rate_cents * @repair_list_item.mearsk_hours_per_unit)/100) + (@repair_list_item.non_mearsk_material_cost_cents)/100, hours: @repair_list_item.mearsk_hours_per_unit}
+        # puts @customer_repair_list.as_json
+        # puts @customer_repair_list.customer_repair_list_items.count
+        puts "controller"
+        puts @customer_repair_list.customer_repair_list_items.first.as_json
+
+        @repair_list_items = @customer_repair_list.customer_repair_list_items.where('container_damaged_area_id': params[:container_damaged_area_id].to_i, 'container_repair_area_id': params[:container_repair_area_id].to_i,  'repair_type_id': params[:repair_type_id].to_i, 'length_id': params[:length_id].to_i, 'width_id': params[:width_id].to_i, 'unit_id': params[:unit_id]).first
+       
+        puts params.as_json
+        throw_error('Item not available', :unprocessable_entity) if @repair_list_items.blank?
+
+        uids = @repair_list_items.uid
+        hours = @repair_list_items.mearsk_hours_per_unit
+        material_cost = @repair_list_items.non_mearsk_material_cost_cents
+
+        # render json
+        render json: { repair_code: @repair_list_items.uid, hours: hours, \
+          labour_cost: (@customer.hourly_rate_cents * @repair_list_items.mearsk_hours_per_unit)/100, material_cost: @repair_list_items.non_mearsk_material_cost.dollars, total_cost: ((@customer.hourly_rate_cents * hours)/100) + material_cost/100 }
     end
     private
 
@@ -176,6 +216,8 @@ class Api::V1::ActivityManagement::Shared::ActivitiesController < Api::V1::BaseC
     end
 
     def set_repair_list
-        @repair_list = RepairList.where(is_active: true).first
+        @activity = Activity.find(params[:activity_id])
+        @customer = @activity.container.customer
+        @customer_repair_list = CustomerRepairList.where(is_active: true, customer: @customer).first
     end
 end

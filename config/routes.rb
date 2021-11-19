@@ -24,6 +24,9 @@ Rails.application.routes.draw do
           post 'activity_statuses',  to: 'activities#activity_status'
           post 'activities/auto_populate_damage_area',  to: 'activities#auto_populate_damage_area'
           post 'activities/auto_populate_repair_type',  to: 'activities#auto_populate_repair_type'
+          post 'activities/auto_populate_length',  to: 'activities#auto_populate_length'
+          post 'activities/auto_populate_width',  to: 'activities#auto_populate_width'
+          post 'activities/auto_populate_unit',  to: 'activities#auto_populate_unit'
           post 'activities/auto_populate_all',  to: 'activities#auto_populate_all'
           scope "activities/:activity_id" do
             resources :activity_items, only: [:index, :create ,:update, :show]
