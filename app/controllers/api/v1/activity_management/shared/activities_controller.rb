@@ -99,8 +99,9 @@ class Api::V1::ActivityManagement::Shared::ActivitiesController < Api::V1::BaseC
         @customer = Customer.where.not(hourly_rate_cents: nil).first
         @repairlistitems.each do |item|
             if item.repair_list.is_active?
+                puts item.mearsk_hours_per_unit
                 render json: { container_repair_area_id: item.container_repair_area_id, container_damaged_area_id: item.container_damaged_area_id, repair_type_id: item.repair_type_id, length_id: item.length_id, width_id: item.width_id, \
-                    labour_cost: (@customer.hourly_rate_cents * item.mearsk_hours_per_unit)/100, material_cost: item.non_mearsk_material_cost.dollars, total_cost: ((@customer.hourly_rate_cents * item.mearsk_hours_per_unit)/100 + item.non_mearsk_material_cost_cents)/100), unit_id: item.unit_id, hours: item.mearsk_hours_per_unit}
+                    labour_cost: (@customer.hourly_rate_cents * item.mearsk_hours_per_unit)/100, material_cost: item.non_mearsk_material_cost.dollars, total_cost: ((@customer.hourly_rate_cents * item.mearsk_hours_per_unit)/100) + (item.non_mearsk_material_cost_cents)/100, unit_id: item.unit_id, hours: item.mearsk_hours_per_unit}
                 break
             else
                 throw_error('Item not available', :unprocessable_entity)
@@ -129,9 +130,10 @@ class Api::V1::ActivityManagement::Shared::ActivitiesController < Api::V1::BaseC
 
     def auto_populate_all
         @repair_list_item = @repair_list.repair_list_items.where('container_damaged_area_id': params[:container_damaged_area_id].to_i, 'container_repair_area_id': params[:container_repair_area_id].to_i,  'repair_type_id': params[:repair_type_id].to_i).first 
+        @customer = Customer.where.not(hourly_rate_cents: nil).first
         throw_error('Item not available', :unprocessable_entity) if @repair_list_item.blank?
         render json: {length_id: @repair_list_item.length_id, width_id: @repair_list_item.width_id, unit_id: @repair_list_item.unit_id, repair_code: @repair_list_item.uid, \
-        labour_cost: (@customer.hourly_rate_cents * item.mearsk_hours_per_unit)/100, material_cost: item.non_mearsk_material_cost.dollars, total_cost: ((@customer.hourly_rate_cents * item.mearsk_hours_per_unit)/100 + item.non_mearsk_material_cost_cents)/100), unit_id: item.unit_id, hours: item.mearsk_hours_per_unit}
+          labour_cost: (@customer.hourly_rate_cents * @repair_list_item.mearsk_hours_per_unit)/100, material_cost: @repair_list_item.non_mearsk_material_cost.dollars, total_cost: ((@customer.hourly_rate_cents * @repair_list_item.mearsk_hours_per_unit)/100) + (@repair_list_item.non_mearsk_material_cost_cents)/100, hours: @repair_list_item.mearsk_hours_per_unit}
     end
     private
 

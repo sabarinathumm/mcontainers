@@ -405,7 +405,7 @@ RSpec.describe 'Admin::ActivityManagement::', type: :request do
             let!(:length){ create(:length) }
             let!(:width){ create(:width) }
             let!(:repair_list){ create(:repair_list, is_active: true) }
-            let!(:repair_list_item){ create_list(:repair_list_item, 30, repair_list: repair_list, repair_type: repair_type, \
+            let!(:repair_list_item){ create_list(:repair_list_item, 30, mearsk_hours_per_unit: 0, repair_list: repair_list, repair_type: repair_type, \
                 container_damaged_area: container_damaged_area, container_repair_area: container_repair_area, \
                 component: component, comp: comp, dam: dam, rep: rep, mode_number: mode_number, repair_mode: repair_mode, \
                 event: event, unit: unit, length: length, width: width) 
@@ -420,7 +420,7 @@ RSpec.describe 'Admin::ActivityManagement::', type: :request do
     
             it 'returns the damage codes' do
                 # Note `json` is a custom helper to parse JSON responses
-                puts json
+                # puts json
                 expect(json).not_to be_empty
                 expect(response).to have_http_status(200)
             end
@@ -529,7 +529,7 @@ RSpec.describe 'Admin::ActivityManagement::', type: :request do
             let!(:length){ create(:length) }
             let!(:width){ create(:width) }
             let!(:repair_list){ create(:repair_list, is_active: true) }
-            let!(:repair_list_item){ create_list(:repair_list_item, 30, repair_list: repair_list, repair_type: repair_type, \
+            let!(:repair_list_item){ create_list(:repair_list_item, 30, mearsk_hours_per_unit: 0, repair_list: repair_list, repair_type: repair_type, \
                 container_damaged_area: container_damaged_area, container_repair_area: container_repair_area, \
                 component: component, comp: comp, dam: dam, rep: rep, mode_number: mode_number, repair_mode: repair_mode, \
                 event: event, unit: unit) 
