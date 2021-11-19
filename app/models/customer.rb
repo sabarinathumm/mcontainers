@@ -12,6 +12,10 @@ class Customer < ApplicationRecord
   
   enum customer_type: [:mearsk, :non_mearsk]
 
+  enum billing_type: [:merc, :common]
+
+  enum approval_type: [:merc_approval_type, :common_approval_type]
+
   monetize :hourly_rate_cents
 
   has_many :customer_repair_lists
