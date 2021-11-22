@@ -7,6 +7,10 @@
 #   Character.create(name: 'Luke', movie: movies.first)
 
 mlcan_excel = Roo::Spreadsheet.open(File.open(Rails.root.join('db/mlcan_meta.xlsx')), extension: :xlsx)
+msc_excel = Roo::Spreadsheet.open(File.open(Rails.root.join('db/MSC EDI Template.xlsm')), extension: :xlsm)
+maersk_excel = Roo::Spreadsheet.open(File.open(Rails.root.join('db/MAERSK EDI Template.xlsm')), extension: :xlsm)
+comps_sheet = msc_excel.sheet(3)
+dams_sheet = maersk_excel.sheet(1)
 meta_sheet = mlcan_excel.sheet(1)
 
 container_repair_areas = meta_sheet.column(2).compact
@@ -41,10 +45,24 @@ comps = meta_sheet.column(8).compact
     Comp.create!(name: comps[i])
 end
 
+comps_desc = comps_sheet.column(3).compact
+comps_mat = comps_sheet.column(2).compact
+comps_name = comps_sheet.column(1).compact
+(1..comps_name.length-1).each do |i|
+    @comp = Comp.find_by(name: comps_name[i])
+    @comp.update!(description: comps_desc[i], material: comps_mat[i]) unless @comp.nil?
+end
+
 dams = meta_sheet.column(9).compact
 
 (1..dams.length-1).each do |i|
     Dam.create!(name: dams[i])
+end
+dams_desc = dams_sheet.column(3).compact
+dams_name = dams_sheet.column(2).compact
+(1..comps_name.length-1).each do |i|
+    @dam = Dam.find_by(name: dams_name[i])
+    @dam.update!(description: dams_desc[i]) unless @dam.nil?
 end
 
 events = meta_sheet.column(10).compact
