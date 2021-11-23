@@ -31,7 +31,6 @@ class Api::V1::RepairListManagement::Shared::RepairListsController < Api::V1::Ba
     end
 
     def version_activation
-        puts "Hi"
         ActiveRecord::Base.transaction do
             RepairList.update(is_active: false)
             @repair_list = RepairList.find(params[:id])
@@ -39,7 +38,6 @@ class Api::V1::RepairListManagement::Shared::RepairListsController < Api::V1::Ba
         end
 
         render json: @repair_list, serializer: RepairListSerializer
-        puts "Hi"
     end
 
 end

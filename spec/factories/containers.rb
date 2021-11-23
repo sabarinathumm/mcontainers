@@ -6,7 +6,7 @@ FactoryBot.define do
     container_length { 15.0 }
     container_width { 15.0 }
     manufacture_year { 2019 }
-    location { "Local Grounds" }
+    location { "DBXN" }
     comments { "Comments" }
     
   end

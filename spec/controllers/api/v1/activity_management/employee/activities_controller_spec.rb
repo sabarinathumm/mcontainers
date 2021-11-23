@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe 'Admin::ActivityManagement::', type: :request do
+RSpec.describe 'Employee::ActivityManagement::', type: :request do
     # initialize test data 
     let!(:admin){ create(:admin) }
     let!(:headers) { get_admin_headers(admin) }
@@ -17,7 +17,7 @@ RSpec.describe 'Admin::ActivityManagement::', type: :request do
     # valid payload
         context 'success' do
 
-        before { get '/api/v1/activity_management/admin/activities', headers: headers[:auth], as: :json }
+        before { get '/api/v1/activity_management/employee/activities', headers: headers[:auth], as: :json }
 
             it 'returns token' do
                 # Note `json` is a custom helper to parse JSON responses
@@ -42,7 +42,7 @@ RSpec.describe 'Admin::ActivityManagement::', type: :request do
         # valid payload
         context 'success' do
     
-            before { get "/api/v1/activity_management/admin/activities?date=#{Time.now.utc.to_date}&customer_id=#{customer.id}&activity_status=quote_draft&activity_type=quote&yard_id=#{yard.id}", headers: headers[:auth], as: :json }
+            before { get "/api/v1/activity_management/employee/activities?date=#{Time.now.utc.to_date}&customer_id=#{customer.id}&activity_status=quote_draft&activity_type=quote&yard_id=#{yard.id}", headers: headers[:auth], as: :json }
     
             it 'returns the filtered activity' do
                 # Note `json` is a custom helper to parse JSON responses
@@ -68,7 +68,7 @@ RSpec.describe 'Admin::ActivityManagement::', type: :request do
 
             let!(:activity2) { create(:activity, container: container, assigned_to: admin, activity_status: 'pending_customer_approval') }
     
-            before { get "/api/v1/activity_management/admin/activities?status=customer_pending&search_text=#{container.container_uid}", headers: headers[:auth], as: :json }
+            before { get "/api/v1/activity_management/employee/activities?status=customer_pending&search_text=#{container.container_uid}", headers: headers[:auth], as: :json }
     
             it 'returns the filtered activity' do
                 # Note `json` is a custom helper to parse JSON responses
@@ -96,7 +96,7 @@ RSpec.describe 'Admin::ActivityManagement::', type: :request do
             let!(:container2) { create(:container, container_type: container_type, yard: yard2, customer: customer) }
             let!(:activity2) { create(:activity, container: container2, assigned_to: admin, activity_status: 'pending_customer_approval') }
     
-            before { get "/api/v1/activity_management/admin/activities?yard_name=-1", headers: headers[:auth], as: :json }
+            before { get "/api/v1/activity_management/employee/activities?yard_name=-1", headers: headers[:auth], as: :json }
     
             it 'returns the filtered activity' do
                 # Note `json` is a custom helper to parse JSON responses
@@ -120,7 +120,7 @@ RSpec.describe 'Admin::ActivityManagement::', type: :request do
             let!(:container2) { create(:container, container_type: container_type, yard: yard, customer: customer, container_owner_name: 'ZZZZZZ') }
             let!(:activity2) { create(:activity, container: container2, assigned_to: admin, activity_status: 'pending_customer_approval') }
     
-            before { get "/api/v1/activity_management/admin/activities?owner_name=-1", headers: headers[:auth], as: :json }
+            before { get "/api/v1/activity_management/employee/activities?owner_name=-1", headers: headers[:auth], as: :json }
     
             it 'returns the filtered activity' do
                 # Note `json` is a custom helper to parse JSON responses
@@ -144,7 +144,7 @@ RSpec.describe 'Admin::ActivityManagement::', type: :request do
             let!(:container2) { create(:container, container_type: container_type, yard: yard, customer: customer, container_owner_name: 'ZZZZZZ') }
             let!(:activity2) { create(:activity, container: container2, assigned_to: admin, activity_status: 'pending_customer_approval', activity_type: 'repair') }
     
-            before { get "/api/v1/activity_management/admin/activities?activity_type_sort=-1", headers: headers[:auth], as: :json }
+            before { get "/api/v1/activity_management/employee/activities?activity_type_sort=-1", headers: headers[:auth], as: :json }
     
             it 'returns the filtered activity' do
                 # Note `json` is a custom helper to parse JSON responses
@@ -168,7 +168,7 @@ RSpec.describe 'Admin::ActivityManagement::', type: :request do
             let!(:container2) { create(:container, container_type: container_type, yard: yard, customer: customer, container_owner_name: 'ZZZZZZ') }
             let!(:activity2) { create(:activity, container: container2, assigned_to: admin, activity_status: 'repair_pending_admin_approval', activity_type: 'repair') }
     
-            before { get "/api/v1/activity_management/admin/activities?activity_status_sort=-1", headers: headers[:auth], as: :json }
+            before { get "/api/v1/activity_management/employee/activities?activity_status_sort=-1", headers: headers[:auth], as: :json }
     
             it 'returns the filtered activity' do
                 # Note `json` is a custom helper to parse JSON responses
@@ -193,7 +193,7 @@ RSpec.describe 'Admin::ActivityManagement::', type: :request do
         context 'success' do
     
             let!(:activity2) { create_list(:activity, 5, container: container, assigned_to: admin) }
-            before { get "/api/v1/activity_management/admin/container_activities?container_id=#{container.id}", headers: headers[:auth], as: :json }
+            before { get "/api/v1/activity_management/employee/container_activities?container_id=#{container.id}", headers: headers[:auth], as: :json }
     
             it 'returns the filtered activity' do
                 # Note `json` is a custom helper to parse JSON responses
@@ -226,7 +226,7 @@ RSpec.describe 'Admin::ActivityManagement::', type: :request do
                     activity_status: 'ready_for_billing'
                 }
             }
-            before { post "/api/v1/activity_management/admin/activities/update_status", params: valid_attributes ,headers: headers[:auth], as: :json }
+            before { post "/api/v1/activity_management/employee/activities/update_status", params: valid_attributes ,headers: headers[:auth], as: :json }
     
             it 'returns the filtered activity' do
                 # Note `json` is a custom helper to parse JSON responses
@@ -247,7 +247,7 @@ RSpec.describe 'Admin::ActivityManagement::', type: :request do
                         activity_id: activity.id
                     }
                 }
-            before { post "/api/v1/activity_management/admin/activities_export", params: valid_attributes, headers: headers[:auth], as: :json }
+            before { post "/api/v1/activity_management/employee/activities_export", params: valid_attributes, headers: headers[:auth], as: :json }
     
             it 'returns token' do
                 # Note `json` is a custom helper to parse JSON responses
@@ -273,7 +273,7 @@ RSpec.describe 'Admin::ActivityManagement::', type: :request do
             let!(:activity2) { create_list(:activity, 5, container: container, assigned_to: admin) }
            
 
-            before { get "/api/v1/activity_management/admin/activities/#{activity.id}", headers: headers[:auth], as: :json }
+            before { get "/api/v1/activity_management/employee/activities/#{activity.id}", headers: headers[:auth], as: :json }
 
             it 'returns the filtered activity' do
                 # Note `json` is a custom helper to parse JSON responses
@@ -296,7 +296,7 @@ RSpec.describe 'Admin::ActivityManagement::', type: :request do
 
     describe 'Delete' do
         context 'sucessful delete' do 
-            before { delete "/api/v1/activity_management/admin/activities/#{activity.id}", headers: headers[:auth], as: :json }
+            before { delete "/api/v1/activity_management/employee/activities/#{activity.id}", headers: headers[:auth], as: :json }
             it 'return 204' do 
                 # puts json
                 expect(response).to have_http_status(204)
@@ -312,7 +312,7 @@ RSpec.describe 'Admin::ActivityManagement::', type: :request do
                         activity_date: "20-Aug-2021"
                     }
                 }
-            before {post "/api/v1/activity_management/admin/activities?container_id=#{container.id}",params: valid_attributes, headers: headers[:auth], as: :json}
+            before {post "/api/v1/activity_management/employee/activities?container_id=#{container.id}",params: valid_attributes, headers: headers[:auth], as: :json}
             it 'return 200' do
                 # puts json
                 expect(json).not_to be_empty
@@ -332,7 +332,7 @@ RSpec.describe 'Admin::ActivityManagement::', type: :request do
                         }
                 }
                 }
-            before {put "/api/v1/activity_management/admin/activities/#{activity.id}",params: valid_attributes, headers: headers[:auth], as: :json}
+            before {put "/api/v1/activity_management/employee/activities/#{activity.id}",params: valid_attributes, headers: headers[:auth], as: :json}
             it 'return 200' do
                 expect(json).not_to be_empty
                 expect(response).to have_http_status(200)
@@ -351,7 +351,7 @@ RSpec.describe 'Admin::ActivityManagement::', type: :request do
                     activity_date: '20-Aug-2021'
                 }
             }
-            before { post "/api/v1/activity_management/admin/activities/update_date", params: valid_attributes ,headers: headers[:auth], as: :json }
+            before { post "/api/v1/activity_management/employee/activities/update_date", params: valid_attributes ,headers: headers[:auth], as: :json }
     
             it 'returns the filtered activity' do
                 # Note `json` is a custom helper to parse JSON responses
@@ -372,7 +372,7 @@ RSpec.describe 'Admin::ActivityManagement::', type: :request do
                     activity_id: activity2.id
                 }
             }
-            before { post "/api/v1/activity_management/admin/activity_statuses", params: valid_attributes ,headers: headers[:auth], as: :json }
+            before { post "/api/v1/activity_management/employee/activity_statuses", params: valid_attributes ,headers: headers[:auth], as: :json }
     
             it 'returns the statuses available' do
                 # Note `json` is a custom helper to parse JSON responses
@@ -422,7 +422,7 @@ RSpec.describe 'Admin::ActivityManagement::', type: :request do
                     repair_code: customer_repair_list_item.first.uid
                 }
             }
-            before { post "/api/v1/activity_management/admin/activities/auto_populate?activity_id=#{activity.id}", params: valid_attributes ,headers: headers[:auth], as: :json }
+            before { post "/api/v1/activity_management/employee/activities/auto_populate?activity_id=#{activity.id}", params: valid_attributes ,headers: headers[:auth], as: :json }
     
             it 'returns the damage codes' do
                 # Note `json` is a custom helper to parse JSON responses
@@ -469,7 +469,7 @@ RSpec.describe 'Admin::ActivityManagement::', type: :request do
                     container_repair_area_id: container_repair_area.id
                 }
             }
-            before { post "/api/v1/activity_management/admin/activities/auto_populate_damage_area?activity_id=#{activity.id}", params: valid_attributes ,headers: headers[:auth], as: :json }
+            before { post "/api/v1/activity_management/employee/activities/auto_populate_damage_area?activity_id=#{activity.id}", params: valid_attributes ,headers: headers[:auth], as: :json }
     
             it 'returns the damage codes' do
                 # Note `json` is a custom helper to parse JSON responses
@@ -517,7 +517,7 @@ RSpec.describe 'Admin::ActivityManagement::', type: :request do
                     container_damaged_area_id: repair_list_item.first.container_damaged_area_id
                 }
             }
-            before { post "/api/v1/activity_management/admin/activities/auto_populate_repair_type?activity_id=#{activity.id}", params: valid_attributes ,headers: headers[:auth], as: :json }
+            before { post "/api/v1/activity_management/employee/activities/auto_populate_repair_type?activity_id=#{activity.id}", params: valid_attributes ,headers: headers[:auth], as: :json }
     
             it 'returns the repair type ids' do
                 # Note `json` is a custom helper to parse JSON responses
@@ -567,7 +567,7 @@ RSpec.describe 'Admin::ActivityManagement::', type: :request do
                     repair_type_id: repair_list_item.first.repair_type_id
                 }
             }
-            before { post "/api/v1/activity_management/admin/activities/auto_populate_length?activity_id=#{activity.id}", params: valid_attributes ,headers: headers[:auth], as: :json }
+            before { post "/api/v1/activity_management/employee/activities/auto_populate_length?activity_id=#{activity.id}", params: valid_attributes ,headers: headers[:auth], as: :json }
     
             it 'returns the length' do
                 # Note `json` is a custom helper to parse JSON responses
@@ -617,7 +617,7 @@ RSpec.describe 'Admin::ActivityManagement::', type: :request do
                     length_id: customer_repair_list_item.first.length_id
                 }
             }
-            before { post "/api/v1/activity_management/admin/activities/auto_populate_width?activity_id=#{activity.id}", params: valid_attributes ,headers: headers[:auth], as: :json }
+            before { post "/api/v1/activity_management/employee/activities/auto_populate_width?activity_id=#{activity.id}", params: valid_attributes ,headers: headers[:auth], as: :json }
     
             it 'returns the width' do
                 # Note `json` is a custom helper to parse JSON responses
@@ -668,7 +668,7 @@ RSpec.describe 'Admin::ActivityManagement::', type: :request do
                     width_id: customer_repair_list_item.first.width_id
                 }
             }
-            before { post "/api/v1/activity_management/admin/activities/auto_populate_unit?activity_id=#{activity.id}", params: valid_attributes ,headers: headers[:auth], as: :json }
+            before { post "/api/v1/activity_management/employee/activities/auto_populate_unit?activity_id=#{activity.id}", params: valid_attributes ,headers: headers[:auth], as: :json }
     
             it 'returns the units' do
                 # Note `json` is a custom helper to parse JSON responses
@@ -721,7 +721,7 @@ RSpec.describe 'Admin::ActivityManagement::', type: :request do
                     unit_id: customer_repair_list_item.first.unit_id
                 }
             }
-            before { post "/api/v1/activity_management/admin/activities/auto_populate_all?activity_id=#{activity.id}", params: valid_attributes ,headers: headers[:auth], as: :json }
+            before { post "/api/v1/activity_management/employee/activities/auto_populate_all?activity_id=#{activity.id}", params: valid_attributes ,headers: headers[:auth], as: :json }
     
             it 'returns the uids, hours , labor-material-total costs' do
                 # Note `json` is a custom helper to parse JSON responses

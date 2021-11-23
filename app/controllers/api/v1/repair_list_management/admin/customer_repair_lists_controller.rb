@@ -24,7 +24,6 @@ class Api::V1::RepairListManagement::Admin::CustomerRepairListsController < Api:
     end
 
     def version_activation
-    puts "hi"
         ActiveRecord::Base.transaction do
             # CustomerRepairList.update(is_active: false)
             @repair_list = CustomerRepairList.find(params[:id])
