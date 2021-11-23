@@ -89,7 +89,8 @@ RSpec.describe 'Admin::ActivityManagement::', type: :request do
                         comments: "No comments Simple waste",
                         labour_cost: 500.0,
                         material_cost: 8000.0,
-                        total_cost: 8500.0
+                        total_cost: 8500.0,
+                        location: 'DBXN'
                     }
                 }
             }

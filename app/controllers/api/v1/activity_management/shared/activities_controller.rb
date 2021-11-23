@@ -114,7 +114,6 @@ class Api::V1::ActivityManagement::Shared::ActivitiesController < Api::V1::BaseC
         throw_error('Item not available', :unprocessable_entity) if @repair_list_items.empty?
 
         ids = @repair_list_items.pluck(:container_damaged_area_id)
-        puts ids
         @container_damaged_areas = ContainerDamagedArea.where(id: ids)
         render json: @container_damaged_areas, each_serializer: MetaSerializer
     end
@@ -164,14 +163,8 @@ class Api::V1::ActivityManagement::Shared::ActivitiesController < Api::V1::BaseC
     end
 
     def auto_populate_all
-        # puts @customer_repair_list.as_json
-        # puts @customer_repair_list.customer_repair_list_items.count
-        puts "controller"
-        puts @customer_repair_list.customer_repair_list_items.first.as_json
-
         @repair_list_items = @customer_repair_list.customer_repair_list_items.where('container_damaged_area_id': params[:container_damaged_area_id].to_i, 'container_repair_area_id': params[:container_repair_area_id].to_i,  'repair_type_id': params[:repair_type_id].to_i, 'length_id': params[:length_id].to_i, 'width_id': params[:width_id].to_i, 'unit_id': params[:unit_id]).first
        
-        puts params.as_json
         throw_error('Item not available', :unprocessable_entity) if @repair_list_items.blank?
 
         uids = @repair_list_items.uid
