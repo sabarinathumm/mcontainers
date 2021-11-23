@@ -39,7 +39,6 @@ class Api::V1::ContainerManagement::Shared::ContainersController < Api::V1::Base
         
         @container.container_attachments.destroy_all if container_params[:container_attachments].present?
         
-        if @container.update!(container_params)
             render json: @container, serializer: ContainerSerializer
         else
             throw_error('Container could not be updated', status: :unprocessable_entity)

@@ -29,12 +29,12 @@ RSpec.describe 'Admin::CustomerRepairListItems::', type: :request do
             let!(:customer_repair_list_item){ create_list(:customer_repair_list_item, 10, customer_repair_list: customer_repair_list, repair_type: repair_type, \
                 container_damaged_area: container_damaged_area, container_repair_area: container_repair_area, \
                 component: component, comp: comp, dam: dam, rep: rep, mode_number: mode_number, repair_mode: repair_mode, \
-                event: event, unit: unit) }
+                event: event, unit: unit, location: 'DBXN') }
 
             let!(:customer_repair_list_item2){ create(:customer_repair_list_item, customer_repair_list: customer_repair_list, repair_type: repair_type, \
                 container_damaged_area: container_damaged_area, container_repair_area: container_repair_area, \
                 component: component, comp: comp, dam: dam, rep: rep, mode_number: mode_number, repair_mode: repair_mode, \
-                event: event, unit: unit, deleted_at: DateTime.now) }
+                event: event, unit: unit, deleted_at: DateTime.now, location: 'DBXN') }
 
             before { get "/api/v1/repair_list_management/admin/customer_repair_list/#{customer_repair_list.id}/items", headers: headers[:auth], as: :json }
 
@@ -63,7 +63,7 @@ RSpec.describe 'Admin::CustomerRepairListItems::', type: :request do
             let!(:customer_repair_list_item){ create_list(:customer_repair_list_item, 30, customer_repair_list: customer_repair_list, repair_type: repair_type, \
                 container_damaged_area: container_damaged_area, container_repair_area: container_repair_area, \
                 component: component, comp: comp, dam: dam, rep: rep, mode_number: mode_number, repair_mode: repair_mode, \
-                event: event, unit: unit) }
+                event: event, unit: unit, location: 'DBXN') }
 
             before { get "/api/v1/repair_list_management/admin/customer_repair_list/#{customer_repair_list.id}/items?page=2", headers: headers[:auth], as: :json }
 
@@ -92,11 +92,11 @@ RSpec.describe 'Admin::CustomerRepairListItems::', type: :request do
             let!(:customer_repair_list_item){ create_list(:customer_repair_list_item, 10, customer_repair_list: customer_repair_list, repair_type: repair_type, \
                 container_damaged_area: container_damaged_area, container_repair_area: container_repair_area, \
                 component: component, comp: comp, dam: dam, rep: rep, mode_number: mode_number, repair_mode: repair_mode, \
-                event: event, unit: unit) }
+                event: event, unit: unit, location: 'DBXN') }
             let!(:customer_repair_list_item2){ create_list(:customer_repair_list_item, 10, customer_repair_list: customer_repair_list, repair_type: repair_type, \
                 container_repair_area: container_repair_area, \
                 component: component, comp: comp, dam: dam, rep: rep, mode_number: mode_number, repair_mode: repair_mode, \
-                event: event, unit: unit) }
+                event: event, unit: unit, location: 'DBXN') }
 
             before { get "/api/v1/repair_list_management/admin/customer_repair_list/#{customer_repair_list.id}/items?search_text=&container_repair_area_id=#{container_repair_area.id}&container_damaged_area_id=#{container_damaged_area.id}&repair_type_id=#{repair_type.id}", headers: headers[:auth], as: :json }
 
@@ -126,14 +126,14 @@ RSpec.describe 'Admin::CustomerRepairListItems::', type: :request do
             let!(:customer_repair_list_item){ create_list(:customer_repair_list_item, 10, customer_repair_list: customer_repair_list, repair_type: repair_type, \
                 container_damaged_area: container_damaged_area, container_repair_area: container_repair_area, \
                 component: component, comp: comp, dam: dam, rep: rep, mode_number: mode_number, repair_mode: repair_mode, \
-                event: event, unit: unit) }
+                event: event, unit: unit, location: 'DBXN') }
 
             let!(:repair_type2){ create(:repair_type, name: 'Alpha') }
 
             let!(:customer_repair_list_item2){ create_list(:customer_repair_list_item, 10, customer_repair_list: customer_repair_list, repair_type: repair_type2, \
                 container_repair_area: container_repair_area, container_damaged_area: container_damaged_area, \
                 component: component, comp: comp, dam: dam, rep: rep, mode_number: mode_number, repair_mode: repair_mode, \
-                event: event, unit: unit) }
+                event: event, unit: unit, location: 'DBXN') }
 
             before { get "/api/v1/repair_list_management/admin/customer_repair_list/#{customer_repair_list.id}/items?repair_type=1", headers: headers[:auth], as: :json }
 
@@ -162,14 +162,14 @@ RSpec.describe 'Admin::CustomerRepairListItems::', type: :request do
             let!(:customer_repair_list_item){ create_list(:customer_repair_list_item, 10, customer_repair_list: customer_repair_list, repair_type: repair_type, \
                 container_damaged_area: container_damaged_area, container_repair_area: container_repair_area, \
                 component: component, comp: comp, dam: dam, rep: rep, mode_number: mode_number, repair_mode: repair_mode, \
-                event: event, unit: unit) }
+                event: event, unit: unit, location: 'DBXN') }
 
             let!(:repair_type2){ create(:repair_type, name: 'Alpha') }
 
             let!(:customer_repair_list_item2){ create_list(:customer_repair_list_item, 10, customer_repair_list: customer_repair_list, repair_type: repair_type2, \
                 container_repair_area: container_repair_area, container_damaged_area: container_damaged_area, \
                 component: component, comp: comp, dam: dam, rep: rep, mode_number: mode_number, repair_mode: repair_mode, \
-                event: event, unit: unit) }
+                event: event, unit: unit, location: 'DBXN') }
 
             before { get "/api/v1/repair_list_management/admin/customer_repair_list/#{customer_repair_list.id}/items?search_text=#{customer_repair_list_item.first.uid[0..2]}&container_repair_area_id=&container_damaged_area_id=&repair_type_id=", headers: headers[:auth], as: :json }
 
@@ -202,7 +202,7 @@ RSpec.describe 'Admin::CustomerRepairListItems::', type: :request do
             let!(:customer_repair_list_item){ create(:customer_repair_list_item, customer_repair_list: customer_repair_list, repair_type: repair_type, \
                 container_damaged_area: container_damaged_area, container_repair_area: container_repair_area, \
                 component: component, comp: comp, dam: dam, rep: rep, mode_number: mode_number, repair_mode: repair_mode, \
-                event: event, unit: unit) }
+                event: event, unit: unit, location: 'DBXN') }
 
             before { get "/api/v1/repair_list_management/admin/customer_repair_list/items/#{customer_repair_list_item.id}", headers: headers[:auth], as: :json }
 
@@ -234,7 +234,7 @@ RSpec.describe 'Admin::CustomerRepairListItems::', type: :request do
                 let!(:customer_repair_list_item){ create(:customer_repair_list_item, customer_repair_list: customer_repair_list, repair_type: repair_type, \
                     container_damaged_area: container_damaged_area, container_repair_area: container_repair_area, \
                     component: component, comp: comp, dam: dam, rep: rep, mode_number: mode_number, repair_mode: repair_mode, \
-                    event: event, unit: unit) }
+                    event: event, unit: unit, location: 'DBXN') }
     
                 before { delete "/api/v1/repair_list_management/admin/customer_repair_list/items/#{customer_repair_list_item.id}", headers: headers[:auth], as: :json }
     
@@ -266,7 +266,7 @@ RSpec.describe 'Admin::CustomerRepairListItems::', type: :request do
             let!(:customer_repair_list_item){ create(:customer_repair_list_item, customer_repair_list: customer_repair_list, repair_type: repair_type, \
                 container_damaged_area: container_damaged_area, container_repair_area: container_repair_area, \
                 component: component, comp: comp, dam: dam, rep: rep, mode_number: mode_number, repair_mode: repair_mode, \
-                event: event, unit: unit) }
+                event: event, unit: unit, location: 'DBXN') }
 
             let!(:valid_attributes){ 
                 {
@@ -314,7 +314,7 @@ RSpec.describe 'Admin::CustomerRepairListItems::', type: :request do
                 let!(:customer_repair_list_item){ create(:customer_repair_list_item, customer_repair_list: customer_repair_list, repair_type: repair_type, \
                     container_damaged_area: container_damaged_area, container_repair_area: container_repair_area, \
                     component: component, comp: comp, dam: dam, rep: rep, mode_number: mode_number, repair_mode: repair_mode, \
-                    event: event, unit: unit) }
+                    event: event, unit: unit, location: 'DBXN') }
 
                 before { get "/api/v1/repair_list_management/admin/customer_repair_list/#{customer_repair_list.id}/items/export", headers: headers[:auth], as: :json }
     

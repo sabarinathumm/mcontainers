@@ -46,7 +46,7 @@ RSpec.describe 'Admin::ContainerManagement::', type: :request do
                         container_length: 45.67,
                         container_width: 56.09,
                         container_type_id: container_type.id,
-                        location: 'Cross Street',
+                        location: 'DBXN',
                         comments: 'Random Comments',
                         manufacture_year: 2021,    
                         container_attachments: [
@@ -78,7 +78,7 @@ RSpec.describe 'Admin::ContainerManagement::', type: :request do
                 expect(json['container']['submitter_initials']).to eql('MG. C')
                 expect(json['container']['container_length']).to eql(45.67)
                 expect(json['container']['container_width']).to eql(56.09)
-                expect(json['container']['location']).to eql('Cross Street')
+                expect(json['container']['location']).to eql('DBXN')
                 expect(json['container']['comments']).to eql('Random Comments')
                 expect(json['container']['container_type']['name']).to eql(container_type.name)
                 expect(json['container']['customer']['full_name']).to eql(customer.full_name)
