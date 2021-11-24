@@ -140,41 +140,6 @@ Rails.application.routes.draw do
           end
         end
 
-        namespace :employee do
-          get 'repair_list',  to: 'repair_lists#index'
-          post 'repair_list', to: 'repair_lists#create'
-          put 'repair_list/version_activation/:id', to: 'repair_lists#version_activation'
-          scope "/repair_list/:repair_list_id" do
-            get 'items',  to: 'repair_list_items#index'
-            post 'items', to: 'repair_list_items#create'
-            get 'items/export', to: 'repair_list_items#export'
-            post 'items/upload', to: 'repair_list_items#upload'
-          end
-
-          get 'customer_repair_list',  to: 'customer_repair_lists#index'
-          post 'customer_repair_list', to: 'customer_repair_lists#create'
-          put 'customer_repair_list/version_activation/:id', to: 'customer_repair_lists#version_activation'
-
-          scope "/customer_repair_list/:customer_repair_list_id" do
-            get 'items',  to: 'customer_repair_list_items#index'
-            post 'items', to: 'customer_repair_list_items#create'
-            get 'items/export', to: 'customer_repair_list_items#export'
-            post 'items/upload', to: 'customer_repair_list_items#upload'
-          end
-
-          scope "/customer_repair_list/" do 
-            get "items/:id",  to: 'customer_repair_list_items#show'
-            put "items/:id", to: 'customer_repair_list_items#update'
-            delete "items/:id",  to: 'customer_repair_list_items#delete'
-          end
-
-          scope "/repair_list/" do 
-            get "items/:id",  to: 'repair_list_items#show'
-            put "items/:id", to: 'repair_list_items#update'
-            delete "items/:id",  to: 'repair_list_items#delete'
-          end
-        end
-
         namespace :shared do
           get 'all_customer_lists',  to: 'repair_lists#all_customer_lists'
         end

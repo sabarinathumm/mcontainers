@@ -21,7 +21,7 @@ RSpec.describe 'Admin::Customers', type: :request do
   let!(:repair_list_item){ create_list(:repair_list_item, 30, repair_list: repair_list, repair_type: repair_type, \
     container_damaged_area: container_damaged_area, container_repair_area: container_repair_area, \
     component: component, comp: comp, dam: dam, rep: rep, mode_number: mode_number, repair_mode: repair_mode, \
-    event: event, unit: unit) }
+    event: event, unit: unit, location: 'DBXN') }
 
     describe 'List all Customers' do
     # valid payload
@@ -59,7 +59,8 @@ RSpec.describe 'Admin::Customers', type: :request do
                     zipcode: '456-098', 
                     password: "GhostFreak@123",
                     repair_list_id: 0,
-                    is_active: true
+                    is_active: true,
+                    location: 'DBXN'
                 }
             }
          }
@@ -89,7 +90,7 @@ RSpec.describe 'Admin::Customers', type: :request do
         let!(:customer){ create(:customer) }
         let!(:customer2){ create(:customer) }
         let!(:customer_repair_list){ create(:customer_repair_list, is_active: true, customer: customer2) }
-        let!(:customer_repair_list_items){ create_list(:customer_repair_list_item, 10, customer_repair_list: customer_repair_list)}
+        let!(:customer_repair_list_items){ create_list(:customer_repair_list_item, 10, customer_repair_list: customer_repair_list, location: 'DBXN')}
         let!(:valid_attributes){ 
             {
                 customer: {
@@ -106,7 +107,8 @@ RSpec.describe 'Admin::Customers', type: :request do
                     zipcode: '456-098', 
                     password: "GhostFreak@123",
                     repair_list_id: customer_repair_list.id,
-                    is_active: true
+                    is_active: true, 
+                    location: 'DBXN'
                 }
             }
          }
@@ -150,7 +152,8 @@ RSpec.describe 'Admin::Customers', type: :request do
                     zipcode: '456-098', 
                     password: "GhostFreak@123",
                     repair_list_id: 0,
-                    is_active: true
+                    is_active: true, 
+                    location: 'DBXN'
                 }
             }
          }
@@ -207,7 +210,7 @@ RSpec.describe 'Admin::Customers', type: :request do
         let!(:customer){ create(:customer) }
         let!(:customer2){ create(:customer) }
         let!(:customer_repair_list){ create(:customer_repair_list, is_active: true, customer: customer2) }
-        let!(:customer_repair_list_items){ create_list(:customer_repair_list_item, 10, customer_repair_list: customer_repair_list)}
+        let!(:customer_repair_list_items){ create_list(:customer_repair_list_item, 10, customer_repair_list: customer_repair_list, location: 'DBXN')}
         let!(:valid_attributes){ 
             {
                 customer: {
@@ -224,7 +227,8 @@ RSpec.describe 'Admin::Customers', type: :request do
                     zipcode: '456-098', 
                     password: "GhostFreak@123",
                     repair_list_id: customer_repair_list.id,
-                    is_active: true
+                    is_active: true, 
+                    location: 'DBXN'
                 }
             }
          }

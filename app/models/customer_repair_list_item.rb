@@ -83,7 +83,7 @@ class CustomerRepairListItem < ApplicationRecord
                 repair_list_item.non_mearsk_hours = row['non_mearsk_hours']
                 repair_list_item.non_mearsk_material_cost = row['non_mearsk_material_cost']
                 repair_list_item.non_mearsk_description = row['non_mearsk_description']
-                repair_list_item.location = row['non_mearsk_location']
+                repair_list_item.location = row['location']
                 repair_list_item.length = row['non_mearsk_length']
                 repair_list_item.width = row['non_mearsk_width']
                 repair_list_item.non_mearsk_id_source = row['non_mearsk_id_source']

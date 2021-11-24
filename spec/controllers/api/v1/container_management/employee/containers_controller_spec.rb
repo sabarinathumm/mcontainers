@@ -98,15 +98,15 @@ RSpec.describe 'Employee::ContainerManagement::', type: :request do
                     {
                         container: {
                             yard_id: yard.id,
-                            container_uid: 'CON4567FG',
+                            container_uid: container.container_uid,
                             customer_id: customer.id,
-                            container_owner_name: 'Robert Bosch',
-                            submitter_initials: 'MG. C',
-                            container_length: 45.67,
-                            container_width: 56.09,
+                            container_owner_name: container.container_owner_name,
+                            submitter_initials: container.submitter_initials,
+                            container_length: container.container_length,
+                            container_width: container.container_width,
                             container_type_id: container_type.id,
-                            location: 'Cross Street',
-                            comments: 'Random Comments',
+                            location: 'DBXN',
+                            comments: container.comments,
                             manufacture_year: 2021,    
                             container_attachments: [
                                 {
@@ -132,16 +132,16 @@ RSpec.describe 'Employee::ContainerManagement::', type: :request do
                     # Note `json` is a custom helper to parse JSON responses
                     #puts json
                     expect(json).not_to be_empty
-                    expect(json['container']['container_uid']).to eql('CON4567FG')
-                    expect(json['container']['container_owner_name']).to eql('Robert Bosch')
-                    expect(json['container']['submitter_initials']).to eql('MG. C')
-                    expect(json['container']['container_length']).to eql(45.67)
-                    expect(json['container']['container_width']).to eql(56.09)
-                    expect(json['container']['location']).to eql('Cross Street')
-                    expect(json['container']['comments']).to eql('Random Comments')
+                    expect(json['container']['container_uid']).to eql(container.container_uid)
+                    expect(json['container']['container_owner_name']).to eql(container.container_owner_name)
+                    expect(json['container']['submitter_initials']).to eql(container.submitter_initials)
+                    expect(json['container']['container_length']).to eql(container.container_length)
+                    expect(json['container']['container_width']).to eql(container.container_width)
+                    expect(json['container']['location']).to eql('DBXN')
+                    expect(json['container']['comments']).to eql(container.comments)
                     expect(json['container']['container_type']['name']).to eql(container_type.name)
                     expect(json['container']['customer']['full_name']).to eql(customer.full_name)
-                    expect(json['container']['container_attachments']).not_to be_empty
+                    expect(json['container']['container_attachments'][0]).not_to be_empty
                     expect(json['container']['container_attachments'].count).to eql(3)
                     expect(json['container']['container_attachments'][0]['attachment_url']).not_to be_empty
                     expect(response).to have_http_status(200)

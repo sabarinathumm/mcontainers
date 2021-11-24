@@ -1,7 +1,7 @@
 uid,container_repair_area,container_damaged_area,repair_type,is_non_mearsk_not_applicable,non_mearsk_hours,non_mearsk_material_cost_cents,non_mearsk_material_cost_currency,non_mearsk_description,comp,rep,dam,component,event,location,unit,length,width,non_mearsk_id_source,is_mearsk_not_applicable,mearsk_max_material_cost_cents,mearsk_max_material_cost_currency,mearsk_unit_material_cost_cents,mearsk_unit_material_cost_currency,mearsk_hours_per_unit,mesrsk_max_pieces,mearsk_units,repair_mode,mode_number,repair_code,combined,mearsk_description,mearsk_id_source
 43,green,"Klocko, Windler and Dicki",,,,0,USD,,,,,,,,,,,,,,,,
-54,peach,"Klocko, Windler and Dicki",,,12.0,1200,USD,Good,Sitework & Site Utilities,Sana Wolf PhD,EIFS,Rubber,Overhead Doors,Karur,feet,,,,,,,,
+54,peach,"Klocko, Windler and Dicki",,,12.0,1200,USD,Good,Sitework & Site Utilities,Sana Wolf PhD,EIFS,Rubber,Overhead Doors,DBXN,feet,,,,,,,,
 55,peach,"Klocko, Windler and Dicki",,true,,0,USD,,,,,,,,,,,,,,,,
 56,peach,"Klocko, Windler and Dicki",,true,,0,USD,,,,,,,,,,,,,,,,
 57,silver,"Klocko, Windler and Dicki",,true,,0,USD,,,,,,,,,,,,,,,,
-58,turquoise,Wolff Inc,,,12.0,1200,USD,12,Sitework & Site Utilities,Cristina Davis Jr.,Masonry,Steel,Overhead Doors,Karur,feet,12.0,12.0,TRON,Ethereum,12,12,12,12
+58,turquoise,Wolff Inc,,,12.0,1200,USD,12,Sitework & Site Utilities,Cristina Davis Jr.,Masonry,Steel,Overhead Doors,DBXN,feet,12.0,12.0,TRON,Ethereum,12,12,12,12

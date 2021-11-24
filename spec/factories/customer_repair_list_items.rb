@@ -1,6 +1,7 @@
 FactoryBot.define do
   factory :customer_repair_list_item do  
     uid { generate(:cus_uid)}
+    location {'DBXN'}
   end
 
   sequence(:cus_uid) do
