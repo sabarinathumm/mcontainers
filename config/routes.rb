@@ -32,7 +32,10 @@ Rails.application.routes.draw do
             resources :activity_items, only: [:index, :create ,:update, :show]
             delete "activity_items/:id", to: 'activity_items#delete'
           end
+          
         end
+
+      
 
         namespace :employee do
           resources :activities, only: [:index, :update, :show, :delete]
@@ -59,6 +62,13 @@ Rails.application.routes.draw do
           end
         end
 
+      end
+
+      namespace :invoice_management do
+        namespace :admin do
+          get 'invoices', to: 'invoices#index'
+          post 'invoices/:id/export_common', to: 'invoices#export_common' 
+        end
       end
       
       namespace :container_management do
