@@ -4,7 +4,7 @@ RSpec.describe 'Admin::ActivityManagement::', type: :request do
     # initialize test data 
     let!(:admin){ create(:admin) }
     let!(:headers) { get_admin_headers(admin) }
-    let!(:customer){ create(:customer) }
+    let!(:customer){ create(:customer, billing_type: 'common') }
     let!(:yard){ create(:yard, name: 'Alpha') }
     let!(:container_type){ create(:container_type) }
     let!(:container_damaged_area){ create(:container_damaged_area) }
@@ -23,8 +23,8 @@ RSpec.describe 'Admin::ActivityManagement::', type: :request do
     let!(:uploaded_file){ create(:uploaded_file, attachment: attachment, user: admin) }
     let!(:container) { create(:container, container_type: container_type, yard: yard, customer: customer) }
     let!(:container_attachment) { create(:container_attachment, attachment: uploaded_file, attachment_type: 'left_side_photo', container: container) } 
-    let!(:activity) { create_list(:activity, 10,  container: container, assigned_to: admin,activity_type: 'quote') }
-    let!(:customer){ create(:customer) }
+    let!(:activity) { create_list(:activity, 10,  container: container, assigned_to: admin,activity_type: 'quote', activity_status: 'ready_for_billing') }
+    let!(:activity_item) {create(:activity_item, activity: activity, container_repair_area:          container_repair_area, container_damaged_area: container_damaged_area, unit: unit)}
     
 
     describe 'List all Activities with billed or ready_for_billing statuses' do
@@ -47,18 +47,19 @@ RSpec.describe 'Admin::ActivityManagement::', type: :request do
         context 'success' do
     
             let!(:activity2) { create_list(:activity, 5, container: container, assigned_to: admin) }
+            let!(:container) { create(:container, container_type: container_type, yard: yard, customer: customer) }
+            let!(:activity_item) {create(:activity_item)}
             let!(:valid_attributes){
                     {
-                        activity_id: activity.first.id
+                        activity_ids: activity2.pluck(:id)
                     }
                 }
-            before { post "/api/v1/invoice_management/admin/invoices/#{activity.first.id}/export_common", params: valid_attributes, headers: headers[:auth], as: :json }
+            before { post "/api/v1/invoice_management/admin/invoices/export", params: valid_attributes, headers: headers[:auth], as: :json }
     
             it 'returns token' do
                 # Note `json` is a custom helper to parse JSON responses
                 # puts response.body
                 # puts response.headers
-                # puts activity.first.id
                 expect(response.headers['Content-Type']).to eq('text/csv')
                 expect(response).to have_http_status(200)
             end

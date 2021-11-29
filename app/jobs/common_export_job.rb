@@ -1,6 +1,6 @@
 class CommonExportJob < ApplicationJob
     queue_as :default
-
+    puts "Common"
     def perform (activity_ids)
         @activities = Activity.where(id: activity_ids)
         @containers = Container.where(id: @activities.pluck(:container_id))
@@ -10,20 +10,25 @@ class CommonExportJob < ApplicationJob
         message_header = msg_header + shop_code + generated_indentifer
         @containers.each do |container| 
             customer_code = "MAER"
-            repair_date = self.container.first.created_at.strftime("%d-%b-%Y")
-            equipment_number = self.container.first.container_uid
-            mode = "0" + self.container.first.container_type_id.to_s
+            repair_date = container.created_at.strftime("%d-%b-%Y")
+            equipment_number = container.container_uid
+            mode = "0" + container.container_type_id.to_s
             cause = "1"
             third_party_location = "   "
             wo_type = "E"
             header_one = "HD1" + customer_code + shop_code + repair_date.to_s + equipment_number.to_s + mode.to_s + cause + third_party_location + wo_type
-
             
-            @activity_items = @containers.activity_items.where(id: activity_ids)
+            # return {message_header: message_header, header_one: header_one}
+            
+            @activity_items = container.activity_items.where(id: activity_ids)
+            puts activity_ids
+            puts "Activity items"
+            puts @activity_items.to_json
             @activity_items.each do |item|
+                puts "Message"
                 # ‘HD2[VendorReferenceNumber][StraightTime][OverTime][DoubleTime][MiscTime][TotalAmount][Space-13]
                 vendor_ref_number = "                          " + "0000010915"
-                hours_per_unit = item.first.hours.to_i
+                hours_per_unit = item.hours.to_i
                 units = item.count
                 straight_time = hours_per_unit * units
                 over_time = "0000"
@@ -43,7 +48,7 @@ class CommonExportJob < ApplicationJob
                 third_party_indicator = 'O'
                 repair_item = "RPR" + damage_code + "  " + repair_code + repair_loc_code + piece_count.to_s + material_amount.to_s + man_hours.to_s + third_party_indicator 
   
-                csv << [ message_header, header_one, header_two, repair_item ]
+                return {header_two: header_two, repair_item: repair_item} 
             end
 
 
