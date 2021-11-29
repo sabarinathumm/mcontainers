@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe 'Admin::ActivityManagement::', type: :request do
+RSpec.describe 'Admin::InvoiceManagement::', type: :request do
     # initialize test data 
     let!(:admin){ create(:admin) }
     let!(:headers) { get_admin_headers(admin) }
@@ -23,8 +23,10 @@ RSpec.describe 'Admin::ActivityManagement::', type: :request do
     let!(:uploaded_file){ create(:uploaded_file, attachment: attachment, user: admin) }
     let!(:container) { create(:container, container_type: container_type, yard: yard, customer: customer) }
     let!(:container_attachment) { create(:container_attachment, attachment: uploaded_file, attachment_type: 'left_side_photo', container: container) } 
+
     let!(:activity) { create_list(:activity, 10,  container: container, assigned_to: admin,activity_type: 'quote', activity_status: 'ready_for_billing') }
-    let!(:activity_item) {create(:activity_item, activity: activity, container_repair_area:          container_repair_area, container_damaged_area: container_damaged_area, unit: unit)}
+
+    # let!(:activity_item) {create(:activity_item, activity: activity, container_repair_area:          container_repair_area, container_damaged_area: container_damaged_area, unit: unit)}
     
 
     describe 'List all Activities with billed or ready_for_billing statuses' do
