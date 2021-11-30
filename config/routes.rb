@@ -56,6 +56,7 @@ Rails.application.routes.draw do
           post 'activities/auto_populate_width',  to: 'activities#auto_populate_width'
           post 'activities/auto_populate_unit',  to: 'activities#auto_populate_unit'
           post 'activities/auto_populate_all',  to: 'activities#auto_populate_all'
+
           scope "activities/:activity_id" do
             resources :activity_items, only: [:index, :create ,:update, :show]
             delete "activity_items/:id", to: 'activity_items#delete'
@@ -65,6 +66,7 @@ Rails.application.routes.draw do
       end
 
       namespace :invoice_management do
+        resources :activities, only: [:index, :show]
         namespace :admin do
           get 'invoices', to: 'invoices#index'
           post 'invoices/export', to: 'invoices#export_common' 
