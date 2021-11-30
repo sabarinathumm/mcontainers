@@ -3,17 +3,18 @@ class Api::V1::InvoiceManagement::Shared::InvoicesController < Api::V1::BaseCont
     before_action :doorkeeper_authorize!
 	before_action :validate_token!
     before_action :set_format, only: [:export_common]
+    before_action :set_activity, only: [:show]
 
     def index
-        # @activities = Activity.all.filters(filter_params).search_by(params[:search_text]).sorts(sort_params)  
-        @activities = Activity.where(activity_status: 'ready_for_billing')
+        @activities = Activity.all.filters(filter_params).search_by(params[:search_text]).sorts(sort_params)  
+        # @activities = Activity.where(activity_status: 'ready_for_billing')
         # puts "HI"
-        # puts @activities.to_json
+        puts @activities.to_json
         render json: @activities, each_serializer: ActivitySerializer
     end
 
     def show
-        render json:  @invoice, serializer: ActivitySerializer
+        render json:  @activity, serializer: ActivitySerializer
     end
 
     def export_common
@@ -21,6 +22,10 @@ class Api::V1::InvoiceManagement::Shared::InvoicesController < Api::V1::BaseCont
         @activities = Activity.where(id: export_params[:activity_ids])
       
         @containers = Container.where(id: @activities.pluck(:container_id))
+
+        # @activity_items = @activities.activity_items.where(id: activity_ids)
+        # puts "Activity Items"
+        # puts @activity_items.to_json
        
         @customers = Customer.where(id: @containers.pluck(:customer_id))
        
@@ -48,7 +53,13 @@ class Api::V1::InvoiceManagement::Shared::InvoicesController < Api::V1::BaseCont
 
     end
     
+    def filter_params
+        params.permit( :activity_status)
+    end
 
+    def sort_params
+        params.permit(:yard_name, :owner_name, :activity_status_sort, :activity_type_sort, :customer_name, :created_at, :activity_uid, :sub_total)
+    end
 
     def set_format
         request.format = 'csv'
@@ -56,5 +67,9 @@ class Api::V1::InvoiceManagement::Shared::InvoicesController < Api::V1::BaseCont
 
     def export_params
         params.permit(activity_ids: [])
+    end
+
+    def set_activity
+        @activity = Activity.find(params[:id])
     end
 end

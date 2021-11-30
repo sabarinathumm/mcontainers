@@ -44,13 +44,39 @@ RSpec.describe 'Admin::InvoiceManagement::', type: :request do
         end
     end
 
+    describe 'show each invoice of the activity' do
+        context 'return each invoice' do
+            let!(:activity2) { create_list(:activity, 5, container: container, assigned_to: admin) }
+            let!(:activity) {create(:activity,container: container, assigned_to: admin)}
+            let!(:container) {create(:container, container_type: container_type, yard: yard, customer: customer )}
+            let!(:repair_type) {create(:repair_type)}
+            let!(:activity_items) {create(:activity_item, activity: activity, container_repair_area: container_repair_area, container_damaged_area: container_damaged_area, repair_type: repair_type, unit: unit)}
+            let!(:container_repair_area) {create(:container_repair_area)}
+            let!(:container_damaged_area) {create(:container_damaged_area)}
+
+            before { get "/api/v1/invoice_management/admin/invoices/#{activity.id}", headers: headers[:auth], as: :json }
+
+            it 'returns the filtered activity' do
+                # Note `json` is a custom helper to parse JSON responses
+                puts json
+                #puts response.body
+                expect(json).not_to be_empty
+                expect(response).to have_http_status(200)
+            end
+        end
+    end
+
     describe 'Export Activities' do
         # valid payload
         context 'success' do
-    
             let!(:activity2) { create_list(:activity, 5, container: container, assigned_to: admin) }
-            let!(:container) { create(:container, container_type: container_type, yard: yard, customer: customer) }
-            let!(:activity_item) {create(:activity_item)}
+            let!(:activity) {create(:activity,container: container, assigned_to: admin)}
+            let!(:container) {create(:container, container_type: container_type, yard: yard, customer: customer )}
+            let!(:repair_type) {create(:repair_type)}
+            let!(:activity_items) {create(:activity_item, activity: activity, container_repair_area: container_repair_area, container_damaged_area: container_damaged_area, repair_type: repair_type, unit: unit)}
+            let!(:container_repair_area) {create(:container_repair_area)}
+            let!(:container_damaged_area) {create(:container_damaged_area)}
+          
             let!(:valid_attributes){
                     {
                         activity_ids: activity2.pluck(:id)
@@ -62,6 +88,8 @@ RSpec.describe 'Admin::InvoiceManagement::', type: :request do
                 # Note `json` is a custom helper to parse JSON responses
                 # puts response.body
                 # puts response.headers
+                puts "Ho"
+                puts activity_items
                 expect(response.headers['Content-Type']).to eq('text/csv')
                 expect(response).to have_http_status(200)
             end

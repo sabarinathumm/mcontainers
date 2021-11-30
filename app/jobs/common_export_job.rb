@@ -20,8 +20,8 @@ class CommonExportJob < ApplicationJob
             
             # return {message_header: message_header, header_one: header_one}
             
-            @activity_items = container.activity_items.where(id: activity_ids)
-            puts activity_ids
+            @activity_items = container.activity_items.where(id: activity_ids )
+            # puts activity_ids
             puts "Activity items"
             puts @activity_items.to_json
             @activity_items.each do |item|

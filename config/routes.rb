@@ -68,6 +68,7 @@ Rails.application.routes.draw do
         namespace :admin do
           get 'invoices', to: 'invoices#index'
           post 'invoices/export', to: 'invoices#export_common' 
+          get 'invoices/:id', to: 'invoices#show'
         end
       end
       
