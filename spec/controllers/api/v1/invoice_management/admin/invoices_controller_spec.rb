@@ -4,7 +4,7 @@ RSpec.describe 'Admin::InvoiceManagement::', type: :request do
     # initialize test data 
     let!(:admin){ create(:admin) }
     let!(:headers) { get_admin_headers(admin) }
-    let!(:customer){ create(:customer, billing_type: 'common') }
+    let!(:customer){ create(:customer, billing_type: 'merc') }
     let!(:yard){ create(:yard, name: 'Alpha') }
     let!(:container_type){ create(:container_type) }
     let!(:container_damaged_area){ create(:container_damaged_area) }
@@ -50,7 +50,7 @@ RSpec.describe 'Admin::InvoiceManagement::', type: :request do
             let!(:activity) {create(:activity,container: container, assigned_to: admin)}
             let!(:container) {create(:container, container_type: container_type, yard: yard, customer: customer )}
             let!(:repair_type) {create(:repair_type)}
-            let!(:activity_items) {create(:activity_item, activity: activity, container_repair_area: container_repair_area, container_damaged_area: container_damaged_area, repair_type: repair_type, unit: unit)}
+            let!(:activity_items) {create(:activity_item, activity: activity, container_repair_area: container_repair_area, container_damaged_area: container_damaged_area, repair_type: repair_type, unit: unit, material_cost_cents: 100)}
             let!(:container_repair_area) {create(:container_repair_area)}
             let!(:container_damaged_area) {create(:container_damaged_area)}
 
@@ -73,23 +73,21 @@ RSpec.describe 'Admin::InvoiceManagement::', type: :request do
             let!(:activity) {create(:activity,container: container, assigned_to: admin)}
             let!(:container) {create(:container, container_type: container_type, yard: yard, customer: customer )}
             let!(:repair_type) {create(:repair_type)}
-            let!(:activity_items) {create(:activity_item, activity: activity, container_repair_area: container_repair_area, container_damaged_area: container_damaged_area, repair_type: repair_type, unit: unit)}
+            let!(:activity_items) {create(:activity_item, activity: activity2.first, container_repair_area: container_repair_area, container_damaged_area: container_damaged_area, repair_type: repair_type, unit: unit)}
             let!(:container_repair_area) {create(:container_repair_area)}
             let!(:container_damaged_area) {create(:container_damaged_area)}
           
             let!(:valid_attributes){
                     {
-                        activity_ids: activity2.pluck(:id)
+                        activity_ids: [activity2.first.id, activity2.second.id]
                     }
                 }
             before { post "/api/v1/invoice_management/admin/invoices/export", params: valid_attributes, headers: headers[:auth], as: :json }
     
             it 'returns token' do
                 # Note `json` is a custom helper to parse JSON responses
-                # puts response.body
+                puts response.body
                 # puts response.headers
-                puts "Ho"
-                puts activity_items
                 expect(response.headers['Content-Type']).to eq('text/csv')
                 expect(response).to have_http_status(200)
             end

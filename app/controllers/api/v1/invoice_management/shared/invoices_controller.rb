@@ -8,9 +8,7 @@ class Api::V1::InvoiceManagement::Shared::InvoicesController < Api::V1::BaseCont
     def index
         @activities = Activity.all.filters(filter_params).search_by(params[:search_text]).sorts(sort_params)  
         @activities = paginate @activities.page(params[:page])
-        # @activities = Activity.where(activity_status: 'ready_for_billing')
-        # puts "HI"
-        puts @activities.to_json
+        # puts @activities.to_json
         render json: @activities, each_serializer: ActivitySerializer, meta: pagination_dict(@activities)
     end
 
@@ -19,34 +17,26 @@ class Api::V1::InvoiceManagement::Shared::InvoicesController < Api::V1::BaseCont
     end
 
     def export_common
-       
-        @activities = Activity.where(id: export_params[:activity_ids])
-      
-        @containers = Container.where(id: @activities.pluck(:container_id))
 
-        # @activity_items = @activities.activity_items.where(id: activity_ids)
-        # puts "Activity Items"
-        # puts @activity_items.to_json
-       
+        @activities = Activity.where(id: export_params[:activity_ids])
+        @containers = Container.where(id: @activities.pluck(:container_id))
         @customers = Customer.where(id: @containers.pluck(:customer_id))
        
         if @customers.first.billing_type == 'common'
             if common = CommonExportJob.perform_now(export_params[:activity_ids])
-                # common = CommonExportJob.perform_now(export_params[:activity_ids])
-               puts common.to_json
-                CSV.generate do |csv|
-                    csv << [ common[:message_header]]
+                csv_data = CSV.generate do |csv|
+                    csv << [common]
                 end
+                send_data csv_data, filename: "Invoice_#{Date.today.to_s}.csv", disposition: :attachment  
             else
                 render json: { success: false }
             end
         else
             if msc = MscExportJob.perform_now(export_params[:activity_ids])
-                # msc = MscExportJob.perform_now(export_params[:activity_ids])
-            #   puts  msc.message_header
-                CSV.generate do |csv|
-                    csv << [  msc.first.message_header, msc.date_time_ref, msc.references, msc.alternative_curr_amt_std, msc.alternative_curr_amt_dpp, msc.labour_cost, msc.name_addr_receiver, msc.equipment_details, msc.equipment_related_info, msc.equipment_condition_info, msc.current_usage_info ]
+                csv_data = CSV.generate do |csv|
+                    csv << [msc]
                 end
+                send_data csv_data, filename: "Invoice_#{Date.today.to_s}.csv", disposition: :attachment  
             else
                 render json: { success: false }
             end
