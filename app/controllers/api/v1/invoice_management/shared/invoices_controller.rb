@@ -7,10 +7,11 @@ class Api::V1::InvoiceManagement::Shared::InvoicesController < Api::V1::BaseCont
 
     def index
         @activities = Activity.all.filters(filter_params).search_by(params[:search_text]).sorts(sort_params)  
+        @activities = paginate @activities.page(params[:page])
         # @activities = Activity.where(activity_status: 'ready_for_billing')
         # puts "HI"
         puts @activities.to_json
-        render json: @activities, each_serializer: ActivitySerializer
+        render json: @activities, each_serializer: ActivitySerializer, meta: pagination_dict(@activities)
     end
 
     def show
