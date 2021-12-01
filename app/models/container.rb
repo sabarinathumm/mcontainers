@@ -20,6 +20,10 @@ class Container < ApplicationRecord
         self.container_attachments_attributes = params
     end
 
+    def location_required?
+        false
+    end
+    
     def next_id
 
         if Container.where("id > ?", self.id).order(id: :asc).first.present?

@@ -37,6 +37,10 @@ class RepairListItem < ApplicationRecord
     #     self.save!
     # end
 
+    def location_required?
+        false
+    end
+    
     def check_not_applicable
 
         if self.is_non_mearsk_not_applicable == true

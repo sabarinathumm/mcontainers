@@ -14,6 +14,8 @@ RSpec.describe 'RepairLists::', type: :request do
   let!(:mode_number){ create(:mode_number) }
   let!(:repair_mode){ create(:repair_mode) }
   let!(:event){ create(:event) }
+  let!(:length) {create(:length)}
+  let!(:width) {create(:width)}
   let!(:unit){ create(:unit) }
 
     describe 'List all Repair Lists' do

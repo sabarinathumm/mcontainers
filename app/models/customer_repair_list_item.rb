@@ -30,6 +30,10 @@ class CustomerRepairListItem < ApplicationRecord
     scope :filter_by_container_damaged_area_id, -> (id) { where container_damaged_area_id: id}
     scope :filter_by_repair_type_id, -> (id) { where repair_type_id: id}
 
+    def location_required?
+        false
+    end
+    
     def self.export(options = {})
         CSV.generate(options) do |csv|
           csv << %w{uid container_repair_area container_damaged_area repair_type is_non_mearsk_not_applicable non_mearsk_hours non_mearsk_material_cost non_mearsk_description non_mearsk_comp non_mearsk_rep non_mearsk_dam non_mearsk_component non_mearsk_event non_mearsk_location unit non_mearsk_length non_mearsk_width non_mearsk_id_source is_mearsk_not_applicable mearsk_max_material_cost mearsk_unit_material_cost mearsk_hours_per_unit mesrsk_max_pieces mearsk_units repair_mode mode_number repair_code combined mearsk_description mearsk_id_source }

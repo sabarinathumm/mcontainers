@@ -15,4 +15,8 @@ class ActivityItem < ApplicationRecord
     monetize :labour_cost_cents
     monetize :material_cost_cents
     monetize :total_cost_cents
+
+    def location_required?
+        false
+    end
 end
