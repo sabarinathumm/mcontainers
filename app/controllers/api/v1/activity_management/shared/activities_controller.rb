@@ -95,8 +95,9 @@ class Api::V1::ActivityManagement::Shared::ActivitiesController < Api::V1::BaseC
     end
 
     def auto_populate
-        @customer_repair_list_item = @customer_repair_list.customer_repair_list_items.where(uid: params[:repair_code]).first unless  params[:repair_code].nil?
-        throw_error('Item not available', :unprocessable_entity) if @customer_repair_list_item.blank?
+        @customer_repair_list_item = @customer_repair_list.customer_repair_list_items.where(uid: params[:repair_code]).first 
+        # unless  params[:repair_code].nil?
+        throw_error('Item not available', :no_content) if @customer_repair_list_item.blank?
         item = @customer_repair_list_item
         if @customer.billing_type == 'common' 
 
