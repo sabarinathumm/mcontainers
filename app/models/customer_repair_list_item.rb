@@ -21,8 +21,9 @@ class CustomerRepairListItem < ApplicationRecord
     monetize :mearsk_unit_material_cost_cents
 
     validates_uniqueness_of :uid, scope: :customer_repair_list_id
-    validates :location, presence: false, format: { with: /^[DF][BHGTX][1-4X][2-4NX]|[LR][BHGTX][0-9X][02-9XN]|[TUB][LXR][0-9X][02-9XN]|[XEI][X][X][X]$/, multiline: true}, on: :create
-
+    # validates :location, presence: false, format: { with: /^[DF][BHGTX][1-4X][2-4NX]|[LR][BHGTX][0-9X][02-9XN]|[TUB][LXR][0-9X][02-9XN]|[XEI][X][X][X]$/, multiline: true}, on: :create
+    validates :location, presence: false, allow_blank: true, format: { with: /^[DF][BHGTX][1-4X][2-4NX]|[LR][BHGTX][0-9X][02-9XN]|[TUB][LXR][0-9X][02-9XN]|[XEI][X][X][X]$/ , multiline: false }, on: :create
+    validates :location, presence: false, allow_blank: true, format: { with: /^[DF][BHGTX][1-4X][2-4NX]|[LR][BHGTX][0-9X][02-9XN]|[TUB][LXR][0-9X][02-9XN]|[XEI][X][X][X]$/ , multiline: false }, on: :update
     # after_create :set_uid
     before_update :check_not_applicable
 
