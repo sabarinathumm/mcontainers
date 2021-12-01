@@ -164,6 +164,8 @@ class Activity < ApplicationRecord
     def set_activity_timeline
         if self.activity_status_was.present? && self.activity_status != self.activity_status_was
             self.activity_timelines.create!(history_status: self.activity_status, history_date: Date.today)
+        elsif Activity.activity_statuses[self.activity_status_was] > Activity.activity_statuses[self.activity_status]
+            self.activity_timelines.create!(history_status: self.activity_status, history_date: history_date_was)
         end
     end
 
