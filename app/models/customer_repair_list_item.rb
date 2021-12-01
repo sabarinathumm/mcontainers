@@ -89,10 +89,10 @@ class CustomerRepairListItem < ApplicationRecord
                 repair_list_item.non_mearsk_material_cost = row['non_mearsk_material_cost']
                 repair_list_item.non_mearsk_description = row['non_mearsk_description']
                 repair_list_item.location = row['location'] #some meta or issue might be these 3
-                repair_list_item.length = Length.where(name: row['length']).first  unless row['length'].blank?
-                repair_list_item.width = Width.where(name: row['width']).first  unless row['width'].blank?
-                # repair_list_item.length = row['non_mearsk_length'] #metas
-                # repair_list_item.width = row['non_mearsk_width']    #metas
+                # repair_list_item.length = Length.where(name: row['length']).first  unless row['length'].blank?
+                # repair_list_item.width = Width.where(name: row['width']).first  unless row['width'].blank?
+                repair_list_item.length = row['non_mearsk_length']
+                repair_list_item.width = row['non_mearsk_width']  
                 repair_list_item.non_mearsk_id_source = row['non_mearsk_id_source']
                 repair_list_item.mearsk_max_material_cost = row['mearsk_max_material_cost']
                 repair_list_item.mearsk_unit_material_cost = row['mearsk_unit_material_cost']
