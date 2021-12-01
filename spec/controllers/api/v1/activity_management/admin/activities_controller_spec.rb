@@ -245,28 +245,29 @@ RSpec.describe 'Admin::ActivityManagement::', type: :request do
         end
     end
 
-    # describe 'Update activity statuses backward' do
-    #     # valid payload
-    #     context 'success' do
+    describe 'Update activity statuses backward' do
+        # valid payload
+        context 'success' do
     
-    #         let!(:activity2) { create_list(:activity, 5, container: container, assigned_to: admin) }
-    #         let!(:activity_timeline) {create(:activity_timeline, activity: activity2.first, history_status: 'ready_for_billing')}
-    #         let!(:valid_attributes){
-    #             {
-    #                 activity_ids: [activity2.first.id, activity2.second.id],
-    #                 activity_status: 'repair_draft'
-    #             }
-    #         }
-    #         before { post "/api/v1/activity_management/admin/activities/update_status", params: valid_attributes ,headers: headers[:auth], as: :json }
+            let!(:activity2) { create_list(:activity, 5, container: container, assigned_to: admin) }
+            let!(:activity_timeline) {create(:activity_timeline, activity: activity2.first, history_status: 'ready_for_billing')}
+            let!(:valid_attributes){
+                {
+                    activity_ids: [activity2.first.id, activity2.second.id],
+                    activity_status: 'repair_draft'
+                }
+            }
+            before { post "/api/v1/activity_management/admin/activities/update_status", params: valid_attributes ,headers: headers[:auth], as: :json }
     
-    #         it 'returns the filtered activity' do
-    #             # Note `json` is a custom helper to parse JSON responses
-    #             puts json
-    #             expect(json).not_to be_empty
-    #             expect(response).to have_http_status(200)
-    #         end
-    #     end
-    # end
+            it 'returns the filtered activity' do
+                # Note `json` is a custom helper to parse JSON responses
+                # puts json
+                # puts response.body
+                expect(json).not_to be_empty
+                expect(response).to have_http_status(200)
+            end
+        end
+    end
 
     describe 'Export Activities' do
         # valid payload

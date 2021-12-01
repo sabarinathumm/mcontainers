@@ -162,12 +162,13 @@ class Activity < ApplicationRecord
     end
 
     def set_activity_timeline
-        if self.activity_status_was.present? && self.activity_status != self.activity_status_was && Activity.activity_statuses[self.activity_status_was] > Activity.activity_statuses[self.activity_status]
-            # puts "IF"
-            self.activity_timelines.create!(history_status: self.activity_status, history_date: Date.today)
-
-        # elsif self.activity_status_was.present? && self.activity_status != self.activity_status_was && Activity.activity_statuses[self.activity_status_was] < Activity.activity_statuses[self.activity_status]
-        #     self.activity_timelines.where(history_status: Activity.activity_statuses).destroy
+        if self.activity_status_was.present? && self.activity_status != self.activity_status_was
+            if Activity.activity_statuses[self.activity_status_was] > Activity.activity_statuses[self.activity_status]
+                self.activity_timelines.create!(history_status: self.activity_status, history_date: Date.today)
+            else
+                arr = Activity.activity_statuses.keys
+                self.activity_timelines.where(history_status: arr[arr.index(self.activity_status)..-1]).destroy_all
+            end
         end
     end
 
