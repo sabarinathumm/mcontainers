@@ -10,6 +10,8 @@ class Api::V1::ContainerManagement::Shared::ContainersController < Api::V1::Base
 
     def validate_container
          if ValidateContainerUidJob.perform_now(validate_container_params[:container_uid])
+            puts "UID"
+            puts validate_container_params[:container_uid]
             render json: { success: true }
          else
             render json: { success: false }
