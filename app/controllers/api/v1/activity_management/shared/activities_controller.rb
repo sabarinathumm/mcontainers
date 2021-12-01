@@ -83,6 +83,7 @@ class Api::V1::ActivityManagement::Shared::ActivitiesController < Api::V1::BaseC
     def update_status
         @activities = Activity.where(id: update_status_params[:activity_ids])
         @activities.update(activity_status: update_status_params[:activity_status])
+        
         render json: { succes: true }, status: :ok
     end
 
