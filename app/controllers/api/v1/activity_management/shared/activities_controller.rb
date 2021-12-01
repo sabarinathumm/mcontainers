@@ -12,7 +12,7 @@ class Api::V1::ActivityManagement::Shared::ActivitiesController < Api::V1::BaseC
         # @activities = Activity.all.group_by(:container_id)
         @activities = Activity.select('DISTINCT ON ("container_id") *').order(:container_id, created_at: :desc)
         
-        @activities = @activities.where.not(activity_status: ['idle','deleted']).filters(filter_params).search_by(params[:search_text]).sorts(sort_params)
+        @activities = @activities.where.not(activity_status: ['deleted']).filters(filter_params).search_by(params[:search_text]).sorts(sort_params)
         @activities = paginate @activities.page(params[:page])
         render json:  @activities, each_serializer: ActivitySerializer, meta: pagination_dict(@activities)
     end
