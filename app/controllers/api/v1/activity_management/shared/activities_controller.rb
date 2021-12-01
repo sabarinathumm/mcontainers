@@ -64,13 +64,13 @@ class Api::V1::ActivityManagement::Shared::ActivitiesController < Api::V1::BaseC
 
     def update       
         @activity.update!(activity_params)
+        puts "HERE UPDATe"
         render json: @activity, serializer: ActivitySerializer       
     end
 
     def update_date 
         @activity = Activity.where(id: update_date_params[:activity_id]).first
         @activity.update(activity_date: update_date_params[:activity_date])
-
         render json: @activity, serializer: ActivitySerializer
     end
     
