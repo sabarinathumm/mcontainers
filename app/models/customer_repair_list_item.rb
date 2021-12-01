@@ -51,7 +51,8 @@ class CustomerRepairListItem < ApplicationRecord
                 repair_list_item.event.present?  ? repair_list_item.event.name: nil, \
                 repair_list_item.location, \
                 repair_list_item.unit.present?  ? repair_list_item.unit.name: nil, \
-                repair_list_item.length.name, repair_list_item.width.name, repair_list_item.non_mearsk_id_source, repair_list_item.is_mearsk_not_applicable, repair_list_item.mearsk_max_material_cost.dollars, \
+                repair_list_item.length.present? ? repair_list_item.length.name: nil, \
+                repair_list_item.width.present? ? repair_list_item.width.name: nil, repair_list_item.non_mearsk_id_source, repair_list_item.is_mearsk_not_applicable, repair_list_item.mearsk_max_material_cost.dollars, \
                 repair_list_item.mearsk_unit_material_cost.dollars, repair_list_item.mearsk_hours_per_unit, \
                 repair_list_item.mesrsk_max_pieces, repair_list_item.mearsk_units, \
                 repair_list_item.repair_mode.present?  ? repair_list_item.repair_mode.name: nil, \
