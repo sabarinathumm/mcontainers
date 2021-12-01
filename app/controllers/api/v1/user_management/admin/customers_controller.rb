@@ -5,7 +5,7 @@ class Api::V1::UserManagement::Admin::CustomersController < Api::V1::BaseControl
     before_action :sort_customers, only: [:index]
 
     def index
-        @customers = @customers.where("lower(full_name) LIKE CONCAT('%',?,'%')", params[:search_text].downcase).order(created_at: :desc) unless params[:search_text].blank?
+        @customers = @customers.where("lower(full_name) LIKE CONCAT('%',?,'%')", params[:search_text].downcase).order(created_at: :asc) unless params[:search_text].blank?
         @customers = paginate @customers.page(params[:page])
         render json: @customers, each_serializer: CustomerSerializer, meta: pagination_dict(@customers)
     end
