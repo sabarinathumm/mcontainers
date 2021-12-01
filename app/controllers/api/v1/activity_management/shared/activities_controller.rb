@@ -147,6 +147,7 @@ class Api::V1::ActivityManagement::Shared::ActivitiesController < Api::V1::BaseC
         ids = @repair_list_items.pluck(:width_id)
 
         @width = Width.where(id: ids)
+        # puts @width.to_json
         render json: @width, each_serializer: MetaSerializer
         # render json: {repair_type_ids: @repair_list_items.pluck(:repair_type_id)}
     end
