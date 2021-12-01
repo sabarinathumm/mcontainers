@@ -77,6 +77,7 @@ class Api::V1::ActivityManagement::Shared::ActivitiesController < Api::V1::BaseC
 
     def delete
         @activity.update!(activity_status: 'deleted')
+        @activity.container.update!(container_status: 'idle')
     end
 
     def update_status
