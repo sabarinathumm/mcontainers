@@ -4,7 +4,7 @@ class Api::V1::RepairListManagement::Admin::CustomerRepairListsController < Api:
     before_action :set_customer, except: [:version_activation]
 
     def index
-        @repair_lists = CustomerRepairList.where(customer: @customer)
+        @repair_lists = CustomerRepairList.where(customer: @customer).order(updated_at: :desc)
         render json: @repair_lists, each_serializer: RepairListSerializer
     end
 
@@ -29,7 +29,7 @@ class Api::V1::RepairListManagement::Admin::CustomerRepairListsController < Api:
             @repair_list = CustomerRepairList.find(params[:id])
             @repair_list.customer.customer_repair_lists.update(is_active: false)
             @repair_list.update!(is_active: true)
-            puts @repair_list.to_json
+            # puts @repair_list.to_json
         end
         render json: @repair_list, serializer: RepairListSerializer
     end
