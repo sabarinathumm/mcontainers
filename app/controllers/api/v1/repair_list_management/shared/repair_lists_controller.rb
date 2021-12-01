@@ -3,7 +3,7 @@ class Api::V1::RepairListManagement::Shared::RepairListsController < Api::V1::Ba
 	before_action :validate_token!
 
     def index
-        @repair_lists = RepairList.all.order(updated_at: :desc)
+        @repair_lists = RepairList.all.order(created_at: :desc)
         render json: @repair_lists, each_serializer: RepairListSerializer
     end
 
