@@ -10,7 +10,7 @@ class Activity < ApplicationRecord
 
     before_update :set_activity_timeline
     after_create :set_activity_uid
-    before_update :set_container_status
+    after_update :set_container_status
     
     enum activity_type: [:quote, :repair]
 
@@ -202,5 +202,5 @@ class Activity < ApplicationRecord
         end
     end
 
-    
+
 end
