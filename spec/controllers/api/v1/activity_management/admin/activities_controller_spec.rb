@@ -298,7 +298,7 @@ RSpec.describe 'Admin::ActivityManagement::', type: :request do
         context 'sucessful delete' do 
             before { delete "/api/v1/activity_management/admin/activities/#{activity.id}", headers: headers[:auth], as: :json }
             it 'return 204' do 
-                # puts json
+                puts json
                 expect(response).to have_http_status(204)
             end
         end
