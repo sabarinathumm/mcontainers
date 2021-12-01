@@ -21,7 +21,7 @@ class CustomerRepairListItem < ApplicationRecord
     monetize :mearsk_unit_material_cost_cents
 
     validates_uniqueness_of :uid, scope: :customer_repair_list_id
-    validates :location, presence: true, format: { with: /^[DF][BHGTX][1-4X][2-4NX]|[LR][BHGTX][0-9X][02-9XN]|[TUB][LXR][0-9X][02-9XN]|[XEI][X][X][X]$/, multiline: true}, on: :create
+    validates :location, presence: false, format: { with: /^[DF][BHGTX][1-4X][2-4NX]|[LR][BHGTX][0-9X][02-9XN]|[TUB][LXR][0-9X][02-9XN]|[XEI][X][X][X]$/, multiline: true}, on: :create
 
     # after_create :set_uid
     before_update :check_not_applicable
@@ -88,7 +88,9 @@ class CustomerRepairListItem < ApplicationRecord
                 repair_list_item.non_mearsk_material_cost = row['non_mearsk_material_cost']
                 repair_list_item.non_mearsk_description = row['non_mearsk_description']
                 repair_list_item.location = row['location'] #some meta or issue might be these 3
+                puts "done"
                 repair_list_item.length = Length.where(name: row['length']).first  unless row['length'].blank?
+                puts "done"
                 repair_list_item.width = Width.where(name: row['width']).first  unless row['width'].blank?
                 # repair_list_item.length = row['non_mearsk_length'] #metas
                 # repair_list_item.width = row['non_mearsk_width']    #metas
