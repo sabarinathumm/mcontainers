@@ -7,11 +7,20 @@ class Api::V1::ActivityManagement::Shared::ActivitiesController < Api::V1::BaseC
     before_action :set_repair_list, only: [:auto_populate, :auto_populate_damage_area, :auto_populate_repair_type, :auto_populate_length,:auto_populate_width,:auto_populate_unit, :auto_populate_all]
 
     def index    
-        @activities = Activity.all.filters(filter_params).search_by(params[:search_text]).sorts(sort_params)  
+        # month_wise = Log.all.group_by { |t| t.created_at.beginning_of_month }
+
+        # @activities = Activity.all.group_by(:container_id)
+        @activities = Activity.select('DISTINCT ON ("container_id") *').order(:container_id, created_at: :desc)
+        
+        @activities = @activities.where.not(activity_status: ['idle','deleted']).filters(filter_params).search_by(params[:search_text]).sorts(sort_params)
         @activities = paginate @activities.page(params[:page])
         render json:  @activities, each_serializer: ActivitySerializer, meta: pagination_dict(@activities)
     end
 
+    def latest
+        
+    end
+    
     def container_activity
         @activities = @container.activities.where.not(activity_status: ['idle','deleted']).order(created_at: :desc)
         render json:  @activities, each_serializer: ActivitySerializer
@@ -83,7 +92,6 @@ class Api::V1::ActivityManagement::Shared::ActivitiesController < Api::V1::BaseC
     def update_status
         @activities = Activity.where(id: update_status_params[:activity_ids])
         @activities.update(activity_status: update_status_params[:activity_status])
-        
         render json: { succes: true }, status: :ok
     end
 
