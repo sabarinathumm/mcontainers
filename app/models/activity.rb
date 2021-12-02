@@ -168,6 +168,7 @@ class Activity < ApplicationRecord
             else
                 arr = Activity.activity_statuses.keys
                 self.activity_timelines.where(history_status: arr[arr.index(self.activity_status)..-1]).destroy_all
+                self.activity_timelines.create!(history_status: self.activity_status, history_date: Date.today)
             end
         end
     end
