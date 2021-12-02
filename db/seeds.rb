@@ -123,7 +123,7 @@ end
 
 (2..repair_items_sheet.last_row).each do |i|
     row = repair_items_sheet.row(i)
-    puts row[i]
+    # puts row[i]
 
     RepairList.create!(name: 'Version '+((RepairList.count+1).to_s), is_active: true) if RepairList.where(is_active: true).blank?
 
@@ -144,8 +144,8 @@ end
     repair_list_item.non_mearsk_material_cost = row[16]
     repair_list_item.non_mearsk_description = row[13]
     repair_list_item.location = row[14]
-    repair_list_item.length = Length.where(name: row[4]).first  unless row[4].blank?
-    repair_list_item.width = Width.where(name: row[5]).first  unless row[5].blank?
+    repair_list_item.length = Length.where("name LIKE CONCAT('%',?,'%')", row[4].to_i).first unless row[4].blank?
+    repair_list_item.width = Width.where("name LIKE CONCAT('%',?,'%')", row[5].to_i).first  unless row[5].blank?
     repair_list_item.non_mearsk_id_source = row[15]
     repair_list_item.mearsk_max_material_cost = row[22]
     repair_list_item.mearsk_unit_material_cost = row[19]
