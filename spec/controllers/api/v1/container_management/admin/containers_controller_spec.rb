@@ -73,13 +73,13 @@ RSpec.describe 'Admin::ContainerManagement::', type: :request do
 
             it 'returns token' do
                 # Note `json` is a custom helper to parse JSON responses
-                #puts json
+                puts json
                 expect(json).not_to be_empty
                 expect(json['container']['container_uid']).to eql('CON4567FG')
                 expect(json['container']['container_owner_name']).to eql('Robert Bosch')
                 expect(json['container']['submitter_initials']).to eql('MG. C')
-                expect(json['container']['container_length_id']).to eql(container_length.id)
-                expect(json['container']['container_height_id']).to eql(container_height.id)
+                expect(json['container']['container_length']['name']).to eql(container_length.name)
+                expect(json['container']['container_height']['name']).to eql(container_height.name)
                 expect(json['container']['location']).to eql('DBXN')
                 expect(json['container']['comments']).to eql('Random Comments')
                 expect(json['container']['container_type']['name']).to eql(container_type.name)
@@ -137,8 +137,8 @@ RSpec.describe 'Admin::ContainerManagement::', type: :request do
                     expect(json['container']['container_uid']).to eql(container.container_uid)
                     expect(json['container']['container_owner_name']).to eql(container.container_owner_name)
                     expect(json['container']['submitter_initials']).to eql(container.submitter_initials)
-                    expect(json['container']['container_length_id']).to eql(container_length.id)
-                    expect(json['container']['container_height_id']).to eql(container_height.id)
+                    expect(json['container']['container_length']['name']).to eql(container_length.name)
+                    expect(json['container']['container_height']['name']).to eql(container_height.name)
                     expect(json['container']['location']).to eql('DBXN')
                     expect(json['container']['comments']).to eql(container.comments)
                     expect(json['container']['container_type']['name']).to eql(container_type.name)
@@ -165,8 +165,8 @@ RSpec.describe 'Admin::ContainerManagement::', type: :request do
                 expect(json['container']['container_uid']).to eql(container.container_uid)
                 expect(json['container']['container_owner_name']).to eql(container.container_owner_name)
                 expect(json['container']['submitter_initials']).to eql(container.submitter_initials)
-                expect(json['container']['container_length_id']).to eql(container_length.id)
-                expect(json['container']['container_height_id']).to eql(container_height.id)
+                expect(json['container']['container_length']['name']).to eql(container_length.name)
+                expect(json['container']['container_height']['name']).to eql(container_height.name)
                 expect(json['container']['location']).to eql(container.location)
                 expect(json['container']['comments']).to eql(container.comments)
                 expect(json['container']['container_type']['name']).to eql(container_type.name)

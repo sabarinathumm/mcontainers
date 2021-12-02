@@ -115,6 +115,8 @@ Rails.application.routes.draw do
         resources :yards, only: [:index]
         resources :lengths, only: [:index]
         resources :widths, only: [:index]
+        resources :container_lengths, only: [:index]
+        resources :container_heights, only: [:index]
       end
 
       namespace :repair_list_management do

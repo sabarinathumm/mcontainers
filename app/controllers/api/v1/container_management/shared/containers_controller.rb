@@ -10,8 +10,8 @@ class Api::V1::ContainerManagement::Shared::ContainersController < Api::V1::Base
 
     def validate_container
          if ValidateContainerUidJob.perform_now(validate_container_params[:container_uid])
-            puts "UID"
-            puts validate_container_params[:container_uid]
+            # puts "UID"
+            # puts validate_container_params[:container_uid]
             render json: { success: true }
          else
             render json: { success: false }
@@ -19,9 +19,10 @@ class Api::V1::ContainerManagement::Shared::ContainersController < Api::V1::Base
     end
 
     def create
-
+        puts container_params
         ActiveRecord::Base.transaction do
             @container = Container.create!(container_params)
+
             @container.activities.create!(activity_status: 'idle', assigned_to: current_admin)
         end
         
@@ -83,7 +84,7 @@ class Api::V1::ContainerManagement::Shared::ContainersController < Api::V1::Base
 
     def container_params
         params.require(:container).permit(:yard_id, :container_uid, :customer_id, :container_owner_name, :submitter_initials, \
-            :container_length_id, :container_width_id, :container_type_id, :manufacture_year, :location, :comments, \
+            :container_length_id, :container_height_id, :container_type_id, :manufacture_year, :location, :comments, \
             container_attachments: [:attachment_type, :attachment_id])
             
     end

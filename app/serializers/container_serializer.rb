@@ -1,6 +1,6 @@
 class ContainerSerializer < ActiveModel::Serializer
-    attributes :id, :container_uid, :container_status, :container_owner_name, :submitter_initials, :container_length, \
-        :container_width, :manufacture_year, :location, :comments, :container_attachments, :container_height, :container_length
+    attributes :id, :container_uid, :container_status, :container_owner_name, :submitter_initials, \
+         :manufacture_year, :location, :comments, :container_attachments
 
     belongs_to :yard, serializer: MetaSerializer
     belongs_to :container_type, serializer: MetaSerializer

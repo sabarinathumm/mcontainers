@@ -106,13 +106,13 @@ container_meta_sheet = mlcan_excel.sheet(2)
 container_lengths = container_meta_sheet.column(1).compact
 
 (1..lengths.length-1).each do |i|
-Length.create!(name: lengths[i])
+ContainerLength.create!(name: lengths[i])
 end
 
-container_widths = container_meta_sheet.column(2).compact
+container_heights = container_meta_sheet.column(2).compact
 
 (1..widths.length-1).each do |i|
-Width.create!(name: widths[i])
+ContainerHeight.create!(name: widths[i])
 end
 yards = container_meta_sheet.column(4).compact
 
