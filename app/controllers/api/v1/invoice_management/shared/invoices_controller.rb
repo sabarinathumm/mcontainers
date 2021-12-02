@@ -34,7 +34,7 @@ class Api::V1::InvoiceManagement::Shared::InvoicesController < Api::V1::BaseCont
         else
             if msc = MscExportJob.perform_now(export_params[:activity_ids])
                 csv_data = CSV.generate do |csv|
-                    csv << [msc]
+                    csv << [msc].transpose
                 end
                 send_data csv_data, filename: "Invoice_#{Date.today.to_s}.csv", disposition: :attachment , type: "text/csv", status: :ok
             else
