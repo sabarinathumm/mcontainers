@@ -21,6 +21,8 @@ RSpec.describe 'Meta::', type: :request do
   let!(:cities){ create_list(:city, 10, province: provinces.first) }
   let!(:yards){ create_list(:yard, 10) }
   let!(:container_types){ create_list(:container_type, 10) }
+  let!(:container_lengths){ create_list(:container_length, 10) }
+  let!(:container_heights){ create_list(:container_height, 10) }
 
     describe 'List all Repair Types' do
     # valid payload
@@ -244,7 +246,7 @@ RSpec.describe 'Meta::', type: :request do
                     expect(response).to have_http_status(200)
                 end
             end
-        end
+    end
 
     describe 'List all Container Types' do
         # valid payload
@@ -259,7 +261,7 @@ RSpec.describe 'Meta::', type: :request do
                     expect(response).to have_http_status(200)
                 end
             end
-        end
+    end
 
     describe 'List all yards' do
         # valid payload
@@ -274,6 +276,36 @@ RSpec.describe 'Meta::', type: :request do
                     expect(response).to have_http_status(200)
                 end
             end
-        end
+    end
     
+
+    describe 'List all Container_lengths' do
+        # valid payload
+        context 'success' do
+        
+        before { get '/api/v1/meta/container_lengths', headers: headers[:auth], as: :json }
+        
+            it 'returns token' do
+                # Note `json` is a custom helper to parse JSON responses
+                expect(json).not_to be_empty
+                expect((json)['container_lengths'].count).to eql(10)
+                expect(response).to have_http_status(200)
+            end
+        end
+    end
+
+    describe 'List all Container_heights' do
+        # valid payload
+        context 'success' do
+        
+        before { get '/api/v1/meta/container_heights', headers: headers[:auth], as: :json }
+        
+            it 'returns token' do
+                # Note `json` is a custom helper to parse JSON responses
+                expect(json).not_to be_empty
+                expect((json)['container_heights'].count).to eql(10)
+                expect(response).to have_http_status(200)
+            end
+        end
+    end
 end

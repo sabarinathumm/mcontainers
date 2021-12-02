@@ -33,6 +33,18 @@ units = meta_sheet.column(7).compact
     Unit.create!(name: units[i])
 end
 
+lengths = meta_sheet.column(5).compact
+
+(1..lengths.length-1).each do |i|
+    Length.create!(name: lengths[i])
+end
+
+widths = meta_sheet.column(6).compact
+
+(1..widths.length-1).each do |i|
+    Width.create!(name: widths[i])
+end
+
 repair_types = meta_sheet.column(4).compact
 
 (1..repair_types.length-1).each do |cra|
@@ -91,13 +103,13 @@ end
 
 container_meta_sheet = mlcan_excel.sheet(2)
 
-lengths = container_meta_sheet.column(1).compact
+container_lengths = container_meta_sheet.column(1).compact
 
 (1..lengths.length-1).each do |i|
 Length.create!(name: lengths[i])
 end
 
-widths = container_meta_sheet.column(2).compact
+container_widths = container_meta_sheet.column(2).compact
 
 (1..widths.length-1).each do |i|
 Width.create!(name: widths[i])

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_11_22_052630) do
+ActiveRecord::Schema.define(version: 2021_12_02_114136) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -138,6 +138,18 @@ ActiveRecord::Schema.define(version: 2021_11_22_052630) do
     t.datetime "updated_at", precision: 6, null: false
   end
 
+  create_table "container_heights", force: :cascade do |t|
+    t.string "name"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+  end
+
+  create_table "container_lengths", force: :cascade do |t|
+    t.string "name"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+  end
+
   create_table "container_repair_areas", force: :cascade do |t|
     t.string "name"
     t.datetime "created_at", precision: 6, null: false
@@ -156,8 +168,6 @@ ActiveRecord::Schema.define(version: 2021_11_22_052630) do
     t.bigint "customer_id"
     t.string "container_owner_name"
     t.string "submitter_initials"
-    t.float "container_length"
-    t.float "container_width"
     t.bigint "container_type_id"
     t.integer "manufacture_year"
     t.text "location"
@@ -165,6 +175,10 @@ ActiveRecord::Schema.define(version: 2021_11_22_052630) do
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.integer "container_status", default: 0
+    t.bigint "container_length_id"
+    t.bigint "container_height_id"
+    t.index ["container_height_id"], name: "index_containers_on_container_height_id"
+    t.index ["container_length_id"], name: "index_containers_on_container_length_id"
     t.index ["container_type_id"], name: "index_containers_on_container_type_id"
     t.index ["container_uid"], name: "index_containers_on_container_uid", unique: true
     t.index ["customer_id"], name: "index_containers_on_customer_id"
@@ -456,6 +470,8 @@ ActiveRecord::Schema.define(version: 2021_11_22_052630) do
   add_foreign_key "cities", "provinces"
   add_foreign_key "container_attachments", "containers"
   add_foreign_key "container_attachments", "uploaded_files", column: "attachment_id"
+  add_foreign_key "containers", "container_heights"
+  add_foreign_key "containers", "container_lengths"
   add_foreign_key "containers", "customers"
   add_foreign_key "containers", "yards"
   add_foreign_key "customer_repair_list_items", "components"

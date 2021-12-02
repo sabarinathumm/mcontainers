@@ -6,10 +6,12 @@ RSpec.describe 'Admin::ContainerManagement::', type: :request do
     let!(:headers) { get_admin_headers(admin) }
     let!(:customer){ create(:customer) }
     let!(:yard){ create(:yard) }
+    let!(:container_length){ create(:container_length)}
+    let!(:container_height){ create(:container_height)}
     let!(:container_type){ create(:container_type) }
     let!(:attachment) { Rack::Test::UploadedFile.new(File.open(File.join(Rails.root, '/README.md'))) }
     let!(:uploaded_file){ create(:uploaded_file, attachment: attachment, user: admin) }
-    let!(:container) { create(:container, container_type: container_type, yard: yard, customer: customer) }
+    let!(:container) { create(:container, container_type: container_type, yard: yard, container_length: container_length, container_height: container_height, customer: customer) }
     let!(:container_attachment) { create(:container_attachment, attachment: uploaded_file, attachment_type: 'left_side_photo', container: container) } 
 
     describe 'List all Containers' do
@@ -43,8 +45,8 @@ RSpec.describe 'Admin::ContainerManagement::', type: :request do
                         customer_id: customer.id,
                         container_owner_name: 'Robert Bosch',
                         submitter_initials: 'MG. C',
-                        container_length: 45.67,
-                        container_width: 56.09,
+                        container_length_id: container_length.id,
+                        container_height_id: container_height.id,
                         container_type_id: container_type.id,
                         location: 'DBXN',
                         comments: 'Random Comments',
@@ -76,8 +78,8 @@ RSpec.describe 'Admin::ContainerManagement::', type: :request do
                 expect(json['container']['container_uid']).to eql('CON4567FG')
                 expect(json['container']['container_owner_name']).to eql('Robert Bosch')
                 expect(json['container']['submitter_initials']).to eql('MG. C')
-                expect(json['container']['container_length']).to eql(45.67)
-                expect(json['container']['container_width']).to eql(56.09)
+                expect(json['container']['container_length_id']).to eql(container_length.id)
+                expect(json['container']['container_height_id']).to eql(container_height.id)
                 expect(json['container']['location']).to eql('DBXN')
                 expect(json['container']['comments']).to eql('Random Comments')
                 expect(json['container']['container_type']['name']).to eql(container_type.name)
@@ -102,8 +104,8 @@ RSpec.describe 'Admin::ContainerManagement::', type: :request do
                             customer_id: customer.id,
                             container_owner_name: container.container_owner_name,
                             submitter_initials: container.submitter_initials,
-                            container_length: container.container_length,
-                            container_width: container.container_width,
+                            container_length_id: container_length.id,
+                            container_height_id: container_height.id,
                             container_type_id: container_type.id,
                             location: 'DBXN',
                             comments: container.comments,
@@ -135,8 +137,8 @@ RSpec.describe 'Admin::ContainerManagement::', type: :request do
                     expect(json['container']['container_uid']).to eql(container.container_uid)
                     expect(json['container']['container_owner_name']).to eql(container.container_owner_name)
                     expect(json['container']['submitter_initials']).to eql(container.submitter_initials)
-                    expect(json['container']['container_length']).to eql(container.container_length)
-                    expect(json['container']['container_width']).to eql(container.container_width)
+                    expect(json['container']['container_length_id']).to eql(container_length.id)
+                    expect(json['container']['container_height_id']).to eql(container_height.id)
                     expect(json['container']['location']).to eql('DBXN')
                     expect(json['container']['comments']).to eql(container.comments)
                     expect(json['container']['container_type']['name']).to eql(container_type.name)
@@ -163,8 +165,8 @@ RSpec.describe 'Admin::ContainerManagement::', type: :request do
                 expect(json['container']['container_uid']).to eql(container.container_uid)
                 expect(json['container']['container_owner_name']).to eql(container.container_owner_name)
                 expect(json['container']['submitter_initials']).to eql(container.submitter_initials)
-                expect(json['container']['container_length']).to eql(container.container_length)
-                expect(json['container']['container_width']).to eql(container.container_width)
+                expect(json['container']['container_length_id']).to eql(container_length.id)
+                expect(json['container']['container_height_id']).to eql(container_height.id)
                 expect(json['container']['location']).to eql(container.location)
                 expect(json['container']['comments']).to eql(container.comments)
                 expect(json['container']['container_type']['name']).to eql(container_type.name)

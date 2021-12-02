@@ -4,7 +4,8 @@ class Container < ApplicationRecord
     belongs_to :customer
     belongs_to :yard
     belongs_to :container_type
-
+    belongs_to :container_length, optional: true
+    belongs_to :container_height, optional: true
     has_many :container_attachments
     has_many :activities 
     has_many :activity_items, through: :activities

@@ -3,8 +3,6 @@ FactoryBot.define do
     container_uid {generate(:container_uid)}
     container_owner_name { Faker::Name.name_with_middle }
     submitter_initials { Faker::Name.initials }
-    container_length { 15.0 }
-    container_width { 15.0 }
     manufacture_year { 2019 }
     location { "DBXN" }
     comments { "Comments" }

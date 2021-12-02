@@ -16,7 +16,7 @@ class MscExportJob < ApplicationJob
             alternative_curr_amt_dpp = "ACA+CAD+DPP:0'"
             labour_cost = "LBR+" +  "'"
             name_addr_receiver = "NAD+LED+MSC'" #or "NAD+DED+CAVANAE’"
-            equipment_details = "EQF+CON+" + (container.container_length).to_s + (container.container_type_id).to_s + "'"
+            equipment_details = "EQF+CON+" + (container.container_length_id).to_s + (container.container_type_id).to_s + "'"
             equipment_related_info = "ERI+ST+MAN:01+ACEP'"
             equipment_condition_info = "ECI+D'"
             current_usage_info = "CUI+TRM:CAVANAE:ZZ+TRM:" + container.created_at.strftime("%d-%b-%Y") + "+E'"

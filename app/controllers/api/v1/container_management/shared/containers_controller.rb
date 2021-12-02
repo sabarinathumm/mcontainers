@@ -83,9 +83,9 @@ class Api::V1::ContainerManagement::Shared::ContainersController < Api::V1::Base
 
     def container_params
         params.require(:container).permit(:yard_id, :container_uid, :customer_id, :container_owner_name, :submitter_initials, \
-            :container_length, :container_width, :container_type_id, :manufacture_year, :location, :comments, \
+            :container_length_id, :container_width_id, :container_type_id, :manufacture_year, :location, :comments, \
             container_attachments: [:attachment_type, :attachment_id])
-
+            
     end
 
 end
