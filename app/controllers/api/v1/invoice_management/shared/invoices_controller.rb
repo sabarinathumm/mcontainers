@@ -27,7 +27,7 @@ class Api::V1::InvoiceManagement::Shared::InvoicesController < Api::V1::BaseCont
                 csv_data = CSV.generate do |csv|
                     csv << [common]
                 end
-                send_data csv_data, filename: "Invoice_#{Date.today.to_s}.csv", disposition: :attachment  
+                send_data csv_data, filename: "Invoice_#{Date.today.to_s}.csv", disposition: :attachment, type: "text/csv", status: :ok  
             else
                 render json: { success: false }
             end
@@ -36,7 +36,7 @@ class Api::V1::InvoiceManagement::Shared::InvoicesController < Api::V1::BaseCont
                 csv_data = CSV.generate do |csv|
                     csv << [msc]
                 end
-                send_data csv_data, filename: "Invoice_#{Date.today.to_s}.csv", disposition: :attachment  
+                send_data csv_data, filename: "Invoice_#{Date.today.to_s}.csv", disposition: :attachment , type: "text/csv", status: :ok
             else
                 render json: { success: false }
             end
