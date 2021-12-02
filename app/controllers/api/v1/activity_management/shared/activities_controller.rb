@@ -7,19 +7,12 @@ class Api::V1::ActivityManagement::Shared::ActivitiesController < Api::V1::BaseC
     before_action :set_repair_list, only: [:auto_populate, :auto_populate_damage_area, :auto_populate_repair_type, :auto_populate_length,:auto_populate_width,:auto_populate_unit, :auto_populate_all]
 
     def index    
-        # month_wise = Log.all.group_by { |t| t.created_at.beginning_of_month }
-
-        # @activities = Activity.all.group_by(:container_id)
         @activities = Activity.select('DISTINCT ON ("container_id") *').order(:container_id, created_at: :desc)
-        
         @activities = @activities.where.not(activity_status: ['deleted']).filters(filter_params).search_by(params[:search_text]).sorts(sort_params)
         @activities = paginate @activities.page(params[:page])
         render json:  @activities, each_serializer: ActivitySerializer, meta: pagination_dict(@activities)
     end
 
-    def latest
-        
-    end
     
     def container_activity
         @activities = @container.activities.where.not(activity_status: ['idle','deleted']).order(created_at: :desc)
@@ -73,7 +66,6 @@ class Api::V1::ActivityManagement::Shared::ActivitiesController < Api::V1::BaseC
 
     def update       
         @activity.update!(activity_params)
-        puts "HERE UPDATe"
         render json: @activity, serializer: ActivitySerializer       
     end
 
@@ -106,7 +98,6 @@ class Api::V1::ActivityManagement::Shared::ActivitiesController < Api::V1::BaseC
 
     def auto_populate
         @customer_repair_list_item = @customer_repair_list.customer_repair_list_items.where(uid: params[:repair_code]).first 
-        # unless  params[:repair_code].nil?
         throw_error('Item not available', :no_content) if @customer_repair_list_item.blank?
         item = @customer_repair_list_item
         if @customer.billing_type == 'common' 

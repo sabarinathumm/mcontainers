@@ -11,7 +11,6 @@ RSpec.describe 'Admin::ActivityManagement::', type: :request do
     let!(:uploaded_file){ create(:uploaded_file, attachment: attachment, user: admin) }
     let!(:container) { create(:container, container_type: container_type, yard: yard, customer: customer) }
     let!(:container_attachment) { create(:container_attachment, attachment: uploaded_file, attachment_type: 'left_side_photo', container: container) } 
-    
     let!(:activity) { create(:activity, container: container, assigned_to: admin,activity_type: 'quote') }
    
     describe 'List all Activities' do
@@ -387,7 +386,7 @@ RSpec.describe 'Admin::ActivityManagement::', type: :request do
     
             it 'returns the filtered activity' do
                 # Note `json` is a custom helper to parse JSON responses
-                puts json
+                # puts json
                 expect(json).not_to be_empty
                 expect(response).to have_http_status(200)
             end
