@@ -15,15 +15,15 @@ meta_sheet = mlcan_excel.sheet(1)
 
 container_repair_areas = meta_sheet.column(2).compact
 
-container_repair_areas.each do |cra|
-    ContainerRepairArea.create!(name: cra)
+(1..container_repair_areas.length-1).each do |cra|
+    ContainerRepairArea.create!(name: container_repair_areas[cra])
 end
 
 
 container_damaged_areas = meta_sheet.column(3).compact
 
-container_damaged_areas.each do |cra|
-    ContainerDamagedArea.create!(name: cra)
+(1..container_damaged_areas.length-1).each do |cra|
+    ContainerDamagedArea.create!(name: container_damaged_areas[cra])
 end
 
 
@@ -35,8 +35,8 @@ end
 
 repair_types = meta_sheet.column(4).compact
 
-repair_types.each do |cra|
-    RepairType.create!(name: cra)
+(1..repair_types.length-1).each do |cra|
+    RepairType.create!(name: repair_types[cra])
 end
 
 comps = meta_sheet.column(8).compact
@@ -116,6 +116,10 @@ end
 
 repair_items_sheet = mlcan_excel.sheet(0)
 
+5.times do
+    @province = Province.create!(name: Faker::Nation.nationality)
+    City.create!(name: Faker::Nation.capital_city, province: @province)
+end
 
 (2..repair_items_sheet.last_row).each do |i|
     row = repair_items_sheet.row(i)
@@ -123,7 +127,7 @@ repair_items_sheet = mlcan_excel.sheet(0)
 
     RepairList.create!(name: 'Version '+((RepairList.count+1).to_s), is_active: true) if RepairList.where(is_active: true).blank?
 
-    repair_list_item = RepairListItem.new(repair_list: RepairList.find_by(is_active: true), uid: row[0] )
+    repair_list_item = RepairListItem.new(repair_list: RepairList.find_by(is_active: true), uid: row[0].to_i.to_s )
 
     repair_list_item.container_repair_area = ContainerRepairArea.find_by(name: row[1]) unless row[1].blank?
     repair_list_item.container_damaged_area = ContainerDamagedArea.where(name: row[2]).first  unless row[2].blank?
