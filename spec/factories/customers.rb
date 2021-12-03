@@ -5,6 +5,8 @@ FactoryBot.define do
     full_name { Faker::Name.first_name }
     owner_name { Faker::Name.first_name }
     billing_name { Faker::Name.first_name }
+    billing_type { 'common'}
+    approval_type { 'common_approval_type' }
     gst { Faker::Number.decimal(l_digits: 2, r_digits: 2) }
     pst { Faker::Number.decimal(l_digits: 2, r_digits: 2) }
     address { Faker::Address.street_address }

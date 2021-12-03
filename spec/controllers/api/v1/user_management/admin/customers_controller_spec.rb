@@ -49,6 +49,8 @@ RSpec.describe 'Admin::Customers', type: :request do
                     full_name: "Harry Styles", 
                     email: "harry@email.com", 
                     owner_name: "HRS Info", 
+                    billing_type: "common",
+                    approval_type: "common_approval_type",
                     billing_name: "Harry", 
                     hourly_rate: 500, 
                     gst: 15.4, 
@@ -75,6 +77,8 @@ RSpec.describe 'Admin::Customers', type: :request do
                 expect(json['customer']['email']).to eq('harry@email.com')
                 expect(json['customer']['owner_name']).to eq('HRS Info')
                 expect(json['customer']['billing_name']).to eq('Harry')
+                expect(json['customer']['billing_type']).to eq('common')
+                expect(json['customer']['approval_type']).to eq('common_approval_type')
                 expect(Customer.find(json['customer']['id']).customer_repair_lists).not_to eq(nil)
                 expect(Customer.find(json['customer']['id']).customer_repair_lists.first.name).to eq("Harry Styles #{repair_list.name}")
                 expect(Customer.find(json['customer']['id']).customer_repair_lists.first.customer_repair_list_items.count).to eq(30)
@@ -97,7 +101,9 @@ RSpec.describe 'Admin::Customers', type: :request do
                     full_name: "Harry Styles", 
                     email: "harry@email.com", 
                     owner_name: "HRS Info", 
-                    billing_name: "Harry", 
+                    billing_name: "Harry",
+                    billing_type: "common",
+                    approval_type: "common_approval_type"  ,
                     hourly_rate: 500, 
                     gst: 15.4, 
                     pst: 15.4, 
@@ -123,6 +129,8 @@ RSpec.describe 'Admin::Customers', type: :request do
                 expect(json['customer']['email']).to eq('harry@email.com')
                 expect(json['customer']['owner_name']).to eq('HRS Info')
                 expect(json['customer']['billing_name']).to eq('Harry')
+                expect(json['customer']['billing_type']).to eq('common')
+                expect(json['customer']['approval_type']).to eq('common_approval_type')
                 expect(Customer.find(json['customer']['id']).customer_repair_lists).not_to eq(nil)
                 expect(Customer.find(json['customer']['id']).customer_repair_lists.first.name).to eq("Harry Styles Version 1")
                 expect(Customer.find(json['customer']['id']).customer_repair_lists.first.customer_repair_list_items.count).to eq(10)
@@ -143,6 +151,8 @@ RSpec.describe 'Admin::Customers', type: :request do
                     email: "bruno@email.com", 
                     owner_name: "Bruno ents Info", 
                     billing_name: "Russel", 
+                    billing_type: "common",
+                    approval_type: "common_approval_type" ,
                     hourly_rate: 500, 
                     gst: 15.4, 
                     pst: 15.4, 
@@ -162,12 +172,14 @@ RSpec.describe 'Admin::Customers', type: :request do
 
             it 'returns token' do
                 # Note `json` is a custom helper to parse JSON responses
-                #puts json
+                puts json
                 expect(json).not_to be_empty
                 expect(json['customer']['full_name']).to eq('Bruno Mars')
                 expect(json['customer']['email']).to eq('bruno@email.com')
                 expect(json['customer']['owner_name']).to eq('Bruno ents Info')
                 expect(json['customer']['billing_name']).to eq('Russel')
+                expect(json['customer']['billing_type']).to eq('common')
+                expect(json['customer']['approval_type']).to eq('common_approval_type')
                 expect(json['customer']['address']).to eq('221 B, Bakers Street')
                 expect(json['customer']['gst']).to eq(15.4)
                 expect(json['customer']['pst']).to eq(15.4)
@@ -189,12 +201,14 @@ RSpec.describe 'Admin::Customers', type: :request do
 
             it 'returns token' do
                 # Note `json` is a custom helper to parse JSON responses
-                #puts json
+                puts json
                 expect(json).not_to be_empty
                 expect(json['customer']['full_name']).to eq(customer.full_name)
                 expect(json['customer']['email']).to eq(customer.email)
                 expect(json['customer']['owner_name']).to eq(customer.owner_name)
                 expect(json['customer']['billing_name']).to eq(customer.billing_name)
+                expect(json['customer']['billing_type']).to eq('common')
+                expect(json['customer']['approval_type']).to eq('common_approval_type')
                 expect(json['customer']['address']).to eq(customer.address)
                 expect(json['customer']['gst']).to eq(customer.gst)
                 expect(json['customer']['pst']).to eq(customer.pst)
@@ -218,6 +232,8 @@ RSpec.describe 'Admin::Customers', type: :request do
                     email: "bruno@email.com", 
                     owner_name: "Bruno ents Info", 
                     billing_name: "Russel", 
+                    billing_type: "common",
+                    approval_type: "common_approval_type" ,
                     hourly_rate: 500, 
                     gst: 15.4, 
                     pst: 15.4, 
@@ -243,6 +259,8 @@ RSpec.describe 'Admin::Customers', type: :request do
                 expect(json['customer']['email']).to eq('bruno@email.com')
                 expect(json['customer']['owner_name']).to eq('Bruno ents Info')
                 expect(json['customer']['billing_name']).to eq('Russel')
+                expect(json['customer']['billing_type']).to eq('common')
+                expect(json['customer']['approval_type']).to eq('common_approval_type')
                 expect(json['customer']['address']).to eq('221 B, Bakers Street')
                 expect(json['customer']['gst']).to eq(15.4)
                 expect(json['customer']['pst']).to eq(15.4)

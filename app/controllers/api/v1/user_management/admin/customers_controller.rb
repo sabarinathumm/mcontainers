@@ -105,12 +105,12 @@ class Api::V1::UserManagement::Admin::CustomersController < Api::V1::BaseControl
     end
 
     def customer_params
-        params.require(:customer).permit(:full_name, :email, :owner_name, :billing_name, :hourly_rate, :gst, :pst, :city_id, \
+        params.require(:customer).permit(:full_name, :email, :owner_name, :billing_name, :billing_type, :approval_type, :hourly_rate, :gst, :pst, :city_id, \
             :province_id, :address, :zipcode, :password, :is_active, :customer_type)
     end
 
     def update_params
-        params.require(:customer).permit(:full_name, :email, :owner_name, :billing_name, :hourly_rate, :gst, :pst, :city_id, \
+        params.require(:customer).permit(:full_name, :email, :owner_name, :billing_name, :billing_type, :approval_type, :hourly_rate, :gst, :pst, :city_id, \
             :province_id, :address, :zipcode, :password, :is_active, :customer_type)
 
     end
