@@ -39,6 +39,7 @@ RSpec.describe 'Admin::ActivityManagement::', type: :request do
         end
     end
 
+
     describe 'List all Activities - With filters' do
         # valid payload
         context 'success' do
@@ -47,7 +48,36 @@ RSpec.describe 'Admin::ActivityManagement::', type: :request do
     
             it 'returns the filtered activity' do
                 # Note `json` is a custom helper to parse JSON responses
-                #puts json
+                puts json
+                expect(json).not_to be_empty
+                expect(json['activities'].count).to eql(1)
+                expect(json['activities'][0]['activity_uid']).to eql(activity.activity_uid)
+                expect(json['activities'][0]['container_number']).to eql(container.container_uid)
+                expect(json['activities'][0]['yard_name']).to eql(yard.name)
+                expect(json['activities'][0]['customer_name']).to eql(customer.full_name)
+                expect(json['activities'][0]['owner_name']).to eql(container.container_owner_name)
+                expect(json['activities'][0]['activity_type']).to eql('quote')
+                expect(json['activities'][0]['activity_status']).to eql('quote_draft')
+                expect(json['activities'][0]['created_at']).to eql(activity.created_at.strftime("%d-%b-%Y"))
+                expect(json['activities'][0]['container']['id']).to eql(container.id)
+                expect(response).to have_http_status(200)
+            end
+        end
+    end
+
+    describe 'List all Activities - With filters' do
+        # valid payload
+        context 'success' do
+            let!(:activity3) { create(:activity, container: container, assigned_to: admin,activity_type: 'quote', activity_status: 'ready_for_billing') }
+            let!(:customer2){ create(:customer) }
+            let!(:container2) { create(:container, container_type: container_type, yard: yard, customer: customer2) }
+            let!(:activity4) { create(:activity, container: container2, assigned_to: admin,activity_type: 'quote', activity_status: 'pending_admin_approval') }
+            let!(:activity5) { create(:activity, container: container2, assigned_to: admin,activity_type: 'quote', activity_status: 'pending_admin_approval') }
+            before { get "/api/v1/activity_management/admin/activities?customer_id=#{customer2.id}&status=all", headers: headers[:auth], as: :json }
+    
+            it 'returns the filtered activity' do
+                # Note `json` is a custom helper to parse JSON responses
+                puts json
                 expect(json).not_to be_empty
                 expect(json['activities'].count).to eql(1)
                 expect(json['activities'][0]['activity_uid']).to eql(activity.activity_uid)

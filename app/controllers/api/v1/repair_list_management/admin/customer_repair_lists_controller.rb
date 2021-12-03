@@ -11,11 +11,13 @@ class Api::V1::RepairListManagement::Admin::CustomerRepairListsController < Api:
     def create
         
         ActiveRecord::Base.transaction do
+            # CustomerRepairList.where(customer: @customer && is_active: true)
+            # puts CustomerRepairList.where(customer: @customer).to_json
             CustomerRepairList.where(customer: @customer).update(is_active: false)
             @repair_list = CustomerRepairList.create!(name: @customer.full_name + ' Version '+((RepairList.count+1).to_s), \
                 is_active: true, customer: @customer)
         end
-        
+        # puts CustomerRepairList.where(customer: @customer).to_json
         if @repair_list.save
             puts @repair_list.to_json
             render json: @repair_list, serializer: RepairListSerializer

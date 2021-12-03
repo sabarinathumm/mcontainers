@@ -205,7 +205,7 @@ class Api::V1::ActivityManagement::Shared::ActivitiesController < Api::V1::BaseC
     end
 
     def filter_params
-        params.permit(:date, :activity_type, :activity_status, :yard_id, :customer_id, :status)
+        params.permit(:date, :activity_type, :activity_status, :yard_id, :customer_id, :status, :container_id)
     end
 
     def update_status_params
