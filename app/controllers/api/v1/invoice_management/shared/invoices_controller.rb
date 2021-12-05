@@ -23,23 +23,23 @@ class Api::V1::InvoiceManagement::Shared::InvoicesController < Api::V1::BaseCont
         @customers = Customer.where(id: @containers.pluck(:customer_id))
        
         if @customers.first.billing_type == 'common'
-            if common = CommonExportJob.perform_now(export_params[:activity_ids])
+            result = CommonExportJob.perform_now(export_params[:activity_ids])
                 csv_data = CSV.generate do |csv|
-                    csv << [common]
+                    csv << [result[0]]
+                    result[1].each do |line|
+                        csv << [line]
+                    end
                 end
-                send_data csv_data, filename: "Invoice_#{Date.today.to_s}.csv", disposition: :attachment, type: "text/csv", status: :ok  
-            else
-                render json: { success: false }
-            end
+            send_data csv_data, filename: "Invoice_#{Date.today.to_s}.csv", disposition: :attachment, type: "text/csv", status: :ok  
         else
-            if msc = MscExportJob.perform_now(export_params[:activity_ids])
+            result = MscExportJob.perform_now(export_params[:activity_ids])
                 csv_data = CSV.generate do |csv|
-                    csv << [msc].transpose
+                    csv << [result[0]]
+                    result[1].each do |line|
+                        csv << [line]
+                    end
                 end
-                send_data csv_data, filename: "Invoice_#{Date.today.to_s}.csv", disposition: :attachment , type: "text/csv", status: :ok
-            else
-                render json: { success: false }
-            end
+            send_data csv_data, filename: "Invoice_#{Date.today.to_s}.csv", disposition: :attachment , type: "text/csv", status: :ok
         end
 
     end

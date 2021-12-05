@@ -6,9 +6,11 @@ class Api::V1::ActivityManagement::Shared::ActivitiesController < Api::V1::BaseC
     before_action :set_format, only: [:export]
     before_action :set_repair_list, only: [:auto_populate, :auto_populate_damage_area, :auto_populate_repair_type, :auto_populate_length,:auto_populate_width,:auto_populate_unit, :auto_populate_all]
 
-    def index    
-        @activities = Activity.select('DISTINCT ON ("container_id") *').order(:container_id, created_at: :desc)
+    def index
+        @activitiy_ids = Activity.all.order(created_at: :asc).group_by(&:container_id).map{|s| s.last.last}.pluck(:id)
+        @activities = Activity.where(id: @activitiy_ids)
         @activities = @activities.where.not(activity_status: ['deleted']).filters(filter_params).search_by(params[:search_text]).sorts(sort_params)
+        @activities = @activities.order(created_at: :desc) if sort_params.blank?
         @activities = paginate @activities.page(params[:page])
         render json:  @activities, each_serializer: ActivitySerializer, meta: pagination_dict(@activities)
     end

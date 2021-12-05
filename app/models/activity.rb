@@ -207,6 +207,4 @@ class Activity < ApplicationRecord
             end
         end
     end
-
-
 end

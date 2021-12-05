@@ -17,7 +17,8 @@ RSpec.describe 'Admin::ActivityManagement::', type: :request do
     # valid payload
         context 'success' do
             let!(:activity3) { create(:activity, container: container, assigned_to: admin,activity_type: 'quote', activity_status: 'ready_for_billing') }
-        before { get '/api/v1/activity_management/admin/activities', headers: headers[:auth], as: :json }
+
+            before { get '/api/v1/activity_management/admin/activities', headers: headers[:auth], as: :json }
 
             it 'returns token' do
                 # Note `json` is a custom helper to parse JSON responses
@@ -25,13 +26,13 @@ RSpec.describe 'Admin::ActivityManagement::', type: :request do
                 
                 expect(json).not_to be_empty
                 expect(json['activities'].count).to eql(1)
-                expect(json['activities'][0]['activity_uid']).to eql(activity.activity_uid)
+                expect(json['activities'][0]['activity_uid']).to eql(activity3.activity_uid)
                 expect(json['activities'][0]['container_number']).to eql(container.container_uid)
                 expect(json['activities'][0]['yard_name']).to eql(yard.name)
                 expect(json['activities'][0]['customer_name']).to eql(customer.full_name)
                 expect(json['activities'][0]['owner_name']).to eql(container.container_owner_name)
                 expect(json['activities'][0]['activity_type']).to eql('quote')
-                expect(json['activities'][0]['activity_status']).to eql('quote_draft')
+                expect(json['activities'][0]['activity_status']).to eql('ready_for_billing')
                 expect(json['activities'][0]['created_at']).to eql(activity.created_at.strftime("%d-%b-%Y"))
                 expect(json['activities'][0]['container']['id']).to eql(container.id)
                 expect(response).to have_http_status(200)
@@ -44,20 +45,20 @@ RSpec.describe 'Admin::ActivityManagement::', type: :request do
         # valid payload
         context 'success' do
             let!(:activity3) { create(:activity, container: container, assigned_to: admin,activity_type: 'quote', activity_status: 'ready_for_billing') }
-            before { get "/api/v1/activity_management/admin/activities?date=#{Time.now.utc.to_date}&customer_id=#{customer.id}&activity_status=quote_draft&activity_type=quote&yard_id=#{yard.id}", headers: headers[:auth], as: :json }
+            before { get "/api/v1/activity_management/admin/activities?date=#{Time.now.utc.to_date}&customer_id=#{customer.id}&activity_status=ready_for_billing&activity_type=quote&yard_id=#{yard.id}", headers: headers[:auth], as: :json }
     
             it 'returns the filtered activity' do
                 # Note `json` is a custom helper to parse JSON responses
-                puts json
+                #puts json
                 expect(json).not_to be_empty
                 expect(json['activities'].count).to eql(1)
-                expect(json['activities'][0]['activity_uid']).to eql(activity.activity_uid)
+                expect(json['activities'][0]['activity_uid']).to eql(activity3.activity_uid)
                 expect(json['activities'][0]['container_number']).to eql(container.container_uid)
                 expect(json['activities'][0]['yard_name']).to eql(yard.name)
                 expect(json['activities'][0]['customer_name']).to eql(customer.full_name)
                 expect(json['activities'][0]['owner_name']).to eql(container.container_owner_name)
                 expect(json['activities'][0]['activity_type']).to eql('quote')
-                expect(json['activities'][0]['activity_status']).to eql('quote_draft')
+                expect(json['activities'][0]['activity_status']).to eql('ready_for_billing')
                 expect(json['activities'][0]['created_at']).to eql(activity.created_at.strftime("%d-%b-%Y"))
                 expect(json['activities'][0]['container']['id']).to eql(container.id)
                 expect(response).to have_http_status(200)
@@ -77,18 +78,18 @@ RSpec.describe 'Admin::ActivityManagement::', type: :request do
     
             it 'returns the filtered activity' do
                 # Note `json` is a custom helper to parse JSON responses
-                puts json
+                #puts json
                 expect(json).not_to be_empty
                 expect(json['activities'].count).to eql(1)
-                expect(json['activities'][0]['activity_uid']).to eql(activity.activity_uid)
-                expect(json['activities'][0]['container_number']).to eql(container.container_uid)
+                expect(json['activities'][0]['activity_uid']).to eql(activity5.activity_uid)
+                expect(json['activities'][0]['container_number']).to eql(container2.container_uid)
                 expect(json['activities'][0]['yard_name']).to eql(yard.name)
-                expect(json['activities'][0]['customer_name']).to eql(customer.full_name)
-                expect(json['activities'][0]['owner_name']).to eql(container.container_owner_name)
+                expect(json['activities'][0]['customer_name']).to eql(customer2.full_name)
+                expect(json['activities'][0]['owner_name']).to eql(container2.container_owner_name)
                 expect(json['activities'][0]['activity_type']).to eql('quote')
-                expect(json['activities'][0]['activity_status']).to eql('quote_draft')
-                expect(json['activities'][0]['created_at']).to eql(activity.created_at.strftime("%d-%b-%Y"))
-                expect(json['activities'][0]['container']['id']).to eql(container.id)
+                expect(json['activities'][0]['activity_status']).to eql('pending_admin_approval')
+                expect(json['activities'][0]['created_at']).to eql(activity5.created_at.strftime("%d-%b-%Y"))
+                expect(json['activities'][0]['container']['id']).to eql(container2.id)
                 expect(response).to have_http_status(200)
             end
         end
@@ -236,7 +237,7 @@ RSpec.describe 'Admin::ActivityManagement::', type: :request do
                 # Note `json` is a custom helper to parse JSON responses
                 #puts json
                 expect(json).not_to be_empty
-                expect(json['activities'].count).to eql(7)
+                expect(json['activities'].count).to eql(6)
                 expect(json['activities'][0]['activity_uid']).to eql(activity2.last.activity_uid)
                 expect(json['activities'][0]['container_number']).to eql(container.container_uid)
                 expect(json['activities'][0]['yard_name']).to eql(yard.name)
