@@ -11,7 +11,9 @@ class Api::V1::ActivityManagement::Shared::ActivitiesController < Api::V1::BaseC
         @activities = Activity.where(id: @activitiy_ids)
         @activities = @activities.where.not(activity_status: ['deleted']).filters(filter_params).search_by(params[:search_text]).sorts(sort_params)
         @activities = @activities.order(created_at: :desc) if sort_params.blank?
+        puts @activities.to_json
         @activities = paginate @activities.page(params[:page])
+        puts @activities.to_json
         render json:  @activities, each_serializer: ActivitySerializer, meta: pagination_dict(@activities)
     end
 
@@ -63,6 +65,7 @@ class Api::V1::ActivityManagement::Shared::ActivitiesController < Api::V1::BaseC
     end 
 
     def show
+        
         render json:  @activity, serializer: ActivitySerializer
     end
 

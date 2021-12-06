@@ -38,13 +38,16 @@ RSpec.describe 'RepairLists::', type: :request do
     describe 'Create Repair Lists' do
         # valid payload
             context 'success' do
-            let!(:repair_lists){ create_list(:repair_list, 10, is_active: true) }
-    
+            let!(:repair_list){ create(:repair_list, is_active: true) }
+            let!(:repair_list_item){ create_list(:repair_list_item, 30, repair_list: repair_list, repair_type: repair_type, \
+                container_damaged_area: container_damaged_area, container_repair_area: container_repair_area, \
+                component: component, comp: comp, dam: dam, rep: rep, mode_number: mode_number, repair_mode: repair_mode, \
+                event: event, unit: unit, location: 'DBXN') }
             before { post '/api/v1/repair_list_management/admin/repair_list', headers: headers[:auth], as: :json }
     
                 it 'returns token' do
                     # Note `json` is a custom helper to parse JSON responses
-                    #puts json
+                    puts json
                     expect(json).not_to be_empty
                     expect(RepairList.where(is_active: true).count).to eql(1)
                     expect(response).to have_http_status(200)

@@ -19,7 +19,7 @@ class Api::V1::ContainerManagement::Shared::ContainersController < Api::V1::Base
     end
 
     def create
-        puts container_params
+        # puts container_params
         ActiveRecord::Base.transaction do
             @container = Container.create!(container_params)
 
@@ -34,7 +34,11 @@ class Api::V1::ContainerManagement::Shared::ContainersController < Api::V1::Base
     end
 
     def show
-        render json: { container: ContainerSerializer.new(@container).as_json, navigation: {total_count: Container.all.count, \
+        @activitiy_ids = Activity.all.order(created_at: :asc).group_by(&:container_id).map{|s| s.last.last}.pluck(:id)
+        @activities = Activity.where(id: @activitiy_ids)
+        @activities = @activities.where.not(activity_status: ['deleted']).filters(filter_params)
+        @containers = Container.where(id: @activities.pluck(:container_id))
+        render json: { container: ContainerSerializer.new(@container).as_json, navigation: {total_count: @containers.count, \
             next_id: @container.next_id, previous_id: @container.prev_id, position: @container.position}}
     end
 
@@ -81,6 +85,11 @@ class Api::V1::ContainerManagement::Shared::ContainersController < Api::V1::Base
     def validate_container_params
         params.permit(:container_uid)
     end
+
+    def filter_params
+        params.permit(:activity_status)
+    end
+
 
     def container_params
         params.require(:container).permit(:yard_id, :container_uid, :customer_id, :container_owner_name, :submitter_initials, \

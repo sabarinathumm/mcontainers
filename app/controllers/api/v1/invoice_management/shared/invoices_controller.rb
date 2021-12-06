@@ -45,7 +45,7 @@ class Api::V1::InvoiceManagement::Shared::InvoicesController < Api::V1::BaseCont
     end
     
     def filter_params
-        params.permit( :activity_status)
+        params.permit(:date, :activity_type, :activity_status, :yard_id, :customer_id, :status, :container_id)
     end
 
     def sort_params

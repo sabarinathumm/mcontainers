@@ -18,9 +18,16 @@ class Api::V1::RepairListManagement::Shared::RepairListsController < Api::V1::Ba
     def create
         
         ActiveRecord::Base.transaction do
+           
+            @old_repair_list = RepairList.where(is_active: true).first
             RepairList.update(is_active: false)
             @repair_list = RepairList.create!(name: 'Version '+((RepairList.count+1).to_s), \
-                is_active: true)
+            is_active: true)
+
+            @old_repair_list.repair_list_items.each do |item|
+                @repair_list.repair_list_items.create!(item.attributes.except("id", "created_at", "updated_at"))
+            end
+           
         end
         
         if @repair_list.save
@@ -36,7 +43,8 @@ class Api::V1::RepairListManagement::Shared::RepairListsController < Api::V1::Ba
             @repair_list = RepairList.find(params[:id])
             @repair_list.update!(is_active: true)
         end
-
+        puts "VERSION"
+        puts @repair_list.to_json
         render json: @repair_list, serializer: RepairListSerializer
     end
 
