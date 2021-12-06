@@ -48,22 +48,5 @@ class Container < ApplicationRecord
         Container.all.order(id: :asc).map(&:id).index(id) + 1
     end
 
-    # def self.msc_export(options = {})
-    #     CSV.generate(options) do |csv|
-    #       csv << %w{uid activity_status activity_type container_number yard_name customer_name owner_name}
-    #       all.each do |activity|
-    #         csv << [ activity.activity_uid, activity.activity_status, activity.activity_type, activity.container_number , activity.yard_name , activity.customer_name , activity.owner_name]
-    #       end
-    #     end
-    # end
-
-    # def self.common_export(options = {})
-    #     CSV.generate(options) do |csv|
-    #       csv << %w{uid activity_status activity_type container_number yard_name customer_name owner_name}
-    #       all.each do |activity|
-    #         csv << [ activity.activity_uid, activity.activity_status, activity.activity_type, activity.container_number , activity.yard_name , activity.customer_name , activity.owner_name]
-    #       end
-    #     end
-    # end
 
 end
