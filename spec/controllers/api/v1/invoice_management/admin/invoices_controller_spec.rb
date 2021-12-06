@@ -4,7 +4,7 @@ RSpec.describe 'Admin::InvoiceManagement::', type: :request do
     # initialize test data 
     let!(:admin){ create(:admin) }
     let!(:headers) { get_admin_headers(admin) }
-    let!(:customer){ create(:customer, billing_type: 'merc') }
+    let!(:customer){ create(:customer, billing_type: 'common') }
     let!(:yard){ create(:yard, name: 'Alpha') }
     let!(:container_type){ create(:container_type) }
     let!(:container_damaged_area){ create(:container_damaged_area) }
