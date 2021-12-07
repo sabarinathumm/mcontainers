@@ -13,13 +13,19 @@ class Api::V1::RepairListManagement::Admin::CustomerRepairListsController < Api:
         ActiveRecord::Base.transaction do
             # CustomerRepairList.where(customer: @customer && is_active: true)
             # puts CustomerRepairList.where(customer: @customer).to_json
+            @old_customer_repair_list = CustomerRepairList.where(customer: @customer).first
+            @old_customer_repair_list = CustomerRepairList.where(is_active: true).first
+
             CustomerRepairList.where(customer: @customer).update(is_active: false)
             @repair_list = CustomerRepairList.create!(name: @customer.full_name + ' Version '+((RepairList.count+1).to_s), \
-                is_active: true, customer: @customer)
+            is_active: true, customer: @customer)
+
+            @old_customer_repair_list.customer_repair_list_items.each do |item|
+                @repair_list.customer_repair_list_items.create!(item.attributes.except("id", "created_at", "updated_at", "customer_repair_list_id"))
+            end
         end
         # puts CustomerRepairList.where(customer: @customer).to_json
         if @repair_list.save
-            puts @repair_list.to_json
             render json: @repair_list, serializer: RepairListSerializer
         else
             render json: { error: 'Could not create new Repair List'}, status: :unprocessable_entity
