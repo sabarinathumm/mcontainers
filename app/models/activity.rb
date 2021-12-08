@@ -7,6 +7,7 @@ class Activity < ApplicationRecord
     belongs_to :assigned_to, polymorphic: true
     has_many :activity_timelines
     has_many :activity_items
+    has_and_belongs_to_many :invoices
 
     before_update :set_activity_timeline
     after_create :set_activity_uid

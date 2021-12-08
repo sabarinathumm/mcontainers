@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_12_02_114136) do
+ActiveRecord::Schema.define(version: 2021_12_08_061951) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -28,6 +28,13 @@ ActiveRecord::Schema.define(version: 2021_12_02_114136) do
     t.datetime "activity_date"
     t.index ["assigned_to_type", "assigned_to_id"], name: "index_activities_on_assigned_to_type_and_assigned_to_id"
     t.index ["container_id"], name: "index_activities_on_container_id"
+  end
+
+  create_table "activities_invoices", id: false, force: :cascade do |t|
+    t.bigint "activity_id", null: false
+    t.bigint "invoice_id", null: false
+    t.index ["activity_id"], name: "index_activities_invoices_on_activity_id"
+    t.index ["invoice_id"], name: "index_activities_invoices_on_invoice_id"
   end
 
   create_table "activity_attachments", force: :cascade do |t|
@@ -287,6 +294,33 @@ ActiveRecord::Schema.define(version: 2021_12_02_114136) do
 
   create_table "events", force: :cascade do |t|
     t.string "name"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+  end
+
+  create_table "invoice_activity_items", force: :cascade do |t|
+    t.string "repair_code"
+    t.integer "quantity"
+    t.string "location"
+    t.float "hours"
+    t.integer "labour_cost"
+    t.integer "material_cost"
+    t.integer "total_cost"
+    t.bigint "container_repair_area_id"
+    t.bigint "container_damaged_area_id"
+    t.bigint "repair_type_id"
+    t.bigint "invoice_id"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["container_damaged_area_id"], name: "index_invoice_activity_items_on_container_damaged_area_id"
+    t.index ["container_repair_area_id"], name: "index_invoice_activity_items_on_container_repair_area_id"
+    t.index ["invoice_id"], name: "index_invoice_activity_items_on_invoice_id"
+    t.index ["repair_type_id"], name: "index_invoice_activity_items_on_repair_type_id"
+  end
+
+  create_table "invoices", force: :cascade do |t|
+    t.string "invoice_number"
+    t.integer "status"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
   end

@@ -3,17 +3,13 @@ class Api::V1::InvoiceManagement::Shared::InvoicesController < Api::V1::BaseCont
     before_action :doorkeeper_authorize!
 	before_action :validate_token!
     before_action :set_format, only: [:export_common]
-    before_action :set_activity, only: [:show]
+    before_action :set_invoice, only: [:show]
 
     def index
         @activities = Activity.all.where(activity_status:'ready_for_billing').filters(filter_params).search_by(params[:search_text]).sorts(sort_params)  
         @activities = paginate @activities.page(params[:page])
         # puts @activities.to_json
         render json: @activities, each_serializer: ActivitySerializer, meta: pagination_dict(@activities)
-    end
-
-    def show
-        render json:  @activity, serializer: ActivitySerializer
     end
 
     def export_common
@@ -43,6 +39,54 @@ class Api::V1::InvoiceManagement::Shared::InvoicesController < Api::V1::BaseCont
         end
 
     end
+
+    def create
+        puts "create"
+        @activity = Activity.find(params[:activity_id])
+        # puts @activity
+        @activity.activity_status = 'billed'
+        # puts @activity.to_json
+        ActiveRecord::Base.transaction do
+            @invoice = Invoice.new(invoice_params)
+            # puts @invoice.to_json
+            if @invoice.save
+                # puts @invoice.to_json
+                render json: @invoice, serializer: InvoiceSerializer, status: :created
+            else
+                throw_error(@invoice.error.full_messages, :unprocessible_entity)    
+            end 
+        end
+        # render json:  @activity, each_serializer: ActivitySerializer, status: :created
+    end
+
+    def invoice_history
+        puts "invoice_history"
+        @activities = Activity.where(activity_status: 'billed').search_by(params[:search_text])
+
+        @activities = paginate @activities.page(params[:page])
+        render json: @activities, each_serializer: InvoiceSerializer, meta: pagination_dict(@invoices)
+    end
+
+    def show
+        render json:  @invoice, serializer: InvoiceSerializer
+    end
+
+    def mark_void
+        @invoice.status = 'void' unless @invoice.status == 'invoiced'
+       
+    end
+
+    # def mail_invoice
+        
+    # end
+
+    # def print_invoice
+        
+    # end
+
+    def invoice_params
+        params.permit(:status, :created_at, :invoice_number)
+    end
     
     def filter_params
         params.permit(:date, :activity_type, :activity_status, :yard_id, :customer_id, :status, :container_id)
@@ -62,5 +106,9 @@ class Api::V1::InvoiceManagement::Shared::InvoicesController < Api::V1::BaseCont
 
     def set_activity
         @activity = Activity.find(params[:id])
+    end
+
+    def set_invoice
+        @invoice = Invoice.find(params[:id])
     end
 end
