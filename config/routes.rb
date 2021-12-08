@@ -69,7 +69,7 @@ Rails.application.routes.draw do
         # resources :activities, only: [:index, :show]
         namespace :admin do 
           get 'invoices', to: 'invoices#index'
-          get 'invoices', to: 'invoices#invoice_history'
+          get 'invoices/invoice_history', to: 'invoices#invoice_history'
           post 'invoices/export', to: 'invoices#export_common' 
           get 'invoices/:id', to: 'invoices#show'
           post 'invoices', to: 'invoices#create' 
@@ -177,8 +177,17 @@ Rails.application.routes.draw do
           post 'auth/forgot_password'
           post 'auth/validate_reset_password_token'
           put 'auth/reset_password'
+
+          get "profiles", to: 'profiles#index'
+          post "profiles", to: 'profiles#create'
+          get "profiles/:id", to: 'profiles#show'
+          put "profiles/:id", to: 'profiles#update'
+          delete "profiles/:id", to: 'profiles#delete'
+
           resources :customers, only: [:index, :update, :create, :show]
           get 'all_customers', to: 'customers#all_customers'
+
+          
         end
 
         namespace :employee do

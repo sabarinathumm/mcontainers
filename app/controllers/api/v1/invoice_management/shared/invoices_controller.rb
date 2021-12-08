@@ -41,33 +41,30 @@ class Api::V1::InvoiceManagement::Shared::InvoicesController < Api::V1::BaseCont
     end
 
     def create
-        puts "create"
         @activity = Activity.where(id: params[:activity_ids]).first
-        # puts @activity
+       
         @activity.activity_status = 'billed'
-        # puts @activity.to_json
+      
         ActiveRecord::Base.transaction do
             @invoice = Invoice.new(invoice_params)
             @invoice.invoice_number = 'INV7678'
             @invoice.status = 'invoiced'
             @invoice.created_at = DateTime.now
-            puts @invoice.to_json
             if @invoice.save
-                # puts @invoice.to_json
                 render json: @invoice, serializer: InvoiceSerializer, status: :created
             else
                 throw_error(@invoice.error.full_messages, :unprocessible_entity)    
             end 
         end
-        # render json:  @activity, each_serializer: ActivitySerializer, status: :created
     end
 
     def invoice_history
-        puts "invoice_history"
-        @activities = Activity.where(activity_status: 'billed').search_by(params[:search_text])
+        @activity = Activity.where(activity_status: 'billed').search_by(params[:search_text]).first
 
-        @activities = paginate @activities.page(params[:page])
-        render json: @activities, each_serializer: InvoiceSerializer, meta: pagination_dict(@invoices)
+        @invoices = ActivitiesInvoice.where(activity_id: @activity.id)
+        puts @invoices.to_json
+        render json: @invoices, each_serializer: InvoiceSerializer
+        # , meta: pagination_dict(@invoices)
     end
 
     def show
@@ -79,12 +76,24 @@ class Api::V1::InvoiceManagement::Shared::InvoicesController < Api::V1::BaseCont
        
     end
 
-    # def mail_invoice
+    def mail_invoice
         
-    # end
+    end
 
     # def print_invoice
-        
+    #     respond_to do |format|
+    #         format.html
+    #         format.pdf do
+    #             render pdf: "Invoice No. #{@invoice.id}",
+    #             page_size: 'A4',
+    #             # template: "invoices/show.html.erb",
+    #             layout: "pdf.html",
+    #             orientation: "Landscape",
+    #             # lowquality: true,
+    #             # zoom: 1,
+    #             # dpi: 75
+    #         end
+    #     end
     # end
 
     def invoice_params
@@ -101,6 +110,10 @@ class Api::V1::InvoiceManagement::Shared::InvoicesController < Api::V1::BaseCont
 
     def set_format
         request.format = 'csv'
+    end
+
+    def set_print_format
+        request.format = 'pdf'
     end
 
     def export_params

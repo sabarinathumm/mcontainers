@@ -2,8 +2,11 @@ class Invoice < ApplicationRecord
     include Filterable
     include Sortable
 
-    has_and_belongs_to_many :activities
+    has_many :activities_invoices
+    has_many :activities, through: :activities_invoices
+
     has_many :invoice_activity_items
+    has_many :activity_items, through: :activities
 
     enum status: [:invoiced, :void]
 

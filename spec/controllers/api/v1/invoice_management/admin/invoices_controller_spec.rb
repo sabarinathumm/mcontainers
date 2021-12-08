@@ -25,7 +25,7 @@ RSpec.describe 'Admin::InvoiceManagement::', type: :request do
     let!(:container_attachment) { create(:container_attachment, attachment: uploaded_file, attachment_type: 'left_side_photo', container: container) } 
 
     let!(:activity) { create_list(:activity, 10,  container: container, assigned_to: admin,activity_type: 'quote', activity_status: 'ready_for_billing') }
-    let!(:invoice) { create(:invoice)}
+    let!(:invoice) { create_list(:invoice, 10)}
     # let!(:activity_item) {create(:activity_item, activity: activity, container_repair_area:          container_repair_area, container_damaged_area: container_damaged_area, unit: unit)}
     
 
@@ -92,11 +92,17 @@ RSpec.describe 'Admin::InvoiceManagement::', type: :request do
     describe 'List all invoices with billed statuses' do
         # valid payload
         context 'success' do
+            
+            let!(:activity) { create_list(:activity, 5, container: container, assigned_to: admin, activity_status: 'billed') }
+            let!(:invoice) { create(:invoice, status: 'invoiced', activities: activity) }
+            let!(:invoice2) { create(:invoice, status: 'void', activities: [activity.first , activity.second]) }
+            # let!(:activities_invoices) {create(:activities_invoices, activity: activity, invoice: invoice, activity_id: activity.id, invoice_id: invoice.id )}
+
             before { get "/api/v1/invoice_management/admin/invoices/invoice_history", headers: headers[:auth], as: :json }
             
             it 'returns token' do
                 # Note `json` is a custom helper to parse JSON responses
-                puts json
+                # puts json
                 expect(json).not_to be_empty
                 expect(response).to have_http_status(200)
             end
