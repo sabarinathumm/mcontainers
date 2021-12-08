@@ -42,13 +42,16 @@ class Api::V1::InvoiceManagement::Shared::InvoicesController < Api::V1::BaseCont
 
     def create
         puts "create"
-        @activity = Activity.find(params[:activity_id])
+        @activity = Activity.where(id: params[:activity_ids]).first
         # puts @activity
         @activity.activity_status = 'billed'
         # puts @activity.to_json
         ActiveRecord::Base.transaction do
             @invoice = Invoice.new(invoice_params)
-            # puts @invoice.to_json
+            @invoice.invoice_number = 'INV7678'
+            @invoice.status = 'invoiced'
+            @invoice.created_at = DateTime.now
+            puts @invoice.to_json
             if @invoice.save
                 # puts @invoice.to_json
                 render json: @invoice, serializer: InvoiceSerializer, status: :created

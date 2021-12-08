@@ -76,13 +76,10 @@ RSpec.describe 'Admin::InvoiceManagement::', type: :request do
         context 'Sucessful creation' do
             let!(:valid_attributes){
                 {
-                    activity_status: 'billed',
-                    invoice_number: 'INV7678',
-                    status: 'invoiced',
-                    created_at: DateTime.now
+                    activity_ids: [activity.first.id, activity.second.id],
                 }
             }
-            before {post "/api/v1/invoice_management/admin/invoices?activity_id=#{activity.first.id}",params: valid_attributes, headers: headers[:auth], as: :json}
+            before {post "/api/v1/invoice_management/admin/invoices",params: valid_attributes, headers: headers[:auth], as: :json}
             it 'return 200' do
                 puts json
                 puts activity.first.id
