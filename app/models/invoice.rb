@@ -2,6 +2,7 @@ class Invoice < ApplicationRecord
     include Filterable
     include Sortable
 
+    belongs_to :customer, optional: true
     has_many :activities_invoices
     has_many :activities, through: :activities_invoices
 

@@ -49,7 +49,8 @@ class Api::V1::InvoiceManagement::Shared::InvoicesController < Api::V1::BaseCont
             ActiveRecord::Base.transaction do
                 activity.update!(activity_status: 'billed')
                 # @invoice = Invoice.new(status: 'invoiced', invoice_number: 'INV7678')
-                invoice = activity.invoices.create!(status: 'invoiced')
+                customer = activity.container.customer
+                invoice = activity.invoices.create!(status: 'invoiced', customer: customer)
                 # puts activity.activity_items.to
                 activity.activity_items.each do |item|
                     invoice_item = invoice.invoice_activity_items.create!(item.attributes.except("id", "created_at", "updated_at", "activity_id", "labour_cost_cents", "labour_cost_currency","material_cost_cents", "material_cost_currency","total_cost_cents", "total_cost_currency", "damaged_area_image_id", "repaired_area_image_id","comments","unit_id","length_id","width_id"))
@@ -63,12 +64,13 @@ class Api::V1::InvoiceManagement::Shared::InvoicesController < Api::V1::BaseCont
     end
 
     def invoice_history
-        @activity = Activity.where(activity_status: 'billed').search_by(params[:search_text])
-        @invoices = ActivitiesInvoice.where(activity_id: @activity.ids)
+        @activity = Activity.where(activity_status: 'billed').filters(filter_params).search_by(params[:search_text]).sorts(sort_params)  
+        @activities_invoices = ActivitiesInvoice.where(activity_id: @activity.ids)
         # puts @activity.id
-        @invoices = paginate @invoices.page(params[:page])
-        puts @invoices.to_json
-        render json: @invoices, each_serializer: InvoiceHistorySerializer
+        @activities_invoices = paginate @activities_invoices.page(params[:page])
+        puts "INVOICE HISTORY"
+        puts @activities_invoices.to_json
+        render json: @activities_invoices, each_serializer: InvoiceHistorySerializer, meta: pagination_dict(@activities_invoices)
     end
 
     def show
@@ -85,22 +87,20 @@ class Api::V1::InvoiceManagement::Shared::InvoicesController < Api::V1::BaseCont
     end
 
     def mail_invoice
-    invoice = @invoice
-        begin
-            if invoice.save
-                InvoiceMailer.send_invoice(invoice, url).deliver_now
-                return invoice
-            else
-                raise Exception.new "Invoice mail not sent" if invoice.blank?
+        invoice = @invoice 
+        unless  Rails.env.test?
+            begin
+                InvoiceMailer.send_invoice(invoice).deliver_now
+                render json: { success: "Invoice has been sent to customer email"}, status: :created
+            rescue Exception => e
+                puts e.message
             end
-        rescue Exception => e
-            puts e.message
         end
+        render json: { success: "Invoice has been sent to customer email"}, status: :created
     end
 
     # def print_invoice
     #     respond_to do |format|
-    #         # format.html
     #         format.pdf do
     #             render pdf: "Invoice No. #{@invoice.id}",
     #             page_size: 'A4',
