@@ -102,8 +102,7 @@ RSpec.describe 'Admin::InvoiceManagement::', type: :request do
             let!(:activity) { create_list(:activity, 5, container: container, assigned_to: admin, activity_status: 'billed') }
             let!(:invoice) { create(:invoice, status: 'invoiced', activities: activity) }
             let!(:invoice2) { create(:invoice, status: 'void', activities: [activity.first , activity.second]) }
-            # let!(:activities_invoices) {create(:activities_invoices, activity: activity, invoice: invoice, activity_id: activity.id, invoice_id: invoice.id )}
-
+            
             before { get "/api/v1/invoice_management/admin/invoice_history", headers: headers[:auth], as: :json }
             
             it 'returns token' do
@@ -118,14 +117,13 @@ RSpec.describe 'Admin::InvoiceManagement::', type: :request do
     describe 'Show each invoice history' do
         context 'return each invoice' do
             let!(:invoice_activity_items){create(:invoice_activity_item, invoice: invoice,container_repair_area: container_repair_area, container_damaged_area: container_damaged_area, repair_type: repair_type, location: 'DBXN' ) }
-
             let!(:activities_invoice) {create(:activities_invoice, activity: activity.first, invoice: invoice)}
 
             before { get "/api/v1/invoice_management/admin/invoices/#{invoice.id}", headers: headers[:auth], as: :json }
 
             it 'returns the filtered activity' do
                 # Note `json` is a custom helper to parse JSON responses
-                puts json
+                # puts json
                 #puts response.body
                 expect(json).not_to be_empty
                 expect(response).to have_http_status(200)
@@ -158,9 +156,7 @@ RSpec.describe 'Admin::InvoiceManagement::', type: :request do
 
     describe 'Mail Invoice to Customer' do
         # valid payload
-        context 'success' do
-    
-            # let!(:invoice) { create_list(:invoice, 5, activities: activity) }
+        context 'success' do 
 
             before { post "/api/v1/invoice_management/admin/mail_invoice/#{invoice.id}", headers: headers[:auth], as: :json }
     
@@ -175,11 +171,9 @@ RSpec.describe 'Admin::InvoiceManagement::', type: :request do
 
     describe 'Print Invoice ' do
         # valid payload
-        context 'success' do
-    
-            let!(:invoice) { create_list(:invoice, 5, activities: activity) }
+        context 'success' do 
            
-            before { post "/api/v1/invoice_management/admin/", params: valid_attributes ,headers: headers[:auth], as: :json }
+            before { get "/api/v1/invoice_management/admin/print_invoice/#{invoice.id}", headers: headers[:auth], as: :json }
     
             it 'returns the filtered activity' do
                 # Note `json` is a custom helper to parse JSON responses

@@ -21,7 +21,7 @@ class Admin < ApplicationRecord
     if id.blank?
         where(nil)
     else
-        joins(:admin).where("admins.id LIKE CONCAT('%',?,'%')", id)
+        joins(:Admin).where("admins.id LIKE CONCAT('%',?,'%')", id)
     end
   end
 
