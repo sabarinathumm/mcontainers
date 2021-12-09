@@ -73,6 +73,7 @@ Rails.application.routes.draw do
           post 'invoices/export', to: 'invoices#export_common' 
           get 'invoices/:id', to: 'invoices#show'
           post 'invoices', to: 'invoices#create' 
+          post 'invoices/mark_void', to: 'invoices#mark_void' 
         end
       end
       

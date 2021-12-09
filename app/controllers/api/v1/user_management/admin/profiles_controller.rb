@@ -35,7 +35,7 @@ class Api::V1::UserManagement::Admin::ProfilesController < Api::V1::BaseControll
     end
 
     def admin_params
-        params.require(:admin).permit(:role, :email, :first_name, :password, :last_name, :phone_number, :is_active)
+        params.permit(:role, :email, :first_name, :password, :last_name, :phone_number, :is_active)
     end
 
 end

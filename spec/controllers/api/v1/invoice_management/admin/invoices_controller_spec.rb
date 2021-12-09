@@ -15,6 +15,7 @@ RSpec.describe 'Admin::InvoiceManagement::', type: :request do
     let!(:dam){ create(:dam) }
     let!(:mode_number){ create(:mode_number) }
     let!(:repair_mode){ create(:repair_mode) }
+    let!(:repair_type){ create(:repair_type) }
     let!(:event){ create(:event) }
     let!(:unit){ create(:unit) }
     let!(:length){ create(:length) }
@@ -25,7 +26,7 @@ RSpec.describe 'Admin::InvoiceManagement::', type: :request do
     let!(:container_attachment) { create(:container_attachment, attachment: uploaded_file, attachment_type: 'left_side_photo', container: container) } 
 
     let!(:activity) { create_list(:activity, 10,  container: container, assigned_to: admin,activity_type: 'quote', activity_status: 'ready_for_billing') }
-    let!(:invoice) { create_list(:invoice, 10)}
+    let!(:invoice) { create(:invoice)}
     # let!(:activity_item) {create(:activity_item, activity: activity, container_repair_area:          container_repair_area, container_damaged_area: container_damaged_area, unit: unit)}
     
 
@@ -74,6 +75,9 @@ RSpec.describe 'Admin::InvoiceManagement::', type: :request do
 
     describe 'Create invoice' do
         context 'Sucessful creation' do
+            let!(:activity) {create(:activity,container: container, assigned_to: admin)}
+            let!(:activity_items) { create_list(:activity_item, 5, labour_cost: 500, material_cost: 500, total_cost: 1000, activity: activity.first, repair_type: repair_type, container_damaged_area: container_damaged_area, \
+                container_repair_area: container_repair_area, damaged_area_image: uploaded_file, repaired_area_image: uploaded_file, unit: unit, length: length, width: width) }
             let!(:valid_attributes){
                 {
                     activity_ids: [activity.first.id, activity.second.id],
@@ -130,4 +134,70 @@ RSpec.describe 'Admin::InvoiceManagement::', type: :request do
             end
         end
     end 
+
+    describe 'Update Invoice status' do
+        # valid payload
+        context 'success' do
+    
+            let!(:invoice) { create_list(:invoice, 5, activities: activity, status: 'invoiced') }
+            let!(:valid_attributes){
+                {
+                    invoice_ids: [invoice.first.id, invoice.second.id],
+                    status: 'void'
+                }
+            }
+            before { post "/api/v1/invoice_management/admin/invoices/mark_void", params: valid_attributes ,headers: headers[:auth], as: :json }
+    
+            it 'returns the filtered activity' do
+                # Note `json` is a custom helper to parse JSON responses
+                puts json
+                expect(json).not_to be_empty
+                expect(response).to have_http_status(200)
+            end
+        end
+    end
+
+    describe 'Mail Invoice to Customer' do
+        # valid payload
+        context 'success' do
+    
+            let!(:invoice) { create_list(:invoice, 5, activity: activity, assigned_to: admin) }
+            let!(:valid_attributes){
+                {
+                    invoice_ids: [invoice.first.id, invoice.second.id],
+                    status: 'void'
+                }
+            }
+            before { post "/api/v1/invoice_management/admin/invoices/mark_void", params: valid_attributes ,headers: headers[:auth], as: :json }
+    
+            it 'returns the filtered activity' do
+                # Note `json` is a custom helper to parse JSON responses
+                #puts json
+                expect(json).not_to be_empty
+                expect(response).to have_http_status(200)
+            end
+        end
+    end
+
+    describe 'Print Invoice ' do
+        # valid payload
+        context 'success' do
+    
+            let!(:invoice) { create_list(:invoice, 5, activity: activity, assigned_to: admin) }
+            let!(:valid_attributes){
+                {
+                    invoice_ids: [invoice.first.id, invoice.second.id],
+                    status: 'void'
+                }
+            }
+            before { post "/api/v1/invoice_management/admin/invoices/mark_void", params: valid_attributes ,headers: headers[:auth], as: :json }
+    
+            it 'returns the filtered activity' do
+                # Note `json` is a custom helper to parse JSON responses
+                #puts json
+                expect(json).not_to be_empty
+                expect(response).to have_http_status(200)
+            end
+        end
+    end
 end
