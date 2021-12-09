@@ -30,9 +30,9 @@ ActiveRecord::Schema.define(version: 2021_12_09_114320) do
     t.index ["container_id"], name: "index_activities_on_container_id"
   end
 
-  create_table "activities_invoices", id: false, force: :cascade do |t|
-    t.bigint "activity_id", null: false
-    t.bigint "invoice_id", null: false
+  create_table "activities_invoices", force: :cascade do |t|
+    t.bigint "activity_id"
+    t.bigint "invoice_id"
     t.index ["activity_id"], name: "index_activities_invoices_on_activity_id"
     t.index ["invoice_id"], name: "index_activities_invoices_on_invoice_id"
   end

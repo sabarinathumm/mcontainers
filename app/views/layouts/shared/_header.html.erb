@@ -1,0 +1,3 @@
+# file rails-generate-pdf/app/views/layouts/shared/_header.html.erb
+# invoice_path(@invoice, format: :pdf) -> /invoice/1.pdf
+<%= link_to ‘DOWNLOAD PDF’, invoice_path(@invoice, format: :pdf) %>

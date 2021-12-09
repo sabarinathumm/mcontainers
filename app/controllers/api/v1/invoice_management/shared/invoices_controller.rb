@@ -3,7 +3,8 @@ class Api::V1::InvoiceManagement::Shared::InvoicesController < Api::V1::BaseCont
     before_action :doorkeeper_authorize!
 	before_action :validate_token!
     before_action :set_format, only: [:export_common]
-    before_action :set_invoice, only: [:show, :mail_invoice]
+    before_action :set_print_format, only: [:print_invoice]
+    before_action :set_invoice, only: [:show, :mail_invoice, :print_invoice]
 
     def index
         @activities = Activity.all.where(activity_status:'ready_for_billing').filters(filter_params).search_by(params[:search_text]).sorts(sort_params)  
@@ -101,7 +102,24 @@ class Api::V1::InvoiceManagement::Shared::InvoicesController < Api::V1::BaseCont
 
     def print_invoice
         puts "PRINT INVOICE"
+        # @invoice = scope.find(params[:id])
+
+        respond_to do |format|
+            format.html
+            format.pdf do
+                render pdf: "Invoice No. #{@invoice.id}",
+                page_size: 'A4',
+                template: "show.html.erb",
+                layout: "pdf.html",
+                # charset: 'binary',
+                orientation: "Landscape",
+                lowquality: true,
+                zoom: 1,
+                dpi: 75
+            end
+        end
         
+        return true
     end
 
     def invoice_params
@@ -135,5 +153,9 @@ class Api::V1::InvoiceManagement::Shared::InvoicesController < Api::V1::BaseCont
     def set_invoice
         @invoice = Invoice.find(params[:id])
         puts "setInvoice"
+    end
+
+    def scope
+        ::Invoice.all.includes(:invoice_activity_items)
     end
 end

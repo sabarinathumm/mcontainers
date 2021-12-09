@@ -178,7 +178,8 @@ RSpec.describe 'Admin::InvoiceManagement::', type: :request do
             it 'returns the filtered activity' do
                 # Note `json` is a custom helper to parse JSON responses
                 #puts json
-                expect(json).not_to be_empty
+                # expect(json).not_to be_empty
+                expect(response.headers['Content-Type']).to eq('application/pdf; charset=utf-8')
                 expect(response).to have_http_status(200)
             end
         end
