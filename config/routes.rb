@@ -69,7 +69,7 @@ Rails.application.routes.draw do
         # resources :activities, only: [:index, :show]
         namespace :admin do 
           get 'invoices', to: 'invoices#index'
-          get 'invoices/invoice_history', to: 'invoices#invoice_history'
+          get 'invoice_history', to: 'invoices#invoice_history'
           post 'invoices/export', to: 'invoices#export_common' 
           get 'invoices/:id', to: 'invoices#show'
           post 'invoices', to: 'invoices#create' 
