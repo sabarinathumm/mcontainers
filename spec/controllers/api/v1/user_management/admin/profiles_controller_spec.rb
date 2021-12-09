@@ -9,14 +9,14 @@ RSpec.describe 'Admin::Profiles', type: :request do
     # valid payload
         context 'success' do
 
-        let!(:admins){ create_list(:admin, 30) }
+        let!(:admins){ create_list(:admin, 30, role: 'employee') }
         before { get '/api/v1/user_management/admin/profiles', headers: headers[:auth], as: :json }
             
             it 'returns token' do
                 # Note `json` is a custom helper to parse JSON responses
-                puts json
+                # puts json
                 expect(json).not_to be_empty
-                expect((json)['admins'].count).to eql(31)
+                expect((json)['admins'].count).to eql(20)
                 expect(response).to have_http_status(200)
             end
         end
@@ -27,15 +27,13 @@ RSpec.describe 'Admin::Profiles', type: :request do
         context 'success' do
         let!(:valid_attributes){ 
             {
-                admin:{
-                    first_name: "Harry", 
-                    last_name: "Styles", 
-                    email: "harry@email.com", 
-                    phone_number: '9898989898',
-                    role: 'administrator',
-                    password: "Password@123",
-                    is_active: true,
-                }
+                first_name: "Harry", 
+                last_name: "Styles", 
+                email: "harry@email.com", 
+                phone_number: '9898989898',
+                role: 'administrator',
+                password: "Password@123",
+                is_active: true
             }
          }
 
@@ -82,10 +80,10 @@ RSpec.describe 'Admin::Profiles', type: :request do
                 # Note `json` is a custom helper to parse JSON responses
                 # puts json
                 expect(json).not_to be_empty
-                expect(json['admin']['first_name']).to eq('Harrie')
-                expect(json['admin']['last_name']).to eq('Style')
-                expect(json['admin']['email']).to eq('harrie@email.com')
-                expect(json['admin']['phone_number']).to eq('9898989898')
+                expect(json['admin']['first_name']).to eq(admin.first_name)
+                expect(json['admin']['last_name']).to eq(admin.last_name)
+                expect(json['admin']['email']).to eq(admin.email)
+                expect(json['admin']['phone_number']).to eq(admin.phone_number)
                 expect(json['admin']['role']).to eq('administrator')
                
                 expect(json['admin']['is_active']).to eq(admin.is_active)

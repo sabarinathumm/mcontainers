@@ -5,16 +5,19 @@ class Api::V1::UserManagement::Admin::ProfilesController < Api::V1::BaseControll
     # before_action :set_activity_item, only: [:show, :update, :delete]
 
     def index    
-            @admins = Admin.where(role: params[:role]).search_by(params[:search_text])
-            @admins = paginate @repair_list_items.page(params[:page])
+        if params[:role] == 'administrator'
+            puts "admin"
+            @admins = Admin.where(role: 'administrator')
+            @admins = paginate @admins.page(params[:page])
             # puts @admins.to_json
             render json: @admins, each_serializer: AdminSerializer
-        # else
-        #     @admins = Admin.where(role: 'administrator').search_by(params[:search_text])
-        #     @admins = paginate @repair_list_items.page(params[:page])
-        #     # puts @admins.to_json
-        #     render json: @admins, each_serializer: AdminSerializer
-        # end
+        else
+            puts "else"
+            @admins = Admin.where(role: 'employee')
+            @admins = paginate @admins.page(params[:page])
+            puts @admins.to_json
+            render json: @admins, each_serializer: AdminSerializer
+        end
     end
 
     def create
