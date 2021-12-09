@@ -17,11 +17,11 @@ class Admin < ApplicationRecord
   has_many :uploaded_files, :as=>:user
   
 
-  def self.search_by(id)
-    if id.blank?
-        where(nil)
+  def self.search_by(search_text)
+    if search
+      find(:all, :conditions => ['name LIKE ?', "%#{search}%"])
     else
-        joins(:Admin).where("admins.id LIKE CONCAT('%',?,'%')", id)
+      find(:all)
     end
   end
 
