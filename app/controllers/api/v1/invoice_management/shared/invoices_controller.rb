@@ -3,7 +3,7 @@ class Api::V1::InvoiceManagement::Shared::InvoicesController < Api::V1::BaseCont
     before_action :doorkeeper_authorize!
 	before_action :validate_token!
     before_action :set_format, only: [:export_common]
-    before_action :set_invoice, only: [:show, :mark_void]
+    before_action :set_invoice, only: [:show]
 
     def index
         @activities = Activity.all.where(activity_status:'ready_for_billing').filters(filter_params).search_by(params[:search_text]).sorts(sort_params)  
@@ -49,32 +49,24 @@ class Api::V1::InvoiceManagement::Shared::InvoicesController < Api::V1::BaseCont
             ActiveRecord::Base.transaction do
                 activity.update!(activity_status: 'billed')
                 # @invoice = Invoice.new(status: 'invoiced', invoice_number: 'INV7678')
-                invoice = activity.invoices.create(status: 'invoiced', invoice_number: 'INV7678')
+                invoice = activity.invoices.create!(status: 'invoiced')
+                # puts activity.activity_items.to
                 activity.activity_items.each do |item|
                     invoice_item = invoice.invoice_activity_items.create!(item.attributes.except("id", "created_at", "updated_at", "activity_id", "labour_cost_cents", "labour_cost_currency","material_cost_cents", "material_cost_currency","total_cost_cents", "total_cost_currency", "damaged_area_image_id", "repaired_area_image_id","comments","unit_id","length_id","width_id"))
                 end
-                # activity.invoice << @invoice
-                # @invoice.invoice_number = 'INV7678'
-                # @invoice.status = 'invoiced'
-                # @invoice.created_at = DateTime.now
             end
             @invoices << invoice 
             @invoices << invoice_item
         end
-        render json: @invoices.to_json
-        # , serializer: InvoiceSerializer, status: :created
-        # else
-        #     throw_error(@invoice.error.full_messages, :unprocessible_entity)    
-        # end 
+        render json: @invoices.to_json , status: :created
+       
     end
 
     def invoice_history
         @activity = Activity.where(activity_status: 'billed').search_by(params[:search_text]).first
-
         @invoices = ActivitiesInvoice.where(activity_id: @activity.id)
-        puts @invoices.to_json
+        @invoices = paginate @invoices.page(params[:page])
         render json: @invoices, each_serializer: InvoiceHistorySerializer
-        # , meta: pagination_dict(@invoices)
     end
 
     def show
@@ -82,10 +74,10 @@ class Api::V1::InvoiceManagement::Shared::InvoicesController < Api::V1::BaseCont
     end
 
     def mark_void
-        puts "mark_void"
-        @invoice.update!(params[:invoice_ids])
-        puts @invoice.to_json
-        render json: @invoice, serializer: InvoiceSerializer
+        @invoice = Invoice.where(id: params[:invoice_ids])
+        @invoice.update(status: params[:status])
+        render json: @invoice
+        # , serializer: InvoiceSerializer
     end
 
     def mail_invoice
@@ -138,5 +130,6 @@ class Api::V1::InvoiceManagement::Shared::InvoicesController < Api::V1::BaseCont
 
     def set_invoice
         @invoice = Invoice.find(params[:id])
+        puts "setInvoice"
     end
 end

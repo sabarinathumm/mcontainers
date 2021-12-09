@@ -1,5 +1,5 @@
 class InvoiceActivityItem < ApplicationRecord
-    belongs_to :activity
+    # belongs_to :activities
     belongs_to :container_repair_area
     belongs_to :container_damaged_area
     belongs_to :repair_type

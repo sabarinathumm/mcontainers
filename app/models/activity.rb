@@ -185,7 +185,7 @@ class Activity < ApplicationRecord
             if self.activity_type == "quote"
                 uid = 'QF'+rand(11111..99999).to_s
                 if self.activity_uid == uid
-                    uid = 'RF' + rand(11111..99999).to_s
+                    uid = 'QF' + rand(11111..99999).to_s
                 end
             elsif self.activity_type == "repair"
                 uid = 'RF'+rand(11111..99999).to_s

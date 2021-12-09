@@ -65,7 +65,7 @@ RSpec.describe 'Admin::InvoiceManagement::', type: :request do
     
             it 'returns token' do
                 # Note `json` is a custom helper to parse JSON responses
-                puts response.body
+                # puts response.body
                 # puts response.headers
                 expect(response.headers['Content-Type']).to eq('text/csv')
                 expect(response).to have_http_status(200)
@@ -76,17 +76,17 @@ RSpec.describe 'Admin::InvoiceManagement::', type: :request do
     describe 'Create invoice' do
         context 'Sucessful creation' do
             let!(:activity) {create(:activity,container: container, assigned_to: admin)}
-            let!(:activity_items) { create_list(:activity_item, 5, labour_cost: 500, material_cost: 500, total_cost: 1000, activity: activity.first, repair_type: repair_type, container_damaged_area: container_damaged_area, \
+            let!(:activity_items) { create_list(:activity_item, 5,activity: activity, labour_cost: 500, material_cost: 500, total_cost: 1000, repair_type: repair_type, container_damaged_area: container_damaged_area, \
                 container_repair_area: container_repair_area, damaged_area_image: uploaded_file, repaired_area_image: uploaded_file, unit: unit, length: length, width: width) }
             let!(:valid_attributes){
                 {
-                    activity_ids: [activity.first.id, activity.second.id],
+                    activity_ids: [activity.id]
                 }
             }
             before {post "/api/v1/invoice_management/admin/invoices",params: valid_attributes, headers: headers[:auth], as: :json}
             it 'return 200' do
-                puts json
-                puts activity.first.id
+                # puts json
+                # puts activity.first.id
                 expect(json).not_to be_empty
                 expect(response).to have_http_status(201)
             end
@@ -127,7 +127,7 @@ RSpec.describe 'Admin::InvoiceManagement::', type: :request do
 
             it 'returns the filtered activity' do
                 # Note `json` is a custom helper to parse JSON responses
-                puts json
+                # puts json
                 #puts response.body
                 expect(json).not_to be_empty
                 expect(response).to have_http_status(200)
@@ -150,7 +150,7 @@ RSpec.describe 'Admin::InvoiceManagement::', type: :request do
     
             it 'returns the filtered activity' do
                 # Note `json` is a custom helper to parse JSON responses
-                puts json
+                # puts json
                 expect(json).not_to be_empty
                 expect(response).to have_http_status(200)
             end
@@ -162,12 +162,11 @@ RSpec.describe 'Admin::InvoiceManagement::', type: :request do
         context 'success' do
     
             let!(:invoice) { create_list(:invoice, 5, activity: activity, assigned_to: admin) }
-            let!(:valid_attributes){
-                {
-                    invoice_ids: [invoice.first.id, invoice.second.id],
-                    status: 'void'
-                }
-            }
+            # let!(:valid_attributes){
+            #     {
+            #         invoice_ids: [invoice.first.id, invoice.second.id]
+            #     }
+            # }
             before { post "/api/v1/invoice_management/admin/invoices/mark_void", params: valid_attributes ,headers: headers[:auth], as: :json }
     
             it 'returns the filtered activity' do
@@ -184,12 +183,12 @@ RSpec.describe 'Admin::InvoiceManagement::', type: :request do
         context 'success' do
     
             let!(:invoice) { create_list(:invoice, 5, activity: activity, assigned_to: admin) }
-            let!(:valid_attributes){
-                {
-                    invoice_ids: [invoice.first.id, invoice.second.id],
-                    status: 'void'
-                }
-            }
+            # let!(:valid_attributes){
+            #     {
+            #         invoice_ids: [invoice.first.id, invoice.second.id],
+            #         status: 'void'
+            #     }
+            # }
             before { post "/api/v1/invoice_management/admin/invoices/mark_void", params: valid_attributes ,headers: headers[:auth], as: :json }
     
             it 'returns the filtered activity' do
