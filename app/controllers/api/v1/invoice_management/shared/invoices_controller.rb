@@ -63,8 +63,9 @@ class Api::V1::InvoiceManagement::Shared::InvoicesController < Api::V1::BaseCont
     end
 
     def invoice_history
-        @activity = Activity.where(activity_status: 'billed').search_by(params[:search_text]).first
-        @invoices = ActivitiesInvoice.where(activity_id: @activity.id)
+        @activity = Activity.where(activity_status: 'billed').search_by(params[:search_text])
+        @invoices = ActivitiesInvoice.where(activity_id: @activity.ids)
+        # puts @activity.id
         @invoices = paginate @invoices.page(params[:page])
         render json: @invoices, each_serializer: InvoiceHistorySerializer
     end
