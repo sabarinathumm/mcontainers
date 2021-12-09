@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_12_08_061951) do
+ActiveRecord::Schema.define(version: 2021_12_09_114320) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -323,6 +323,8 @@ ActiveRecord::Schema.define(version: 2021_12_08_061951) do
     t.integer "status"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+    t.bigint "customer_id"
+    t.index ["customer_id"], name: "index_invoices_on_customer_id"
   end
 
   create_table "items", force: :cascade do |t|
@@ -525,6 +527,7 @@ ActiveRecord::Schema.define(version: 2021_12_08_061951) do
   add_foreign_key "customer_repair_lists", "customers"
   add_foreign_key "customers", "cities"
   add_foreign_key "customers", "provinces"
+  add_foreign_key "invoices", "customers"
   add_foreign_key "repair_list_items", "components"
   add_foreign_key "repair_list_items", "comps"
   add_foreign_key "repair_list_items", "container_damaged_areas"

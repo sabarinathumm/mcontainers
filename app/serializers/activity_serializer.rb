@@ -3,7 +3,7 @@ class ActivitySerializer < ActiveModel::Serializer
         :activity_type, :activity_status, :created_at, :activity_date, :activity_items_subtotal
 
     belongs_to :container, serializer: ContainerSerializer
-    belongs_to :invoices, serializer: InvoiceSerializer
+    # belongs_to :invoices, serializer: InvoiceSerializer
     has_many :activity_timelines, each_serializer: ActivityTimelineSerializer
 
     def created_at

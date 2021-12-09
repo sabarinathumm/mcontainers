@@ -19,7 +19,8 @@ class Customer < ApplicationRecord
   monetize :hourly_rate_cents
 
   has_many :customer_repair_lists
-
+  has_many :invoices
+  
   belongs_to :city, optional: true
   belongs_to :province, optional: true
 
