@@ -78,11 +78,13 @@ RSpec.describe 'Admin::InvoiceManagement::', type: :request do
             let!(:activity) {create(:activity,container: container, assigned_to: admin)}
             let!(:activity_items) { create_list(:activity_item, 5,activity: activity, labour_cost: 500, material_cost: 500, total_cost: 1000, repair_type: repair_type, container_damaged_area: container_damaged_area, \
                 container_repair_area: container_repair_area, damaged_area_image: uploaded_file, repaired_area_image: uploaded_file, unit: unit, length: length, width: width) }
-            let!(:valid_attributes){
+            
+                let!(:valid_attributes){
                 {
                     activity_ids: [activity.id]
                 }
             }
+
             before {post "/api/v1/invoice_management/admin/invoices",params: valid_attributes, headers: headers[:auth], as: :json}
             it 'return 200' do
                 # puts json
@@ -116,18 +118,28 @@ RSpec.describe 'Admin::InvoiceManagement::', type: :request do
     describe 'Show each invoice history' do
         context 'return each invoice' do
             let!(:activity2) { create_list(:activity, 5, container: container, assigned_to: admin) }
-            let!(:activity) {create(:activity,container: container, assigned_to: admin)}
+            let!(:activity) {create(:activity, id: 54, container: container, assigned_to: admin)}
             let!(:container) {create(:container, container_type: container_type, yard: yard, customer: customer )}
+
             let!(:repair_type) {create(:repair_type)}
-            let!(:activity_items) {create(:activity_item, activity: activity, container_repair_area: container_repair_area, container_damaged_area: container_damaged_area, repair_type: repair_type, unit: unit, material_cost_cents: 100)}
             let!(:container_repair_area) {create(:container_repair_area)}
             let!(:container_damaged_area) {create(:container_damaged_area)}
 
-            before { get "/api/v1/invoice_management/admin/invoices/#{activity.id}", headers: headers[:auth], as: :json }
+            let!(:activity_items) {create(:activity_item, activity: activity, container_repair_area: container_repair_area, container_damaged_area: container_damaged_area, repair_type: repair_type, unit: unit, material_cost_cents: 100)}
+
+            let!(:invoice) {create(:invoice)}
+            let!(:invoice_activity_items){create(:invoice_activity_item, invoice: invoice,container_repair_area: container_repair_area, container_damaged_area: container_damaged_area, repair_type: repair_type, location: 'DBXN' ) }
+
+            let!(:activities_invoice) {create(:activities_invoice, activity: activity, invoice: invoice)}
+
+            
+            
+
+            before { get "/api/v1/invoice_management/admin/invoices/#{activity2.first.id}", headers: headers[:auth], as: :json }
 
             it 'returns the filtered activity' do
                 # Note `json` is a custom helper to parse JSON responses
-                # puts json
+                puts json
                 #puts response.body
                 expect(json).not_to be_empty
                 expect(response).to have_http_status(200)

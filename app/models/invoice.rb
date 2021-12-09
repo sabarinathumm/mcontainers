@@ -14,10 +14,12 @@ class Invoice < ApplicationRecord
     after_create :set_invoice_number
 
     def set_invoice_number
-        invoice_number = 'IN'+rand(11111..99999).to_s
+        invoice_number = 'IN'+rand(1111111..9999999).to_s
         if self.invoice_number == invoice_number
-            uid = 'IN' + rand(11111..99999).to_s
+            uid = 'IN' + rand(1111111..9999999).to_s
         end
+        self.invoice_number = invoice_number
+        self.save!
         # puts invoice_number.to_json
     end
 

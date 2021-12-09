@@ -53,12 +53,15 @@ class Api::V1::ActivityManagement::Shared::ActivitiesController < Api::V1::BaseC
        
         ActiveRecord::Base.transaction do
             @activity = Activity.create!(activity_create_params)
+            puts @activity.to_json
             ActivityTimeline.create!(activity: @activity, history_status: @activity.activity_status, history_date: @activity.activity_date)
             @activity.container.update!(container_status: 'active')
         end 
-
+        puts @activity.to_json
         if @activity.save
             render json: @activity, serializer: ActivitySerializer
+            puts "CREATE"
+            puts @activity.to_json
         else
             render json: { error: 'Could not create new activity List'}, status: :unprocessable_entity
         end

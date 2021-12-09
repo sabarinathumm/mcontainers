@@ -3,7 +3,7 @@ class Api::V1::InvoiceManagement::Shared::InvoicesController < Api::V1::BaseCont
     before_action :doorkeeper_authorize!
 	before_action :validate_token!
     before_action :set_format, only: [:export_common]
-    before_action :set_invoice, only: [:show]
+    before_action :set_invoice, only: [:show, :mail_invoice]
 
     def index
         @activities = Activity.all.where(activity_status:'ready_for_billing').filters(filter_params).search_by(params[:search_text]).sorts(sort_params)  
@@ -67,11 +67,14 @@ class Api::V1::InvoiceManagement::Shared::InvoicesController < Api::V1::BaseCont
         @invoices = ActivitiesInvoice.where(activity_id: @activity.ids)
         # puts @activity.id
         @invoices = paginate @invoices.page(params[:page])
+        puts @invoices.to_json
         render json: @invoices, each_serializer: InvoiceHistorySerializer
     end
 
     def show
-        render json:  @invoice, serializer: InvoiceHistorySerializer
+        puts "SHOW"
+        puts @invoice.to_json
+        render json:  @invoice, serializer: InvoiceSerializer
     end
 
     def mark_void
@@ -82,7 +85,17 @@ class Api::V1::InvoiceManagement::Shared::InvoicesController < Api::V1::BaseCont
     end
 
     def mail_invoice
-        
+    invoice = @invoice
+        begin
+            if invoice.save
+                InvoiceMailer.send_invoice(invoice, url).deliver_now
+                return invoice
+            else
+                raise Exception.new "Invoice mail not sent" if invoice.blank?
+            end
+        rescue Exception => e
+            puts e.message
+        end
     end
 
     # def print_invoice

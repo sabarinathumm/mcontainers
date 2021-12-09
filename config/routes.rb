@@ -74,6 +74,8 @@ Rails.application.routes.draw do
           get 'invoices/:id', to: 'invoices#show'
           post 'invoices', to: 'invoices#create' 
           post 'invoices/mark_void', to: 'invoices#mark_void' 
+          get 'invoices/:id', to: 'invoices#mail_invoice'
+          get 'invoices/:id', to: 'invoices#print_invoice'
         end
       end
       

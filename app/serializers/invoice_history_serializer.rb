@@ -1,5 +1,5 @@
 class InvoiceHistorySerializer < ActiveModel::Serializer
-    attributes :id, :invoice_number, :activity_id, :invoice_id
+    attributes :id, :invoice_number
 
     belongs_to :activity, serializer: ActivitySerializer
     belongs_to :invoice, serializer: InvoiceSerializer
