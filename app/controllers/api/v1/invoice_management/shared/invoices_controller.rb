@@ -111,7 +111,7 @@ class Api::V1::InvoiceManagement::Shared::InvoicesController < Api::V1::BaseCont
     #             # zoom: 1,
     #             # dpi: 75
     #         end
-    #     end
+        
     # end
 
     def invoice_params

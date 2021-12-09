@@ -6,17 +6,15 @@ class Api::V1::UserManagement::Admin::ProfilesController < Api::V1::BaseControll
 
     def index    
         if params[:role] == 'administrator'
-            puts "admin"
-            @admins = Admin.where(role: 'administrator')
+            @admins = Admin.all.where(role: 'administrator').search_by(params[:search_text])
             @admins = paginate @admins.page(params[:page])
             # puts @admins.to_json
-            render json: @admins, each_serializer: AdminSerializer
+            render json: @admins, each_serializer: AdminSerializer, meta: pagination_dict(@admins)
         else
-            puts "else"
-            @admins = Admin.where(role: 'employee')
+            @admins = Admin.all.where(role: 'employee').search_by(params[:search_text])
             @admins = paginate @admins.page(params[:page])
-            puts @admins.to_json
-            render json: @admins, each_serializer: AdminSerializer
+            # puts @admins.to_json
+            render json: @admins, each_serializer: AdminSerializer, meta: pagination_dict(@admins)
         end
     end
 
@@ -35,7 +33,7 @@ class Api::V1::UserManagement::Admin::ProfilesController < Api::V1::BaseControll
     end
 
     def delete
-        @admin.destroy!
+        @admin.destroy! unless current_admin != @admin
     end
 
     private
@@ -44,6 +42,9 @@ class Api::V1::UserManagement::Admin::ProfilesController < Api::V1::BaseControll
         @admin = Admin.find(params[:id])
     end
 
+    def filter_params
+        params.permit(:role, :customer_id, :status, :container_id)
+    end
     def admin_params
         params.permit(:role, :email, :first_name, :password, :last_name, :phone_number, :is_active)
     end

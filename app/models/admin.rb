@@ -16,6 +16,15 @@ class Admin < ApplicationRecord
   has_many :activities, :as=>:assigned_to
   has_many :uploaded_files, :as=>:user
   
+
+  def self.search_by(id)
+    if id.blank?
+        where(nil)
+    else
+        joins(:admin).where("admins.id LIKE CONCAT('%',?,'%')", id)
+    end
+  end
+
   class << self
     def authenticate(email, password)
       admin = Admin.find_for_authentication(email: email)
