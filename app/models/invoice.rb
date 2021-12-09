@@ -11,10 +11,10 @@ class Invoice < ApplicationRecord
     enum status: [:invoiced, :void]
 
     
-    # after_create :set_invoice_number
+    after_create :set_invoice_number
 
-    # def invoice_number
+    def invoice_number
         
-    # end
+    end
 
 end

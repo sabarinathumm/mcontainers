@@ -11,7 +11,7 @@ RSpec.describe 'Admin::Profiles', type: :request do
 
         let!(:admins){ create_list(:admin, 30) }
         before { get '/api/v1/user_management/admin/profiles', headers: headers[:auth], as: :json }
-
+            
             it 'returns token' do
                 # Note `json` is a custom helper to parse JSON responses
                 puts json
