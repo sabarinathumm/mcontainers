@@ -18,8 +18,8 @@ class Admin < ApplicationRecord
   
 
   def self.search_by(search_text)
-    if search
-      find(:all, :conditions => ['name LIKE ?', "%#{search}%"])
+    if search_by
+      find(:all, :conditions => ['name LIKE ?', "%#{search_text}%"])
     else
       find(:all)
     end
