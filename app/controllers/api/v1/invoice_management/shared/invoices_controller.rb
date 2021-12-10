@@ -69,22 +69,23 @@ class Api::V1::InvoiceManagement::Shared::InvoicesController < Api::V1::BaseCont
         @activities_invoices = ActivitiesInvoice.where(activity_id: @activity.ids)
         # puts @activity.id
         @activities_invoices = paginate @activities_invoices.page(params[:page])
-        puts "INVOICE HISTORY"
-        puts @activities_invoices.to_json
+        # puts "INVOICE HISTORY"
+        # puts @activities_invoices.to_json
         render json: @activities_invoices, each_serializer: InvoiceHistorySerializer, meta: pagination_dict(@activities_invoices)
     end
 
     def show
-        puts "SHOW"
-        puts @invoice.to_json
+        # puts "SHOW"
+        # puts @invoice.to_json
         render json:  @invoice, serializer: InvoiceSerializer
     end
 
     def mark_void
         @invoice = Invoice.where(id: params[:invoice_ids])
         @invoice.update(status: params[:status])
-        render json: @invoice
-        # , serializer: InvoiceSerializer
+        # @activity = Activity.where(invoice_id: @invoice.id)
+        puts @invoice.to_json
+        render json: @invoice, serializer: InvoiceSerializer, status: :ok
     end
 
     def mail_invoice
@@ -101,7 +102,7 @@ class Api::V1::InvoiceManagement::Shared::InvoicesController < Api::V1::BaseCont
     end
 
     def print_invoice
-        puts "PRINT INVOICE"
+        # puts "PRINT INVOICE"
         # @invoice = scope.find(params[:id])
 
         respond_to do |format|
@@ -152,7 +153,7 @@ class Api::V1::InvoiceManagement::Shared::InvoicesController < Api::V1::BaseCont
 
     def set_invoice
         @invoice = Invoice.find(params[:id])
-        puts "setInvoice"
+        # puts "setInvoice"
     end
 
     def scope

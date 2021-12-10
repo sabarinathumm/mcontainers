@@ -17,11 +17,11 @@ class Admin < ApplicationRecord
   has_many :uploaded_files, :as=>:user
   
 
-  def self.search_by(uid)
-    if uid.blank?
+  def self.search_by(full_name)
+    if full_name.blank?
         where(nil)
     else
-        joins(:container).where("containers.container_uid LIKE CONCAT('%',?,'%')", uid)
+        joins(:Admin).where("admins.full_name LIKE CONCAT('%',?,'%')", full_name)
     end
   end
   
