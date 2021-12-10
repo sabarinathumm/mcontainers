@@ -210,6 +210,14 @@ Rails.application.routes.draw do
           post 'auth/validate_reset_password_token'
           put 'auth/reset_password'
         end
+
+        namespace :shared do
+          delete 'auth/logout'
+          post 'auth/login'
+          post 'auth/forgot_password'
+          post 'auth/validate_reset_password_token'
+          put 'auth/reset_password'
+        end
       end
   	end
   end
