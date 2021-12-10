@@ -6,12 +6,15 @@ class Api::V1::UserManagement::Admin::ProfilesController < Api::V1::BaseControll
 
     def index    
         if params[:role] == 'administrator'
-            @admins = Admin.all.where(role: 'administrator').search_by(params[:search_text])
+            @admins = Admin.where(role: 'administrator').search_by(params[:search_text])
             @admins = paginate @admins.page(params[:page])
+            # puts "INDEX"
             # puts @admins.to_json
             render json: @admins, each_serializer: AdminSerializer, meta: pagination_dict(@admins)
         else
-            @admins = Admin.all.where(role: 'employee').search_by(params[:search_text])
+            # puts "INDEX"
+            @admins = Admin.where(role: 'employee').search_by(params[:search_text])
+            # puts "INDEX"
             @admins = paginate @admins.page(params[:page])
             # puts @admins.to_json
             render json: @admins, each_serializer: AdminSerializer, meta: pagination_dict(@admins)

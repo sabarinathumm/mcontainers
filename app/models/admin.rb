@@ -17,13 +17,21 @@ class Admin < ApplicationRecord
   has_many :uploaded_files, :as=>:user
   
 
-  def self.search_by(search_text)
-    if search_text
-      find(:all, :conditions => ['name LIKE ?', "%#{search_text}%"])
+  def self.search_by(uid)
+    if uid.blank?
+        where(nil)
     else
-      find(:all)
+        joins(:container).where("containers.container_uid LIKE CONCAT('%',?,'%')", uid)
     end
   end
+  
+  # def self.search_by(search_text)
+  #   if search_text
+  #     find(:all, :conditions => ['name LIKE ?', "%#{search_text}%"])
+  #   else
+  #     find(:all)
+  #   end
+  # end
 
   class << self
     def authenticate(email, password)
